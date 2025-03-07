@@ -14,9 +14,14 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'      // Spring Boot Web
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf for serving HTML
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // Thymeleaf for serving HTML, template engine between front and back end
     implementation 'org.springframework.boot:spring-boot-starter'          // Core Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA for database connection
+    implementation 'com.h2database:h2' // H2 in memory database for hosting
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0' // API for persisting Java objects
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 tasks.named('test') {
