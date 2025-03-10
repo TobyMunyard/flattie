@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;;
 public class HomeController {
 
     /**
-     * Serves the home page of the application from the url "/". "Index" string is
+     * Serves the home page of the application from the url "/". "index" string is
      * automatically mapped to file "index.html" in resources/templates folder.
      * 
      * @return The index page of the application.
@@ -19,5 +19,66 @@ public class HomeController {
     @GetMapping("/")
     public String home() {
         return "index";
+    }
+
+    /**
+     * Serves the login page of the application from the url "/login". "login"
+     * string is automatically mapped to file "login.html" in resources/templates
+     * folder.
+     * 
+     * @return The login page of the application.
+     */
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    /**
+     * Serves the create account page of the application from the url
+     * "/createAccount". "createAccount" string is automatically mapped to file
+     * "createAccount.html" in resources/templates
+     * folder.
+     * 
+     * @return The createAccount page of the application.
+     */
+    @GetMapping("/createAccount")
+    public String createAccount() {
+        return "createAccount";
+    }
+
+    /**
+     * Serves the join flat page of the application from the url "/joinFlat".
+     * "joinFlat" string is automatically mapped to file "joinFlat.html" in
+     * resources/templates folder.
+     * 
+     * @return The join flat page of the application.
+     */
+    @GetMapping("/joinFlat")
+    public String joinFlat() {
+        return "joinFlat";
+    }
+
+    /**
+     * Serves the flat info page of the application from the url "/flatInfo".
+     * "flatInfo" string is automatically mapped to file "flatInfo.html" in
+     * resources/templates folder.
+     * 
+     * @return The flat info page of the application.
+     */
+    @GetMapping("/flatInfo")
+    public String flatInfo() {
+        return "flatInfo";
+    }
+
+    /**
+     * Serves the shopping list page of the application from the url
+     * "/shoppingList". "shoppingList" string is automatically mapped to file
+     * "shoppingList.html" in resources/templates folder.
+     * 
+     * @return The index page of the application.
+     */
+    @GetMapping("/shoppingList")
+    public String shoppingList() {
+        return "shoppingList";
     }
 }
