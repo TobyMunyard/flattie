@@ -1,28 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flattie</title>
+    <title>Login - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
     <nav>
+        <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
         <a th:href="@{/}">Home</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/createAccount}">Create Account</a>
         <a th:href="@{/joinFlat}">Join Flat</a>
-        <a th:href="@{/flatInfo}">Flat Info</a>
+        <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
+        <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </nav>
-    <h1>Login</h1>
-    <p>Welcome to flattie.</p>
-    <form action="/login" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <input type="submit" value="Login">
-    </form>
+
+    <div class="container">
+        <section id="login">
+            <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
+            <h2>Login</h2>
+            <form action="/login" method="post">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <div class="keep-logged-in">
+                    <input type="checkbox" id="keep-logged-in" name="keep-logged-in">
+                    <label for="keep-logged-in">Keep me logged in</label>
+                </div> <!-- this is a checkbox to keep the user logged in, will need to actually work though -->
+
+                <input type="submit" value="Login">
+            </form>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+    </footer>
 </body>
+
 </html>
