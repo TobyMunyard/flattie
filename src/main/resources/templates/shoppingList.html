@@ -1,21 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flattie</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
-    <nav>
+    <div id="mySidebar" class="sidebar">
+        <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
         <a th:href="@{/}">Home</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/createAccount}">Create Account</a>
         <a th:href="@{/joinFlat}">Join Flat</a>
-        <a th:href="@{/flatInfo}">Flat Info</a>
+        <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
-    </nav>
-    <h1>Shopping List</h1>
-    <p>Welcome to flattie.</p>
+        <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
+    </div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰</button>
+        <div class="shopping-list-container">
+            <h1><i class="fas fa-shopping-cart"></i> Flatmate Shopping List</h1>
+            <input type="text" id="item-input" placeholder="Add item">
+            <button id="add-button">Add</button>
+            <ul id="shopping-list">
+                <!-- Items will be added here -->
+            </ul>
+        </div>
+    </div>
+    <script src="shoppingList.js"></script>
 </body>
+
 </html>
