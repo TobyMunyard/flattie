@@ -20,6 +20,8 @@
         <a th:href="@{/joinFlat}">Join Flat</a>
         <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
+        <a th:href="@{/choreList}">Chore List</a>
+        <a th:href="@{/rentCalculator}">Rent Calculator</a>
         <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </div>
 
@@ -28,7 +30,7 @@
         <div class="shopping-list-container">
             <h1><i class="fas fa-shopping-cart"></i> Flatmate Shopping List</h1>
             <input type="text" id="item-input" placeholder="Add item">
-            <button id="add-button">Add</button>
+            <button id="add-button">Add</button> <!-- This needs to communicate with the backend to properly work -->
             <ul id="shopping-list">
                 <!-- Items will be added here -->
             </ul>

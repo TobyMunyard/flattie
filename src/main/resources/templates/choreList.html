@@ -21,6 +21,7 @@
         <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
         <a th:href="@{/choreList}">Chore List</a>
+        <a th:href="@{/rentCalculator}">Rent Calculator</a>
         <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </div>
 
@@ -36,7 +37,7 @@
                 </div>
                 <div>
                     <p style="text-align: center;">Assign To</p>
-                    <select id="assign-to">
+                    <select id="assign-to"> <!-- This needs to get the flatmates from the flat -->
                         <option value="unassigned">Unassigned</option>
                         <option value="person1">Person 1</option>
                         <option value="person2">Person 2</option>
@@ -60,6 +61,7 @@
                 </div>
                 <div>
                     <p style="text-align: center;">Recurrence (Days)</p>
+                    <!-- This needs to discussed in terms of implementation -->
                     <input type="number" id="recurrence" placeholder="Days" value="0" min="0">
                 </div>
                 <button id="add-chore">Add Chore</button>
@@ -71,14 +73,9 @@
                     <button id="search-button">Search</button>
                     <button id="clear-search">X</button>
                 </div>
-                <select id="sort-by">
-                    <option value="chore">Chore</option>
-                    <option value="assignment">Assignment</option>
-                    <option value="priority">Priority</option>
-                </select>
             </div>
 
-            <table id="chore-table">
+            <table id="chore-table"> <!-- This needs to be populated with the chores from the flat -->
                 <thead>
                     <tr>
                         <th data-sort="chore" style="cursor: pointer;">Chore</th>
@@ -90,10 +87,12 @@
                 </thead>
                 <tbody id="chore-list">
                     <!-- Chores will be added here -->
+                    <!-- These will need to be able to be "ticked off" -->
                 </tbody>
             </table>
         </div>
     </div>
+    <script src="/js/choreList.js"></script>
 </body>
 
 </html>

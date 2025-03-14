@@ -25,6 +25,8 @@
         <a th:href="@{/joinFlat}">Join Flat</a>
         <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
+        <a th:href="@{/choreList}">Chore List</a>
+        <a th:href="@{/rentCalculator}">Rent Calculator</a>
         <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </nav>
 
@@ -40,9 +42,10 @@
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
                 <div class="keep-logged-in">
+                    <!-- this is a checkbox to keep the user logged in, will need to actually work though -->
                     <input type="checkbox" id="keep-logged-in" name="keep-logged-in">
                     <label for="keep-logged-in">Keep me logged in</label>
-                </div> <!-- this is a checkbox to keep the user logged in, will need to actually work though -->
+                </div>
 
                 <input type="submit" value="Login">
             </form>
