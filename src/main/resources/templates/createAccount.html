@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flattie</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Create Account - Flattie.com</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -21,7 +21,7 @@
         <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
         <a th:href="@{/}">Home</a>
         <a th:href="@{/login}">Login</a>
-        <a th:href="@{/register}">Create Account</a>
+        <a th:href="@{/createAccount}">Create Account</a>
         <a th:href="@{/joinFlat}">Join Flat</a>
         <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
@@ -31,10 +31,16 @@
     <div class="container">
         <section id="register">
             <i class="fas fa-user-circle login-icon"></i>
-            <h2>Register</h2>
-            <form>
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            <h2>Create Account</h2>
+            <form action="/createAccount" method="post">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
+
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" placeholder="Enter last name" required>
+
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter a unique username" required>
 
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -42,11 +48,11 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password"
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password"
                     required>
 
-                <button type="submit">Register</button>
+                <button type="submit">Create Account</button>
             </form>
         </section>
     </div>
