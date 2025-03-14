@@ -81,4 +81,28 @@ public class HomeController {
     public String shoppingList() {
         return "shoppingList";
     }
+
+    /**
+     * Serves the chore list page of the application from the url "/choreList".
+     * "choreList" string is automatically mapped to file "choreList.html" in
+     * resources/templates folder.
+     * 
+     * @return The choreList page of the application.
+     */
+    @GetMapping("/choreList")
+    public String choreList() {
+        return "choreList";
+    }
+
+    /**
+     * Serves the rent calculator page of the application from the url "/rentCalculator".
+     * "rentCalculator" string is automatically mapped to file "rentCalculator.html" in
+     * resources/templates folder.
+     * 
+     * @return The rent calculator page of the application.
+     */
+    @GetMapping("/rentCalculator")
+    public String rentCalculator() {
+        return "rentCalculator";
+    }
 }
