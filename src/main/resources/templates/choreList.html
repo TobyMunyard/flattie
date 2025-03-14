@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chore List</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div id="mySidebar" class="sidebar">
+        <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/createAccount}">Create Account</a>
+        <a th:href="@{/joinFlat}">Join Flat</a>
+        <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
+        <a th:href="@{/shoppingList}">Shopping List</a>
+        <a th:href="@{/choreList}">Chore List</a>
+        <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
+    </div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰</button>
+        <div class="chore-list-container">
+            <h1><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
+
+            <div class="input-group">
+                <div>
+                    <p style="text-align: center;">Chore Name</p>
+                    <input type="text" id="chore-input" placeholder="Add chore">
+                </div>
+                <div>
+                    <p style="text-align: center;">Assign To</p>
+                    <select id="assign-to">
+                        <option value="unassigned">Unassigned</option>
+                        <option value="person1">Person 1</option>
+                        <option value="person2">Person 2</option>
+                        <option value="person3">Person 3</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="text-align: center;">Priority</p>
+                    <select id="priority">
+                        <option value="1">Priority 1</option>
+                        <option value="2">Priority 2</option>
+                        <option value="3">Priority 3</option>
+                        <option value="4">Priority 4</option>
+                        <option value="5">Priority 5</option>
+                        <option value="6">Priority 6</option>
+                        <option value="7">Priority 7</option>
+                        <option value="8">Priority 8</option>
+                        <option value="9">Priority 9</option>
+                        <option value="10">Priority 10</option>
+                    </select>
+                </div>
+                <div>
+                    <p style="text-align: center;">Recurrence (Days)</p>
+                    <input type="number" id="recurrence" placeholder="Days" value="0" min="0">
+                </div>
+                <button id="add-chore">Add Chore</button>
+            </div>
+
+            <div class="filter-options">
+                <div>
+                    <input type="text" id="search-chore" placeholder="Search chore">
+                    <button id="search-button">Search</button>
+                    <button id="clear-search">X</button>
+                </div>
+                <select id="sort-by">
+                    <option value="chore">Chore</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="priority">Priority</option>
+                </select>
+            </div>
+
+            <table id="chore-table">
+                <thead>
+                    <tr>
+                        <th data-sort="chore" style="cursor: pointer;">Chore</th>
+                        <th data-sort="assignment" style="cursor: pointer;">Assignment</th>
+                        <th data-sort="priority" style="cursor: pointer;">Priority</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="chore-list">
+                    <!-- Chores will be added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>
