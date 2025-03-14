@@ -2,6 +2,9 @@ package com.example.flattie.repository;
 
 import org.springframework.stereotype.Repository;
 import com.example.flattie.model.AppUser;
+
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -13,5 +16,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
-    // Empty right now but can be populated with custom queries at a later date.
+    public Optional<AppUser> getAppUserByUsername(String username);
 }

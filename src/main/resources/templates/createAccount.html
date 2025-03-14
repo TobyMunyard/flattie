@@ -17,5 +17,18 @@
     </nav>
     <h1>Create Account</h1>
     <p>Welcome to flattie.</p>
+    <form action="/createAccount" method="post">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required>
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <button type="submit">Create Account</button> 
+    </form>
 </body>
 </html>

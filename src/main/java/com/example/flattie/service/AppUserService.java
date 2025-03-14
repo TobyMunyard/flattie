@@ -1,6 +1,8 @@
 package com.example.flattie.service;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.flattie.model.AppUser;
@@ -45,5 +47,9 @@ public class AppUserService {
      */
     public void deleteAppUser(Long id) {
         appUserRepository.deleteById(id);
+    }
+
+    public Optional<AppUser> getAppUserByUsername(String username){
+        return appUserRepository.getAppUserByUsername(username);
     }
 }

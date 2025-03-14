@@ -75,4 +75,10 @@ public class AppUser {
         this.flat = flat;
     }
 
+    @Override
+    public String toString() {
+        return "AppUser [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username=" + username
+                + ", password=" + password + "]";
+    }
+
 }
