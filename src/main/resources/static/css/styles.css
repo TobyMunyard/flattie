@@ -378,6 +378,29 @@ footer {
     width: 100%;
 }
 
+/* Keep Me Logged In Checkbox */
+.keep-logged-in {
+    display: flex;
+    align-items: center; /* Aligns checkbox and label vertically */
+    gap: 5px; /* Keeps spacing consistent */
+    margin-top: 7.5px;
+}
+
+.keep-logged-in label {
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+.keep-logged-in input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0px;
+    transform: translateY(4.5px); /* Slight alignment */
+}
+
 /* ========================== */
 /*    Home Page Styles        */
 /* ========================== */
