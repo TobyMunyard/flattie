@@ -30,11 +30,10 @@
         <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </nav>
 
-    <div class="container">
+    <div class="auth-page">
         <section id="register">
             <i class="fas fa-user-circle login-icon"></i>
             <h2>Create Account</h2>
-            <fieldset>
             <form action="/createAccount" method="post">
                 <label for="firstName">First Name</label>
                 <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
@@ -57,7 +56,6 @@
 
                 <button type="submit">Create Account</button>
             </form>
-            </fieldset> 
         </section>
     </div>
 

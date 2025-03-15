@@ -379,7 +379,7 @@ footer {
 }
 
 /* Keep Me Logged In Checkbox */
-.keep-logged-in {
+ .keep-logged-in {
     display: flex;
     align-items: center; /* Aligns checkbox and label vertically */
     gap: 5px; /* Keeps spacing consistent */
@@ -550,26 +550,27 @@ footer {
 /*        Form Styles         */
 /* ========================== */
 /* Create account Style */
-.container {
-    max-width: 400px;
+.auth-page {
+    max-width: 600px;
     padding: 20px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px auto; /* Center the form on the page */
 }
 
 /* Form Input Fields */
-form {
+.auth-page form {
     display: flex;
     flex-direction: column;
 }
 
-label {
+.auth-page label {
     font-weight: bold;
     margin-top: 10px;
 }
 
-input {
+.auth-page input {
     width: 94%;
     padding: 10px;
     margin-top: 5px;
@@ -578,14 +579,14 @@ input {
     font-size: 14px;
 }
 
-input:focus {
+.auth-page input:focus {
     border-color: #e67e22;
     outline: none;
     box-shadow: 0 0 5px rgba(230, 126, 34, 0.5);
 }
 
 /* Button Styling */
-button {
+.auth-page button {
     width: 100%;
     padding: 12px;
     background-color: #e67e22;
@@ -598,16 +599,16 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+.auth-page button:hover {
     background-color: #d35400;
 }
 
-button:active {
+.auth-page button:active {
     transform: scale(0.98);
 }
 
 /* User Icon */
-.login-icon {
+.auth-page .login-icon {
     font-size: 50px;
     color: #e67e22;
     display: block;
@@ -615,9 +616,8 @@ button:active {
     margin-bottom: 10px;
 }
 
-/* Responsive Design */
 @media (max-width: 480px) {
-    .container {
+    .auth-page {
         width: 90%;
     }
 }
