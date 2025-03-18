@@ -1,0 +1,147 @@
+/* Updated styles for card grid layout */
+        .flat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Updated styles for individual flat cards */
+        .flat-card {
+            position: relative;
+            width: 100%;
+            height: auto; 
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            background-color: #fff; 
+        }
+
+        .flat-card:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Panel styles */
+        .flat-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 85%; /* Covers 85% of the card */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 2;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .flat-card.active .flat-panel {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .flat-panel h3 {
+            color: #e44d26;
+            margin-bottom: 10px;
+        }
+
+        .flat-panel p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .flat-panel .member-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .flat-panel .member-list li {
+            margin: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .flat-panel .member-list img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+
+        /* Remove inner card and flipping effects */
+        .flat-card-inner {
+            position: static; 
+            transform-style: flat; 
+        }
+
+        .flat-card.flipped .flat-card-inner {
+            transform: none;
+        }
+
+        /* Updated styles for front and back sides of the card */
+        .flat-card-front, .flat-card-back {
+            position: static;
+            width: 100%;
+            height: auto;
+            backface-visibility: visible;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; 
+            padding: 20px;
+            text-align: left; 
+            border-radius: 0;
+            box-shadow: none;
+            transition: none;
+        }
+
+        .flat-card-front {
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        .flat-card-back {
+            background-color: #f9f9f9;
+            color: #555;
+            transform: none;
+        }
+
+        /* Updated styles for flat images */
+        .flat-image {
+            width: 100%;
+            height: 220px; 
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Updated styles for basic flat details */
+        .flat-name {
+            font-size: 1.5em; 
+            margin-bottom: 10px;
+            color: #e44d26;
+        }
+
+        /* Updated styles for detailed flat information */
+        .flat-details h3 {
+            color: #e44d26;
+            margin-bottom: 10px;
+        }
+
+        .flat-details p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
