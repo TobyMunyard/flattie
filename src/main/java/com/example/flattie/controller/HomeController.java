@@ -105,4 +105,16 @@ public class HomeController {
     public String rentCalculator() {
         return "rentCalculator";
     }
+
+    /**
+     * Serves the viewFlats page of the application from the url "/viewFlats".
+     * "viewFlats" string is automatically mapped to file "viewFlats.html" in
+     * resources/templates folder.
+     * 
+     * @return The viewFlats page of the application.
+     */
+    @GetMapping("/viewFlats")
+    public String viewFlats() {
+        return "viewFlats";
+    }
 }

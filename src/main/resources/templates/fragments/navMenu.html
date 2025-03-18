@@ -1,13 +1,24 @@
 <!-- inject using fragments/navMenu.html -->
 <nav th:fragment="navMenu">
-    <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
+    <!-- this needs to change when user is/isn't logged in and if they're a flatmate/PM -->
+     <!-- Always shown -->
     <a th:href="@{/}">Home</a>
+    <a th:href="@{/about}">About</a>
+
+    <!-- Logged out -->
     <a th:href="@{/login}">Login</a>
     <a th:href="@{/createAccount}">Create Account</a>
-    <a th:href="@{/joinFlat}">Join Flat</a>
-    <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
+    
+    
+    <!-- Flatmate only -->
     <a th:href="@{/shoppingList}">Shopping List</a>
     <a th:href="@{/choreList}">Chore List</a>
     <a th:href="@{/rentCalculator}">Rent Calculator</a>
-    <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
+    <a th:href="@{/joinFlat}">Join Flat</a>
+
+    <!-- Flatmate and In Flat -->
+    <a th:href="@{/flatInfo}">Flat Info</a>
+
+    <!-- PM only -->
+    <a th:href="@{/viewFlats}">Manage Flats</a>
 </nav>

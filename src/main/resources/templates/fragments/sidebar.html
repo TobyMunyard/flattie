@@ -1,11 +1,24 @@
 <!-- inject using fragments/sidebar.html -->
 <div th:fragment="sidebar" id="mySidebar" class="sidebar">
+  <!-- this needs to change when user is/isn't logged in and if they're a flatmate/PM -->
+  <!-- Always shown -->
   <a th:href="@{/}">Home</a>
+  <a th:href="@{/about}">About</a> this needs to be an actual page
+
+  <!-- Logged out -->
   <a th:href="@{/login}">Login</a>
   <a th:href="@{/createAccount}">Create Account</a>
-  <a th:href="@{/joinFlat}">Join Flat</a>
-  <a th:href="@{/flatInfo}">Flat Info</a>
+
+
+  <!-- Flatmate only -->
   <a th:href="@{/shoppingList}">Shopping List</a>
   <a th:href="@{/choreList}">Chore List</a>
   <a th:href="@{/rentCalculator}">Rent Calculator</a>
+  <a th:href="@{/joinFlat}">Join Flat</a>
+
+  <!-- Flatmate and In Flat -->
+  <a th:href="@{/flatInfo}">Flat Info</a>
+
+  <!-- PM only -->
+  <a th:href="@{/viewFlats}">Manage Flats</a>
 </div>
