@@ -14,4 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FlatRepository extends JpaRepository<Flat, Long> {
 
     // Empty right now but can be populated with custom queries at a later date.
+    
 }
