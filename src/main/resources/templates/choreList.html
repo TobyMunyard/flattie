@@ -12,18 +12,9 @@
 </head>
 
 <body>
-    <div id="mySidebar" class="sidebar">
-        <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
-        <a th:href="@{/}">Home</a>
-        <a th:href="@{/login}">Login</a>
-        <a th:href="@{/createAccount}">Create Account</a>
-        <a th:href="@{/joinFlat}">Join Flat</a>
-        <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
-        <a th:href="@{/shoppingList}">Shopping List</a>
-        <a th:href="@{/choreList}">Chore List</a>
-        <a th:href="@{/rentCalculator}">Rent Calculator</a>
-        <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
-    </div>
+    
+    <!-- Directly inject the sidebar from /fragments/ -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div id="main">
         <button class="openbtn" onclick="openNav()">☰</button>
