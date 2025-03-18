@@ -1,0 +1,101 @@
+        /* Additional styling for a more engaging Join Flat page */
+        body {
+            background: linear-gradient(45deg, #ffe6cc, #fff);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
+            /* Occupy the remaining vertical space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #join-flat {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        #join-flat h2 {
+            color: #e44d26;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #join-flat label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        #join-flat input[type="text"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        #join-flat input[type="text"]:focus {
+            border-color: #e67e22;
+            outline: none;
+        }
+
+        #join-flat button[type="submit"] {
+            padding: 12px 24px;
+            border: none;
+            background-color: #e67e22;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        #join-flat button[type="submit"]:hover {
+            background-color: #d35400;
+        }
+
+        /* Animated decor */
+        .decor {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: #f39c12;
+            border-radius: 50%;
+            animation: pulse 3s infinite alternate;
+            opacity: 0.5;
+        }
+
+        .decor.one {
+            top: 10%;
+            left: 10%;
+        }
+
+        .decor.two {
+            bottom: 15%;
+            right: 15%;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }

@@ -3,19 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flattie</title>
+    <title>Join Flat - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/joinFlat.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
     <nav>
+        <!-- this needs to be modular and changes when user is/isn't logged in and if they're a flatmate/PM -->
         <a th:href="@{/}">Home</a>
         <a th:href="@{/login}">Login</a>
         <a th:href="@{/createAccount}">Create Account</a>
         <a th:href="@{/joinFlat}">Join Flat</a>
-        <a th:href="@{/flatInfo}">Flat Info</a>
+        <a th:href="@{/flatInfo}">Flat Info</a> <!-- This needs to only be visible when user is logged into flat -->
         <a th:href="@{/shoppingList}">Shopping List</a>
+        <a th:href="@{/choreList}">Chore List</a>
+        <a th:href="@{/rentCalculator}">Rent Calculator</a>
+        <!-- <a th:href="@{/about}">About</a> this  needs to be an actual page-->
     </nav>
-    <h1>Join Flat</h1>
-    <p>Welcome to flattie.</p>
+
+    <div class="container">
+        <section id="join-flat">
+            <i class="fas fa-home login-icon"></i>
+            <h2>Join Flat</h2>
+            <form>
+                <label for="flat_code">Flat Code</label>
+                <input type="text" id="flat_code" name="flat_code" placeholder="Enter flat code" required>
+
+                <button type="submit">Join</button>
+            </form>
+        </section>
+    </div>
+
+    <!-- <div class="decor one"></div>
+    <div class="decor two"></div> -->
+
+    <footer>
+        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+    </footer>
 </body>
 </html>
