@@ -25,7 +25,7 @@ public class CreateAccountController {
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             AppUser newUser = new AppUser(firstName, lastName, username, passwordEncoder.encode(password));
             System.out.println("Working: " + newUser);
-            // appUserService.saveAppUser(newUser);
+            appUserService.saveAppUser(newUser);
         }
 
         return "login";

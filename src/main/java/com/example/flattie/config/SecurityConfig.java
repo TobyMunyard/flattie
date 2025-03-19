@@ -1,4 +1,4 @@
-package com.example.flattie.Security;
+package com.example.flattie.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +10,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Allow all requests
                 .csrf(csrf -> csrf.disable()) // Disable CSRF (for development)
