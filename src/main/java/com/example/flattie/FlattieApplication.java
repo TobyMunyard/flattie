@@ -18,5 +18,6 @@ public class FlattieApplication {
     public static void main(String[] args) {
         SpringApplication.run(FlattieApplication.class, args);
         System.out.println("Web application is running locally at http://localhost:8080");
+        System.out.println("H2 console is running locally at http://localhost:8080/h2-console");
     }
 }
