@@ -8,10 +8,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        // DO NOT REMOVE THESE TWO LINES THEY ALLOW H2 TO NOT BE BLOCKED!
+        http.csrf().disable(); 
         http.headers().frameOptions().disable();
+        
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Allow all requests
                 .csrf(csrf -> csrf.disable()) // Disable CSRF (for development)
