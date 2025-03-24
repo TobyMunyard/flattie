@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -24,7 +24,10 @@
         <section id="login">
             <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
             <h2>Login</h2>
-            <form action="/login" method="post">
+            <div>
+                <p th:if="${usernameExists == false or passwordsMatch == false}">Username and password do not match!</p>
+            </div>
+            <form th:action="@{/login}" method="post">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
 
