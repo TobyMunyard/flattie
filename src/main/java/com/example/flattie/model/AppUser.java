@@ -1,16 +1,31 @@
 package com.example.flattie.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+/**
+ * Entity that represents a user account within the system.
+ */
 @Entity
 public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "First name cannot be null")
     private String firstName;
+
+    @NotBlank(message = "Last name cannot be null")
     private String lastName;
+
+    @NotBlank(message = "Username cannot be null")
+    @Size(min = 5, message = "Username must be at least 5 characters long")
     private String username;
+
+    @NotBlank(message = "Password cannot be null")
+    @Size(min = 7, message = "Password must be at least 7 characters long")
     private String password;
 
     @ManyToOne(cascade = CascadeType.ALL)
