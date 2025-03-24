@@ -24,6 +24,9 @@
         <section id="register">
             <i class="fas fa-user-circle login-icon"></i>
             <h2>Create Account</h2>
+            <div>
+                <p th:if="${error != null}" th:text="${error}"></p>
+            </div>
             <form action="/createAccount" method="post">
                 <label for="firstName">First Name</label>
                 <input type="text" id="firstName" name="firstName" placeholder="Enter first name" required>
