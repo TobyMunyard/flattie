@@ -11,12 +11,32 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
+/**
+ * Controller class for handling all actions related to users logging into their accounts.
+ */
 @Controller
 public class LoginController {
 
     @Autowired
     AppUserService appUserService;
 
+    /**
+     * Handles a request from a user to log into an account. Redirects differently
+     * based on whether inputs are valid.
+     * 
+     * @param username           The username of the account a user is trying to log
+     *                           into.
+     * @param password           The password for the account a user is trying to
+     *                           log into.
+     * @param model              The model of the front-end of the application,
+     *                           anything added to this can be accessed on other
+     *                           pages.
+     * @param redirectAttributes Essentially a one time version of the model,
+     *                           anything added to this will only exist for one
+     *                           redirect.
+     * @return If username and password are correct, the joinFlat page. Otherwise,
+     *         redirect to the login page with a error message displayed.
+     */
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, @RequestParam("password") String password,
             Model model, RedirectAttributes redirectAttributes) {
