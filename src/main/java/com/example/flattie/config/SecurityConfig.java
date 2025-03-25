@@ -6,9 +6,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Configuration file for altering spring security configuration.
+ */
 @Configuration
 public class SecurityConfig {
 
+    /**
+     * Allows for the alteration and configuration of the security settings for the web application.
+     * 
+     * @param http Injected by Spring, used to configure the security settings of the web application.
+     * @return The configured HttpSecurity object.
+     * @throws Exception If something goes wrong when configuring security settings.
+     */
     @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
