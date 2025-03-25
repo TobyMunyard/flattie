@@ -1,13 +1,13 @@
 package com.example.flattie.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
@@ -40,7 +40,6 @@ public class LoginController {
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, @RequestParam("password") String password,
             Model model, RedirectAttributes redirectAttributes) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         boolean usernameExists = true;
         boolean passwordsMatch = true;
@@ -53,7 +52,7 @@ public class LoginController {
             return "redirect:/login";
         }
 
-        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+        if (!SecurityConfig.passwordEncoder().matches(password, existingUser.getPassword())) {
             // Password does not match saved one
             passwordsMatch = false;
             redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);

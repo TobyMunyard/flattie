@@ -3,6 +3,7 @@ package com.example.flattie.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -12,9 +13,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // DO NOT REMOVE THESE TWO LINES THEY ALLOW H2 TO NOT BE BLOCKED!
-        http.csrf().disable(); 
+        http.csrf().disable();
         http.headers().frameOptions().disable();
-        
+
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Allow all requests
                 .csrf(csrf -> csrf.disable()) // Disable CSRF (for development)
@@ -22,6 +23,17 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable()); // Disable basic auth
 
         return http.build();
+    }
+
+    /**
+     * Decoupled password encoder to prevent accidental use of different encoders
+     * that may lead to issues when attempting to verify if a user's password is
+     * correct.
+     * 
+     * @return A BCryptPasswordEncoder for hashing user passwords.
+     */
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }
