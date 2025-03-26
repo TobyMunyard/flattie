@@ -74,7 +74,13 @@ public class HomeController {
      * @return The flat info page of the application.
      */
     @GetMapping("/flatInfo")
-    public String flatInfo() {
+    public String flatInfo(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "flatInfo";
     }
 
@@ -86,7 +92,13 @@ public class HomeController {
      * @return The index page of the application.
      */
     @GetMapping("/shoppingList")
-    public String shoppingList() {
+    public String shoppingList(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "shoppingList";
     }
 
@@ -98,7 +110,13 @@ public class HomeController {
      * @return The choreList page of the application.
      */
     @GetMapping("/choreList")
-    public String choreList() {
+    public String choreList(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "choreList";
     }
 
@@ -110,7 +128,13 @@ public class HomeController {
      * @return The rent calculator page of the application.
      */
     @GetMapping("/rentCalculator")
-    public String rentCalculator() {
+    public String rentCalculator(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "rentCalculator";
     }
 
@@ -122,7 +146,13 @@ public class HomeController {
      * @return The viewFlats page of the application.
      */
     @GetMapping("/viewFlats")
-    public String viewFlats() {
+    public String viewFlats(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "viewFlats";
     }
 }
