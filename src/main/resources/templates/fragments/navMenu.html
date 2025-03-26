@@ -6,18 +6,18 @@
     <a th:href="@{/about}">About</a>
 
     <!-- Logged out -->
-    <a th:href="@{/login}">Login</a>
-    <a th:href="@{/createAccount}">Create Account</a>
+    <a th:if="${session.user == null}" th:href="@{/login}">Login</a>
+    <a th:if="${session.user == null}" th:href="@{/createAccount}">Create Account</a>
     
     
     <!-- Flatmate only -->
-    <a th:href="@{/shoppingList}">Shopping List</a>
-    <a th:href="@{/choreList}">Chore List</a>
-    <a th:href="@{/rentCalculator}">Rent Calculator</a>
-    <a th:href="@{/joinFlat}">Join Flat</a>
+    <a th:if="${session.user != null}" th:href="@{/shoppingList}">Shopping List</a>
+    <a th:if="${session.user != null}" th:href="@{/choreList}">Chore List</a>
+    <a th:if="${session.user != null}" th:href="@{/rentCalculator}">Rent Calculator</a>
+    <a th:if="${session.user != null}" th:href="@{/joinFlat}">Join Flat</a>
 
     <!-- Flatmate and In Flat -->
-    <a th:href="@{/flatInfo}">Flat Info</a>
+    <a th:if="${session.user != null}" th:href="@{/flatInfo}">Flat Info</a> 
 
     <!-- PM only -->
     <a th:href="@{/viewFlats}">Manage Flats</a>

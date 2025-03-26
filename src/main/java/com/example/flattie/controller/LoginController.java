@@ -5,7 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpSession;
 
 import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
@@ -39,7 +41,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, @RequestParam("password") String password,
-            Model model, RedirectAttributes redirectAttributes) {
+            Model model, RedirectAttributes redirectAttributes, HttpSession session) {
 
         boolean usernameExists = true;
         boolean passwordsMatch = true;
@@ -61,7 +63,7 @@ public class LoginController {
 
         // User exists and login correct
         System.out.println("Working: " + existingUser);
-        model.addAttribute("user", existingUser);
+        session.setAttribute("user", existingUser);
         return "redirect:/joinFlat";
     }
 }

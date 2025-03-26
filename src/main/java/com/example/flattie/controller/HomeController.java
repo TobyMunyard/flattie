@@ -1,7 +1,9 @@
 package com.example.flattie.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.stereotype.Controller;;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import com.example.flattie.model.AppUser;
 
 /**
  * Controller class for the main page of the application. Maps URLs to html
@@ -54,7 +56,13 @@ public class HomeController {
      * @return The join flat page of the application.
      */
     @GetMapping("/joinFlat")
-    public String joinFlat() {
+    public String joinFlat(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
         return "joinFlat";
     }
 
