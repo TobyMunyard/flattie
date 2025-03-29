@@ -67,6 +67,24 @@ public class HomeController {
     }
 
     /**
+     * Serves the log out page of the application from the url "/logout".
+     * "logout" string is automatically mapped to file "logOut.html" in
+     * resources/templates folder.
+     * 
+     * @return The join flat page of the application.
+     */
+    @GetMapping("/logoutPage")
+    public String logOut(HttpSession session) {
+        AppUser user = (AppUser) session.getAttribute("user");
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        return "logOut";
+    }
+
+    /**
      * Serves the flat info page of the application from the url "/flatInfo".
      * "flatInfo" string is automatically mapped to file "flatInfo.html" in
      * resources/templates folder.
@@ -121,8 +139,10 @@ public class HomeController {
     }
 
     /**
-     * Serves the rent calculator page of the application from the url "/rentCalculator".
-     * "rentCalculator" string is automatically mapped to file "rentCalculator.html" in
+     * Serves the rent calculator page of the application from the url
+     * "/rentCalculator".
+     * "rentCalculator" string is automatically mapped to file "rentCalculator.html"
+     * in
      * resources/templates folder.
      * 
      * @return The rent calculator page of the application.

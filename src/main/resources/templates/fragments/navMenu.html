@@ -11,6 +11,7 @@
     
     
     <!-- Flatmate only -->
+    <a th:if="${session.user != null}" th:href="@{/logoutPage}">Log Out</a>
     <a th:if="${session.user != null}" th:href="@{/shoppingList}">Shopping List</a>
     <a th:if="${session.user != null}" th:href="@{/choreList}">Chore List</a>
     <a th:if="${session.user != null}" th:href="@{/rentCalculator}">Rent Calculator</a>
