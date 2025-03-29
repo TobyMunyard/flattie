@@ -15,6 +15,7 @@ import com.example.flattie.service.FlatService;
  * Controller class for handling all requests based on flat creation
  * within the system.
  */
+
 @Controller
 public class CreateFlatController {
 
