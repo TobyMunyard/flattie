@@ -18,7 +18,7 @@
     <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div class="container">
-        <!-- Show the "Join Flat" form only if no flat information is available -->
+        <!-- Show the "Join Flat" form only if no flat is found -->
         <section id="join-flat" th:unless="${flat != null}">
             <i class="fas fa-home login-icon"></i>
             <h2>Join Flat</h2>
@@ -30,16 +30,20 @@
             </form>
         </section>
 
-        <!-- Display flat information only if a flat is available -->
-        <section id="flat-info" th:if="${flat != null}">
-            <h2>Flat Information</h2>
-            <p><strong>Flat Name:</strong> <span th:text="${flat.flatName}"></span></p>
-            <p><strong>Address:</strong> <span th:text="${flat.address}"></span></p>
-            <p><strong>City:</strong> <span th:text="${flat.city}"></span></p>
-            <p><strong>Postcode:</strong> <span th:text="${flat.postcode}"></span></p>
-            <p><strong>Description:</strong> <span th:text="${flat.flatDescription}"></span></p>
-            <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}"></span></p>
-            <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}"></span></p>
+        <!-- Display flats in a grid -->
+        <section id="flats-grid" th:if="${flats != null}">
+            <h2>Joined Flats</h2>
+            <div class="grid-container">
+                <div class="flat-card" th:each="flat : ${flats}">
+                    <h3 th:text="${flat.flatName}"></h3>
+                    <p><strong>Address:</strong> <span th:text="${flat.address}"></span></p>
+                    <p><strong>City:</strong> <span th:text="${flat.city}"></span></p>
+                    <p><strong>Postcode:</strong> <span th:text="${flat.postcode}"></span></p>
+                    <p><strong>Description:</strong> <span th:text="${flat.flatDescription}"></span></p>
+                    <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}"></span></p>
+                    <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}"></span></p>
+                </div>
+            </div>
         </section>
     </div>
 

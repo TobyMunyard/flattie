@@ -112,7 +112,7 @@ public String createFlat(@RequestParam("flatName") String flatName,
 
 // Method to generate a random alphanumeric code
 private String generateRandomCode() {
-    return java.util.UUID.randomUUID().toString().substring(0, 8); // Generate an 8-character random code
+    return java.util.UUID.randomUUID().toString().substring(0, 5); // Generate an 5-character random code
 }
     
     }
