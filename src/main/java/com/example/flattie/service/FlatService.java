@@ -1,8 +1,10 @@
 package com.example.flattie.service;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.example.flattie.model.Flat;
 import com.example.flattie.repository.FlatRepository;
 
@@ -31,7 +33,7 @@ public class FlatService {
     /**Chekc if the address already exists in the databse */
     public boolean addressExists(String address) {
         return flatRepository.existsByAddress(address);
-}
+    }
 
     /**
      * Saves a new Flat to the database.
@@ -51,4 +53,9 @@ public class FlatService {
     public void deleteFlat(Long id) {
         flatRepository.deleteById(id);
     }
+
+    public Flat findByJoinCode(String joinCode) {
+        return flatRepository.findByJoinCode(joinCode);
+    }
+
 }
