@@ -69,6 +69,12 @@ public String createFlat(@RequestParam("flatName") String flatName,
         return "redirect:/createFlat";
     }
 
+    // Check if the address already exists
+    if (flatService.addressExists(address)) {
+            redirectAttributes.addFlashAttribute("error", "A flat with this address already exists.");
+            return "redirect:/createFlat";
+        }
+
     if (city == null || city.isBlank() || city.length() > 50) {
         redirectAttributes.addFlashAttribute("error", "City must be under 50 characters.");
         return "redirect:/createFlat";
@@ -98,7 +104,7 @@ public String createFlat(@RequestParam("flatName") String flatName,
     String joinCode = generateRandomCode();
 
     // All inputs are valid, create the flat
-    Flat newFlat = new Flat(joinCode, weeklyRent, rooms);
+    Flat newFlat = new Flat(joinCode, flatName, address, city, postcode, flatDescription, weeklyRent, rooms);
     flatService.saveFlat(newFlat);
 
     return "redirect:/viewFlats"; // Redirect to a dashboard or success page

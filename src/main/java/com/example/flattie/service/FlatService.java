@@ -28,6 +28,11 @@ public class FlatService {
         return flatRepository.findAll();
     }
 
+    /**Chekc if the address already exists in the databse */
+    public boolean addressExists(String address) {
+        return flatRepository.existsByAddress(address);
+}
+
     /**
      * Saves a new Flat to the database.
      * 
