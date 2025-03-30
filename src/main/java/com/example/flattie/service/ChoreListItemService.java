@@ -21,6 +21,7 @@ public class ChoreListItemService {
 
     /**
      * Gets all chore list items currently in the database.
+     * 
      * @return A list of all current ChoreListItem entities in the database.
      */
     public List<ChoreListItem> getAllItems() {
@@ -42,10 +43,9 @@ public class ChoreListItemService {
      * 
      * @param id The id of the ChoreListItem to delete from the database.
      */
-    public void deleteItem(Long id) {   
+    public void deleteItem(Long id) {
         choreListItemRepository.deleteById(id);
     }
-
 
     /**
      * Finds a list of chores by flat ID.

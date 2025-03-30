@@ -106,24 +106,6 @@ public class HomeController {
     }
 
     /**
-     * Serves the chore list page of the application from the url "/choreList".
-     * "choreList" string is automatically mapped to file "choreList.html" in
-     * resources/templates folder.
-     * 
-     * @return The choreList page of the application.
-     */
-    // @GetMapping("/choreList")
-    // public String choreList(HttpSession session) {
-    //     AppUser user = (AppUser) session.getAttribute("user");
-
-    //     if (user == null) {
-    //         return "redirect:/login";
-    //     }
-
-    //     return "choreList";
-    // }
-
-    /**
      * Serves the rent calculator page of the application from the url
      * "/rentCalculator".
      * "rentCalculator" string is automatically mapped to file "rentCalculator.html"

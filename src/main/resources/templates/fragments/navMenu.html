@@ -16,11 +16,11 @@
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/choreList}">Chore List</a>
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/rentCalculator}">Rent Calculator</a>
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/joinFlat}">Join Flat</a>
+    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/createFlat}">Create Flat</a>
 
     <!-- Flatmate and In Flat -->
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/flatInfo}">Flat Info</a> 
 
     <!-- PM only -->
-    <a th:href="@{/viewFlats}">Manage Flats</a>
-    <a th:href="@{/createFlat}">Create Flat</a>
+    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/viewFlats}">Manage Flats</a>
 </nav>

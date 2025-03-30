@@ -77,7 +77,7 @@ public class SecurityConfig {
                                                                 "/js/**")
                                                 .permitAll()
                                                 .requestMatchers("/logoutPage", "/shoppingList", "/choreList",
-                                                                "/rentCalculator", "/joinFlat", "/flatInfo")
+                                                                "/rentCalculator", "/joinFlat", "/flatInfo", "/createFlat", "/viewFlats")
                                                 .authenticated()
                                                 .anyRequest().authenticated())
                                 .formLogin((form) -> form
