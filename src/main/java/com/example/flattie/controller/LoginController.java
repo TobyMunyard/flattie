@@ -11,8 +11,11 @@ import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
+import jakarta.servlet.http.HttpSession;
+
 /**
- * Controller class for handling all actions related to users logging into their accounts.
+ * Controller class for handling all actions related to users logging into their
+ * accounts.
  */
 @Controller
 public class LoginController {
@@ -39,7 +42,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     public String login(@RequestParam("username") String username, @RequestParam("password") String password,
-            Model model, RedirectAttributes redirectAttributes) {
+            Model model, RedirectAttributes redirectAttributes, HttpSession session) {
 
         boolean usernameExists = true;
         boolean passwordsMatch = true;
@@ -62,6 +65,11 @@ public class LoginController {
         // User exists and login correct
         System.out.println("Working: " + existingUser);
         model.addAttribute("user", existingUser);
-        return "redirect:/joinFlat";
+
+        // Store the user in session so it persists across requests
+        session.setAttribute("loggedInUser", existingUser);
+
+        // Redirect to the home page
+        return "redirect:/";
     }
 }
