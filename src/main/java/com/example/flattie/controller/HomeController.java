@@ -2,7 +2,12 @@ package com.example.flattie.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpSession;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
 import com.example.flattie.model.AppUser;
 
 /**
@@ -75,15 +80,6 @@ public class HomeController {
      */
     @GetMapping("/logoutPage")
     public String logOut(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
-
-        // Log to check if user exists in the session
-        System.out.println("Session User: " + user);
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
         return "logOut";
     }
 
@@ -130,16 +126,16 @@ public class HomeController {
      * 
      * @return The choreList page of the application.
      */
-    @GetMapping("/choreList")
-    public String choreList(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
+    // @GetMapping("/choreList")
+    // public String choreList(HttpSession session) {
+    //     AppUser user = (AppUser) session.getAttribute("user");
 
-        if (user == null) {
-            return "redirect:/login";
-        }
+    //     if (user == null) {
+    //         return "redirect:/login";
+    //     }
 
-        return "choreList";
-    }
+    //     return "choreList";
+    // }
 
     /**
      * Serves the rent calculator page of the application from the url
@@ -169,8 +165,8 @@ public class HomeController {
      * @return The viewFlats page of the application.
      */
     @GetMapping("/viewFlats")
-    public String viewFlats(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
+    public String viewFlats(Model model, @AuthenticationPrincipal UserDetails user) {
+        model.addAttribute("user", user);
 
         if (user == null) {
             return "redirect:/login";

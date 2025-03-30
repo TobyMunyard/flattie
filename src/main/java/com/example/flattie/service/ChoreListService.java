@@ -18,9 +18,9 @@ public class ChoreListService {
         this.choreListRepository = choreListRepository;
     }
 
-    public List<ChoreListItem> getChoresForFlat(Long flatId) {
-        return choreListRepository.findByFlatId(flatId);
-    }
+    // public List<ChoreListItem> getChoresForFlat(Long flatId) {
+    //     return choreListRepository.findByFlatId(flatId);
+    // }
 
     public void addChoreToFlat(Flat flat, ChoreListItem choreItem) {
         ChoreList choreList = new ChoreList(flat, choreItem);

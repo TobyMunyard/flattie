@@ -1,6 +1,7 @@
 package com.example.flattie.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,9 @@ public class LoginController {
 
     @Autowired
     AppUserService appUserService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     /**
      * Handles a request from a user to log into an account. Redirects differently
@@ -56,7 +60,7 @@ public class LoginController {
             return "redirect:/login";
         }
 
-        if (!SecurityConfig.passwordEncoder().matches(password, existingUser.getPassword())) {
+        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
             // Password does not match saved one
             passwordsMatch = false;
             redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);

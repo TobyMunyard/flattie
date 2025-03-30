@@ -53,7 +53,7 @@ public class ChoreListItemService {
      * @param flatId The ID of the flat to find chores for.
      * @return A list of ChoreListItem entities associated with the given flat ID.
      */
-    public List<ChoreListItem> findByFlatId(Long flatId) {
-        return choreListItemRepository.findByFlatId(flatId);
-    }
+    // public List<ChoreListItem> findByFlatId(Long flatId) {
+    //     return choreListItemRepository.findByFlatId(flatId);
+    // }
 }

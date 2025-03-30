@@ -1,6 +1,7 @@
 package com.example.flattie.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,9 @@ public class CreateAccountController {
 
     @Autowired
     AppUserService appUserService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     /**
      * Called upon the submission of the account creation form. Checks that input
@@ -72,7 +76,7 @@ public class CreateAccountController {
         }
 
         // User inputs are all acceptable, create account
-        AppUser newUser = new AppUser(firstName, lastName, username, SecurityConfig.passwordEncoder().encode(password));
+        AppUser newUser = new AppUser(firstName, lastName, username, passwordEncoder.encode(password));
         appUserService.saveAppUser(newUser);
 
         return "redirect:/login";

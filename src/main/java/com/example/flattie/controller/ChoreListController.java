@@ -34,8 +34,8 @@ public class ChoreListController {
         Flat userFlat = currentUser.getFlat();
         if (userFlat != null) {
             // Fetch chores for the flat using a service method
-            List<ChoreListItem> chores = choreService.getChoresForFlat(userFlat.getId());
-            model.addAttribute("chores", chores);
+            //List<ChoreListItem> chores = choreService.getChoresForFlat(userFlat.getId());
+            //model.addAttribute("chores", chores);
         }
 
         // Pass the user info (if needed idk)

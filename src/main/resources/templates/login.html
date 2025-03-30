@@ -25,9 +25,9 @@
             <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
             <h2>Login</h2>
             <div>
-                <p th:if="${usernameExists == false or passwordsMatch == false}">Username and password do not match!</p>
+                <p th:if="${param.error}">Username and password do not match!</p>
             </div>
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{/perform_login}" method="post">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
 
