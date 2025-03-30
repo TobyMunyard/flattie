@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.flattie.config.SecurityConfig;
-import com.example.flattie.model.ShoppingListItem;
 import com.example.flattie.repository.ShoppingListItemRepository;
-import com.example.flattie.service.ShoppingListItemService;
+// import com.example.flattie.config.SecurityConfig;
+// import com.example.flattie.model.ShoppingListItem;
+// import com.example.flattie.service.ShoppingListItemService;
 // import com.example.flattie.service.userRepository;
-import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -24,8 +24,8 @@ public class ShoppingListController {
 
 	
 	@Autowired
+    private ShoppingListItemRepository shoppingListItemRepository;
 	// private final UserRepository userRepository;
-	// private final ShoppingListItemRepository shoppingListItemRepository;
 
 
 	/**
@@ -40,6 +40,8 @@ public class ShoppingListController {
 
 	// 	shoppingListItemService.saveItem(newItem);
 	// 	return "redirect:/shopping-list";
+
+	//
 	return "ShoppingList"; 
 	}
 
