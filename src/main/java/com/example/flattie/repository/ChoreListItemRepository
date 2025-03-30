@@ -13,5 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface ChoreListItemRepository extends JpaRepository<ChoreListItem, Long> {
 
-    // Empty right now but can be populated with custom queries at a later date.
+    // Method to find list of chores by flat ID.
+    List<ChoreListItem> findByFlatId(Long flatId);
 }
