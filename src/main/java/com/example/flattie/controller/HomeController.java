@@ -71,11 +71,14 @@ public class HomeController {
      * "logout" string is automatically mapped to file "logOut.html" in
      * resources/templates folder.
      * 
-     * @return The join flat page of the application.
+     * @return The log out page of the application.
      */
     @GetMapping("/logoutPage")
     public String logOut(HttpSession session) {
         AppUser user = (AppUser) session.getAttribute("user");
+
+        // Log to check if user exists in the session
+        System.out.println("Session User: " + user);
 
         if (user == null) {
             return "redirect:/login";

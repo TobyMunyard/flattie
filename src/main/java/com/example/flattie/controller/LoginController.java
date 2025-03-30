@@ -13,7 +13,8 @@ import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
 /**
- * Controller class for handling all actions related to users logging into their accounts.
+ * Controller class for handling all actions related to users logging into their
+ * accounts.
  */
 @Controller
 public class LoginController {
