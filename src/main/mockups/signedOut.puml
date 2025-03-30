@@ -1,0 +1,9 @@
+@startsalt SignedInFlatmate
+{
+    {Flattie.com}
+    {<u>Your one-stop shop for flatmate management}
+    {
+        [<b>Home] | [<b>Login] | [<b>Create Account] | [<b>About]
+    }
+}
+@endsalt

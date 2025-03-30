@@ -23,15 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const shoppingList = document.getElementById('shopping-list');
 
     addButton.addEventListener('click', addItem);
-
+    // Event Listenr
     itemInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             addItem();
         }
     });
-
+    // Function for adding a new item to the shopping list.
     function addItem() {
         const itemName = itemInput.value.trim();
+        // Only add if the string is not empty
         if (itemName !== '') {
             const listItem = document.createElement('li');
             listItem.classList.add('list-item');
@@ -85,6 +86,14 @@ document.addEventListener('DOMContentLoaded', function () {
             shoppingList.appendChild(listItem);
             itemInput.value = '';
         }
+    }
+
+    async function loadShoppingList() {
+
+    }
+
+    async function deleteItem(id){
+        
     }
 
     function deleteItem(event) {

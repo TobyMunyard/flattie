@@ -1,10 +1,15 @@
 package com.example.flattie.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Flat {
@@ -18,19 +23,23 @@ public class Flat {
 
     @Column(unique = true) // Ensure the address is unique in the database
     private String address; // Address of the flat
-    
+
     private String city; // City where the flat is located
     private String postcode; // Postcode of the flat
     private String flatDescription; // Description of the flat
     private double weeklyRent; // Weekly rent for the flat
     private int rooms; // Number of rooms in the flat
 
+    @OneToOne(mappedBy = "flat", cascade = CascadeType.ALL)
+    private ChoreList choreList; // Chore list associated with the flat
+
     // Default constructor required by JPA
     protected Flat() {
     }
 
     // Constructor with all fields
-    public Flat(String joinCode, String flatName, String address, String city, String postcode, String flatDescription, double weeklyRent, int rooms) {
+    public Flat(String joinCode, String flatName, String address, String city, String postcode, String flatDescription,
+            double weeklyRent, int rooms, ChoreList choreList) {
         this.joinCode = joinCode;
         this.flatName = flatName;
         this.address = address;
@@ -39,6 +48,7 @@ public class Flat {
         this.flatDescription = flatDescription;
         this.weeklyRent = weeklyRent;
         this.rooms = rooms;
+        this.choreList = choreList;
     }
 
     // Getters and setters
@@ -112,5 +122,13 @@ public class Flat {
 
     public void setRooms(int rooms) {
         this.rooms = rooms;
+    }
+
+    public ChoreList getChoreList() {
+        return choreList;
+    }
+
+    public void setChoreList(ChoreList choreList) {
+        this.choreList = choreList;
     }
 }

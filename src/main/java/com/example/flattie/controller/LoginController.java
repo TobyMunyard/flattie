@@ -12,6 +12,8 @@ import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
+import jakarta.servlet.http.HttpSession;
+
 /**
  * Controller class for handling all actions related to users logging into their
  * accounts.
@@ -62,7 +64,13 @@ public class LoginController {
         }
 
         // User exists and login correct
-        session.setAttribute("user", existingUser);
-        return "redirect:/joinFlat";
+        System.out.println("Working: " + existingUser);
+        model.addAttribute("user", existingUser);
+
+        // Store the user in session so it persists across requests
+        session.setAttribute("loggedInUser", existingUser);
+
+        // Redirect to the home page
+        return "redirect:/";
     }
 }
