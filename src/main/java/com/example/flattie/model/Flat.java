@@ -39,7 +39,7 @@ public class Flat {
 
     // Constructor with all fields
     public Flat(String joinCode, String flatName, String address, String city, String postcode, String flatDescription,
-            double weeklyRent, int rooms, ChoreList choreList) {
+            double weeklyRent, int rooms) {
         this.joinCode = joinCode;
         this.flatName = flatName;
         this.address = address;
@@ -48,7 +48,6 @@ public class Flat {
         this.flatDescription = flatDescription;
         this.weeklyRent = weeklyRent;
         this.rooms = rooms;
-        this.choreList = choreList;
     }
 
     // Getters and setters
