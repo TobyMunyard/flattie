@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/joinFlat.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 </head>
 <body>
     <header>
@@ -19,20 +18,34 @@
     <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div class="container">
-        <section id="join-flat">
+        <!-- Show the "Join Flat" form only if no flat is found -->
+        <section id="join-flat" th:unless="${flat != null}">
             <i class="fas fa-home login-icon"></i>
             <h2>Join Flat</h2>
-            <form>
+            <form action="/joinFlat" method="post">
                 <label for="flat_code">Flat Code</label>
                 <input type="text" id="flat_code" name="flat_code" placeholder="Enter flat code" required>
 
                 <button type="submit">Join</button>
             </form>
         </section>
-    </div>
 
-    <!-- <div class="decor one"></div>
-    <div class="decor two"></div> -->
+        <!-- Display flats in a grid -->
+        <section id="flats-grid" th:if="${flats != null}">
+            <h2>Joined Flats</h2>
+            <div class="grid-container">
+                <div class="flat-card" th:each="flat : ${flats}">
+                    <h3 th:text="${flat.flatName}"></h3>
+                    <p><strong>Address:</strong> <span th:text="${flat.address}"></span></p>
+                    <p><strong>City:</strong> <span th:text="${flat.city}"></span></p>
+                    <p><strong>Postcode:</strong> <span th:text="${flat.postcode}"></span></p>
+                    <p><strong>Description:</strong> <span th:text="${flat.flatDescription}"></span></p>
+                    <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}"></span></p>
+                    <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}"></span></p>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <footer>
         <p>&copy; 2024 Flattie.com. All rights reserved.</p>

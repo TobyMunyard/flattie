@@ -1,0 +1,57 @@
+@startuml assignment-one
+
+skin rose
+skinparam Style StrictUML
+skinparam LineType ortho
+skinparam monochrome true
+
+class App_User {
+    * User_Id
+--
+    * First_Name 
+    * Last_Name 
+    * Username 
+    * Email 
+    * Password
+}
+
+class Shopping_List_Item {
+    * Item_ID 
+--
+    * Item_Name
+    * Price
+    * Quantity 
+}
+
+class Chore_List_Item {
+  * Item_ID
+--
+  * Description
+  * Is_Completed
+}
+
+class Flat {
+    * Flat_ID
+--
+    * Join_Code
+    * Weekly_Rent
+    * Rooms 
+}
+
+class Property_Manager {
+    * Manager_ID
+--
+    * First_Name
+    * Last_Name
+    * Username
+    * Email
+    * Password
+}
+
+App_User }|--|| Flat
+Property_Manager ||--o{ Flat
+Flat ||--o{ Chore_List_Item
+Flat ||--o{ Shopping_List_Item
+App_User |o--o{ Chore_List_Item
+
+@enduml
