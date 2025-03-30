@@ -1,3 +1,5 @@
+package com.example.flattie.controller;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
