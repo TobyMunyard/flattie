@@ -15,7 +15,6 @@ public class ShoppingListItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String itemName;
-    private double price;
     private int quantity;
 
     /**
@@ -27,9 +26,8 @@ public class ShoppingListItem {
     /**
      * Constructs a new shopping list item.
      */
-    public ShoppingListItem(String itemName, double price, int quantity) {
+    public ShoppingListItem(String itemName, int quantity) {
         this.itemName = itemName;
-        this.price = price;
         this.quantity = quantity;
     }
 
@@ -47,14 +45,6 @@ public class ShoppingListItem {
 
     public void setItemName(String itemName) {
         this.itemName = itemName;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public int getQuantity() {
