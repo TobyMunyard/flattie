@@ -61,13 +61,8 @@ public class HomeController {
      * @return The join flat page of the application.
      */
     @GetMapping("/joinFlat")
-    public String joinFlat(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    public String joinFlat(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "joinFlat";
     }
 
@@ -79,7 +74,8 @@ public class HomeController {
      * @return The log out page of the application.
      */
     @GetMapping("/logoutPage")
-    public String logOut(HttpSession session) {
+    public String logOut(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "logOut";
     }
 
@@ -91,13 +87,8 @@ public class HomeController {
      * @return The flat info page of the application.
      */
     @GetMapping("/flatInfo")
-    public String flatInfo(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    public String flatInfo(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "flatInfo";
     }
 
@@ -109,13 +100,8 @@ public class HomeController {
      * @return The index page of the application.
      */
     @GetMapping("/shoppingList")
-    public String shoppingList(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    public String shoppingList(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "shoppingList";
     }
 
@@ -147,13 +133,8 @@ public class HomeController {
      * @return The rent calculator page of the application.
      */
     @GetMapping("/rentCalculator")
-    public String rentCalculator(HttpSession session) {
-        AppUser user = (AppUser) session.getAttribute("user");
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
+    public String rentCalculator(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "rentCalculator";
     }
 
@@ -165,13 +146,8 @@ public class HomeController {
      * @return The viewFlats page of the application.
      */
     @GetMapping("/viewFlats")
-    public String viewFlats(Model model, @AuthenticationPrincipal UserDetails user) {
+    public String viewFlats(@AuthenticationPrincipal AppUser user, Model model) {
         model.addAttribute("user", user);
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-
         return "viewFlats";
     }
 }
