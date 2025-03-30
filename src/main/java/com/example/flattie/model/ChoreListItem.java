@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 /**
  * Database entity representing a chore list item. Mapped automatically to
  * database schema using ChoreListItemRepository and ChoreListItemService.
+ * 
  * @see com.example.flattie.repository.ChoreListItemRepository
  * @see com.example.flattie.service.ChoreListItemService
  */
@@ -40,6 +41,7 @@ public class ChoreListItem {
 
     /**
      * Returns the ID of the chore
+     * 
      * @return the ID of the chore
      */
     public Long getId() {
@@ -48,6 +50,7 @@ public class ChoreListItem {
 
     /**
      * Sets the ID of the chore
+     * 
      * @param id the ID of the chore
      */
     public void setId(Long id) {
@@ -56,16 +59,17 @@ public class ChoreListItem {
 
     /**
      * Returns the name of the chore.
+     * 
      * @
-     * @return the name of the chore
+     *   @return the name of the chore
      */
     public String getChoreName() {
         return choreName;
     }
 
-
     /**
      * Sets the name of the chore.
+     * 
      * @param choreName the name of the chore
      */
     public void setChoreName(String choreName) {
@@ -74,6 +78,7 @@ public class ChoreListItem {
 
     /**
      * Returns the flatmate assignment of the chore.
+     * 
      * @return person assigned to the chore
      */
     public String getAssignment() {
@@ -82,6 +87,7 @@ public class ChoreListItem {
 
     /**
      * Sets the assignment of the chore.
+     * 
      * @param assignment the assignment of the chore
      */
     public void setAssignment(String assignment) {
@@ -90,6 +96,7 @@ public class ChoreListItem {
 
     /**
      * Returns the priority of the chore.
+     * 
      * @return the priority of the chore
      */
     public int getPriority() {
@@ -98,6 +105,7 @@ public class ChoreListItem {
 
     /**
      * Sets the priority of the chore.
+     * 
      * @param priority the priority of the chore
      */
     public void setPriority(int priority) {
@@ -106,6 +114,7 @@ public class ChoreListItem {
 
     /**
      * Returns the frequency of the chore.
+     * 
      * @return the frequency of the chore
      */
     public int getFrequency() {
@@ -114,6 +123,7 @@ public class ChoreListItem {
 
     /**
      * Sets whether or not the chore is completed.
+     * 
      * @param isCompleted whether or not the chore is completed
      */
     public void setCompleted(boolean isCompleted) {
@@ -122,6 +132,7 @@ public class ChoreListItem {
 
     /**
      * Returns whether or not the chore is completed.
+     * 
      * @return whether or not the chore is completed
      */
     public boolean isCompleted() {
