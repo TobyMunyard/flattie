@@ -19,6 +19,7 @@ public class ChoreListItem {
     private String assignment;
     private int priority;
     private int frequency; // in days
+    private boolean isCompleted;
 
     /**
      * Constructs a new chore list item. Needed for spring to function.
@@ -29,11 +30,12 @@ public class ChoreListItem {
     /**
      * Constructs a new chore list item.
      */
-    public ChoreListItem(String choreName, String assignment, int priority, int frequency) {
+    public ChoreListItem(String choreName, String assignment, int priority, int frequency, boolean isCompleted) {
         this.choreName = choreName;
         this.assignment = assignment;
         this.priority = priority;
         this.frequency = frequency;
+        this.isCompleted = isCompleted;
     }
 
     /**
@@ -108,5 +110,21 @@ public class ChoreListItem {
      */
     public int getFrequency() {
         return frequency;
+    }
+
+    /**
+     * Sets whether or not the chore is completed.
+     * @param isCompleted whether or not the chore is completed
+     */
+    public void setCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
+
+    /**
+     * Returns whether or not the chore is completed.
+     * @return whether or not the chore is completed
+     */
+    public boolean isCompleted() {
+        return isCompleted;
     }
 }

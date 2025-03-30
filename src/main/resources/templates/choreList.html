@@ -28,11 +28,11 @@
                 </div>
                 <div>
                     <p style="text-align: center;">Assign To</p>
-                    <select id="assign-to"> <!-- This needs to get the flatmates from the flat -->
+                    <select id="assign-to">
                         <option value="unassigned">Unassigned</option>
-                        <option value="person1">Person 1</option>
-                        <option value="person2">Person 2</option>
-                        <option value="person3">Person 3</option>
+                        <th:block th:each="flatmate : ${flatmates}"> <!-- This will get the flatmates from the flat and inject it via Thymeleaf -->
+                            <option th:value="${flatmate.username}" th:text="${flatmate.username}"></option>
+                        </th:block>
                     </select>
                 </div>
                 <div>

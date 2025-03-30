@@ -20,7 +20,7 @@ public class AppUserService {
     public AppUserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
-
+ 
     /**
      * Gets all users currently in the database.
      * 

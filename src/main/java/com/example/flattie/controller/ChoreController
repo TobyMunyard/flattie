@@ -1,0 +1,16 @@
+@Controller
+public class ChoreController {
+    @Autowired
+    private final UserRepository userRepository;
+    private final ChoreListItemRepository choreListItemRepository;
+
+    @GetMapping("/chore-list")
+    public String getChoreList(Model model) {
+        // Assuming the logged-in user is a flatmate
+        User loggedInUser = userService.getLoggedInUser();  // Get the current user
+        List<User> flatmates = userRepository.findByFlatId(loggedInUser.getFlat().getId()); // Get flatmates in the same flat
+        List<ChoreListItem> chores = choreListItemRepository.findByFlatId(loggedInUser.getFlat().getId()); // Get chores for the flat
+        model.addAttribute("flatmates", flatmates);
+        return "choreList";  // Return the Thymeleaf template
+    }
+}
