@@ -9,8 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Repository interface for interacting with ChoreList entities within
  * the database. Offers several built in methods that are called in
- * ChoreListService. Future custom queries will be added here and then
- * called with the service class.
+ * ChoreListService.
  */
 @Repository
 public interface ChoreListRepository extends JpaRepository<ChoreList, Long> {

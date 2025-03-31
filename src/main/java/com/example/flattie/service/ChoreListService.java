@@ -77,4 +77,13 @@ public class ChoreListService {
         choreListRepository.save(choreList);
 
     }
+
+    /**
+     * Searches for a ChoreListItem by its Name.
+     * @param name The name of the ChoreListItem to search for.
+     * @return A list of ChoreListItems that match the given name.
+     */
+    public List<ChoreListItem> searchChoreListItemsByName(String name) {
+        return choreListItemRepository.findByChoreNameContainingIgnoreCase(name);
+    }
 }

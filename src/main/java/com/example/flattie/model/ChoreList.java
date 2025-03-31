@@ -12,6 +12,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
+/**
+ * Database entity representing a chore list. Mapped automatically to
+ * database schema using ChoreListRepository and ChoreListService.
+ */
 @Entity
 public class ChoreList {
     @Id
@@ -19,11 +23,13 @@ public class ChoreList {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "flat_id", nullable = false)
+    @JoinColumn(name = "flat_id", nullable = false) // foreign key in ChoreList table
+    // This is a one-to-one relationship with Flat, as each flat has one chore list.
     private Flat flat;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "choreListID") // foreign key in ChoreListItem table
+    // This is a one-to-many relationship with ChoreListItem, as each chore list can have many items.
     private List<ChoreListItem> choreListItems;
 
     protected ChoreList() {

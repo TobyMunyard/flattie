@@ -16,151 +16,63 @@ function closeNav() {
     document.getElementById("main").style.marginLeft = "0";
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const choreInput = document.getElementById('chore-input');
-    const assignToSelect = document.getElementById('assign-to');
-    const prioritySelect = document.getElementById('priority');
-    const addChoreButton = document.getElementById('add-chore');
-    const choreList = document.getElementById('chore-list');
-    const searchChoreInput = document.getElementById('search-chore');
-    const sortBySelect = document.getElementById('sort-by');
-    const recurrenceInput = document.getElementById('recurrence');
-    const choreTable = document.getElementById('chore-table');
-    const searchButton = document.getElementById('search-button');
-    const clearSearchButton = document.getElementById('clear-search');
+// document.getElementById('add-chore').addEventListener('click', function () {
+//     const choreName = document.getElementById('chore-input').value;
+//     const assignment = document.getElementById('assignment').value;
+//     const priority = document.getElementById('priority').value;
+//     const frequency = document.getElementById('frequency').value;
 
-    let chores = [];
-    let originalChores = [];
-    let searchTerm = '';
+//     fetch('/choreList/add', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({
+//             choreName: choreName,
+//             assignment: assignment,
+//             priority: priority,
+//             frequency: frequency
+//         })
+//     }).then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 // Test alert to confirm success
+//                 alert('Chore added successfully!');
+//                 // Update chore list dynamically
+//                 addChoreToTable(data.chore);
+//             } else {
+//                 alert('Failed to add chore');
+//             }
+//         });
+// });
 
-    addChoreButton.addEventListener('click', addChore);
+function addChoreToTable(chore) {
+    const table = document.getElementById('chore-list');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${chore.choreName}</td>
+        <td>${chore.assignment}</td>
+        <td>${chore.priority}</td>
+        <td><button onclick="editChore(${chore.id})">Edit</button></td>
+        <td><button onclick="deleteChore(${chore.id})">Delete</button></td>
+    `;
+    table.appendChild(row);
+}
 
-    function addChore() {
-        const choreName = choreInput.value.trim();
-        const assignedTo = assignToSelect.value;
-        const priority = prioritySelect.value;
-        const recurrence = recurrenceInput.value;
-
-        if (choreName !== '') {
-            const chore = {
-                name: choreName,
-                assignedTo: assignedTo,
-                priority: priority,
-                recurrence: recurrence,
-                completed: false
-            };
-
-            chores.push(chore);
-            originalChores.push({...chore});
-            renderChores();
-            choreInput.value = '';
-            recurrenceInput.value = 0;
-        }
-    }
-
-    function renderChores() {
-        choreList.innerHTML = '';
-
-        chores.forEach((chore, index) => {
-            const choreItem = document.createElement('tr');
-            choreItem.classList.add('chore-item');
-            choreItem.dataset.index = index;
-
-            const assignedName = chore.assignedTo === 'unassigned' ? 'Unassigned' : chore.assignedTo;
-
-            choreItem.innerHTML = `
-                <td><b>${chore.name}</b></td>
-                <td><p style="font-style: italic;">${assignedName}</p></td>
-                <td><b>${chore.priority}</b></td>
-                <td><button class="edit-button">Edit</button></td>
-                <td><button class="delete-button">Delete</button></td>
-            `;
-
-            choreList.appendChild(choreItem);
-
-            const deleteButton = choreItem.querySelector('.delete-button');
-            deleteButton.addEventListener('click', deleteChore);
-            const editButton = choreItem.querySelector('.edit-button');
-            editButton.addEventListener('click', editChore);
+document.getElementById('search-button').addEventListener('click', function () {
+    const query = document.getElementById('search-chore').value;
+    fetch(`/chore/search?query=${query}`).then(response => response.json())
+        .then(data => {
+            // Clear current table and re-add searched chores
+            document.getElementById('chore-list').innerHTML = '';
+            data.forEach(chore => addChoreToTable(chore));
         });
-    }
-
-    function deleteChore(event) {
-        const choreItem = event.target.parentNode.parentNode;
-        const index = choreItem.dataset.index;
-        chores.splice(index, 1);
-        originalChores.splice(index, 1);
-        renderChores();
-    }
-
-    function editChore(event) {
-        const choreItem = event.target.parentNode.parentNode;
-        const index = choreItem.dataset.index;
-        const chore = chores[index];
-
-        choreInput.value = chore.name;
-        assignToSelect.value = chore.assignedTo;
-        prioritySelect.value = chore.priority;
-        recurrenceInput.value = chore.recurrence;
-
-        chores.splice(index, 1);
-        originalChores.splice(index, 1);
-        renderChores();
-    }
-
-    sortBySelect.addEventListener('change', () => {
-        const sortBy = sortBySelect.value;
-        sortChores(sortBy);
-    });
-
-    function sortChores(sortBy) {
-        switch (sortBy) {
-            case 'chore':
-                chores.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'assignment':
-                chores.sort((a, b) => a.assignedTo.localeCompare(b.assignedTo));
-                break;
-            case 'priority':
-                chores.sort((a, b) => a.priority - b.priority);
-                break;
-        }
-        renderChores();
-    }
-
-    searchChoreInput.addEventListener('input', (event) => {
-      searchTerm = searchChoreInput.value.toLowerCase();
-      filterChores();
-    });
-
-    searchButton.addEventListener('click', () => {
-      searchTerm = searchChoreInput.value.toLowerCase();
-      filterChores();
-    });
-
-    clearSearchButton.addEventListener('click', () => {
-        searchChoreInput.value = '';
-        searchTerm = '';
-        chores = [...originalChores];
-        renderChores();
-    });
-
-    function filterChores() {
-      if (!searchTerm) {
-        chores = [...originalChores];
-      } else {
-        chores = originalChores.filter(chore => chore.name.toLowerCase().includes(searchTerm));
-      }
-        renderChores();
-    }
-
-    choreTable.querySelectorAll('th').forEach(th => {
-        th.addEventListener('click', () => {
-            const sortBy = th.dataset.sort;
-            sortChores(sortBy);
-        });
-    });
-
-    originalChores = [...chores]
-    renderChores();
 });
+
+function deleteChore(id) {
+    fetch(`/chore/delete/${id}`, { method: 'DELETE' }).then(response => {
+        if (response.ok) {
+            // Remove from table
+            const row = document.querySelector(`#chore-list tr[data-id='${id}']`);
+            row.remove();
+        }
+    });
+}

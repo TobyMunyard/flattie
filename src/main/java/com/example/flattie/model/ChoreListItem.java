@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * Database entity representing a chore list item. Mapped automatically to
+ * Database entity representing a chore list item. Mapped automatically to 
  * database schema using ChoreListItemRepository and ChoreListItemService.
  * 
  * @see com.example.flattie.repository.ChoreListItemRepository

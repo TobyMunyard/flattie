@@ -3,12 +3,18 @@ package com.example.flattie.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.ChoreListItem;
@@ -25,7 +31,7 @@ import com.example.flattie.service.ChoreListService;
 public class ChoreListController {
 
     @Autowired
-    private ChoreListService choreService;
+    private ChoreListService choreListService;
 
     /**
      * Serves the chore list page of the application from the url "/choreList".
@@ -49,9 +55,10 @@ public class ChoreListController {
         }
 
         // Fetch chores for the flat using a service method
-        ChoreList choreList = choreService.getChoreListForFlat(userFlat.getId());
+        ChoreList choreList = choreListService.getChoreListForFlat(userFlat.getId());
         if (choreList == null) {
-            // This should never happen as flats are constructed with a chore list, but just in case...
+            // This should never happen as flats are constructed with a chore list, but just
+            // in case...
             model.addAttribute("error", "Chore list not found for your flat.");
             return "errorPage";
         }
@@ -67,15 +74,18 @@ public class ChoreListController {
     }
 
     /**
-     * Handles adding a new chore item to the list.
+     * Handles adding a new chore item to the list. The chore is added to the chore
+     * list
+     * for the currently authenticated user's flat.
      * 
      * @param choreListItem The new chore item to be added
-     * @param user The currently authenticated user
-     * @param model The model to be populated with the updated chore list
+     * @param user          The currently authenticated user
+     * @param model         The model to be populated with the updated chore list
      * @return The updated chore list page
      */
     @PostMapping("/choreList/add")
-    public String addChore(@ModelAttribute ChoreListItem choreListItem, @AuthenticationPrincipal AppUser user, Model model) {
+    public String addChore(@ModelAttribute ChoreListItem choreListItem, @AuthenticationPrincipal AppUser user,
+            Model model) {
         if (user == null) {
             model.addAttribute("error", "You are not logged in.");
             return "redirect:/login"; // Redirect to login page if user is not logged in
@@ -89,7 +99,7 @@ public class ChoreListController {
         }
 
         // Fetch the current chore list for the flat
-        ChoreList choreList = choreService.getChoreListForFlat(userFlat.getId());
+        ChoreList choreList = choreListService.getChoreListForFlat(userFlat.getId());
         if (choreList == null) {
             model.addAttribute("error", "Chore list not found for your flat.");
             return "errorPage";
@@ -97,12 +107,27 @@ public class ChoreListController {
 
         // Add the new chore item to the chore list
         choreList.addChore(choreListItem);
-        choreService.saveChoreList(choreList); // Save the updated chore list
+        choreListService.saveChoreList(choreList); // Save the updated chore list
 
         // Add updated list to model for rendering
         model.addAttribute("chores", choreList.getChoreListItems());
-        // model.addAttribute("choreListItem", new ChoreListItem()); // Clear the form for next input
+
+        // Clear the form for next input
+        // model.addAttribute("choreListItem", new ChoreListItem());
 
         return "choreList"; // Return the same page to show updated chore list
+    }
+
+    @DeleteMapping("/chore/delete/{id}")
+    public ResponseEntity<Void> deleteChore(@PathVariable Long id) {
+        choreListService.deleteChoreFromFlat(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/chore/search")
+    @ResponseBody
+    public List<ChoreListItem> searchChores(@RequestParam String query) {
+        // Logic to search chores
+        return choreListService.searchChoreListItemsByName(query);
     }
 }
