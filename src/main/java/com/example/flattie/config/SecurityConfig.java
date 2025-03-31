@@ -74,10 +74,11 @@ public class SecurityConfig {
                                 .authorizeHttpRequests((authz) -> authz
                                                 .requestMatchers("/", "/login", "/about", "/viewFlats", "createFlat",
                                                                 "/createAccount", "/h2-console/**", "/css/**",
-                                                                "/js/**")
+                                                                "/js/**", "/error")
                                                 .permitAll()
                                                 .requestMatchers("/logoutPage", "/shoppingList", "/choreList",
-                                                                "/rentCalculator", "/joinFlat", "/flatInfo", "/createFlat", "/viewFlats")
+                                                                "/rentCalculator", "/joinFlat", "/flatInfo",
+                                                                "/createFlat", "/viewFlats")
                                                 .authenticated()
                                                 .anyRequest().authenticated())
                                 .formLogin((form) -> form
@@ -101,7 +102,8 @@ public class SecurityConfig {
         }
 
         /**
-         * Decoupled {@link PasswordEncoder} to prevent accidental use of different encoders
+         * Decoupled {@link PasswordEncoder} to prevent accidental use of different
+         * encoders
          * that may lead to issues when attempting to verify if a user's password is
          * correct. Also used by spring security for authentication.
          * 

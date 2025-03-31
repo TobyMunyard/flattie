@@ -48,6 +48,7 @@ public class Flat {
         this.flatDescription = flatDescription;
         this.weeklyRent = weeklyRent;
         this.rooms = rooms;
+        this.choreList = new ChoreList(this, new ArrayList<>()); // Initialize the chore list with an empty list
     }
 
     // Getters and setters
