@@ -20,15 +20,6 @@ public class ChoreListItemService {
     }
 
     /**
-     * Gets all chore list items currently in the database.
-     * 
-     * @return A list of all current ChoreListItem entities in the database.
-     */
-    public List<ChoreListItem> getAllItems() {
-        return choreListItemRepository.findAll();
-    }
-
-    /**
      * Saves a new ChoreListItem to the database.
      * 
      * @param choreListItem The ChoreListItem to persist in the database.
@@ -39,21 +30,12 @@ public class ChoreListItemService {
     }
 
     /**
-     * Deletes a ChoreListItem from the database based on a provided id.
+     * Finds a list of chores by chore list ID.
      * 
-     * @param id The id of the ChoreListItem to delete from the database.
+     * @param flatId The ID of the chore list to find chores for.
+     * @return A list of ChoreListItem entities associated with the given chore list ID.
      */
-    public void deleteItem(Long id) {
-        choreListItemRepository.deleteById(id);
+    public List<ChoreListItem> findByFlatId(Long flatId) {
+        return choreListItemRepository.findByChoreListId(flatId);
     }
-
-    /**
-     * Finds a list of chores by flat ID.
-     * 
-     * @param flatId The ID of the flat to find chores for.
-     * @return A list of ChoreListItem entities associated with the given flat ID.
-     */
-    // public List<ChoreListItem> findByFlatId(Long flatId) {
-    //     return choreListItemRepository.findByFlatId(flatId);
-    // }
 }

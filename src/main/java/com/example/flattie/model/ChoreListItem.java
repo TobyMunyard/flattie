@@ -22,6 +22,12 @@ public class ChoreListItem {
     private int frequency; // in days
     private boolean isCompleted;
 
+    // The chore list this item belongs to.
+    // This is a foreign key in the database.
+    @JoinColumn(name = "choreListID", referencedColumnName = "id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private ChoreList choreList;
+
     /**
      * Constructs a new chore list item. Needed for spring to function.
      */
@@ -60,8 +66,8 @@ public class ChoreListItem {
     /**
      * Returns the name of the chore.
      * 
-     * @
-     *   @return the name of the chore
+     * 
+     * @return the name of the chore
      */
     public String getChoreName() {
         return choreName;
@@ -122,6 +128,15 @@ public class ChoreListItem {
     }
 
     /**
+     * Sets the frequency of the chore.
+     * 
+     * @param frequency the frequency of the chore
+     */
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+    /**
      * Sets whether or not the chore is completed.
      * 
      * @param isCompleted whether or not the chore is completed
@@ -137,5 +152,23 @@ public class ChoreListItem {
      */
     public boolean isCompleted() {
         return isCompleted;
+    }
+
+    /**
+     * Returns the ID of the chore list this item belongs to.
+     * 
+     * @return the ID of the chore list this item belongs to
+     */
+    public ChoreList getChoreList() {
+        return choreList;
+    }
+    
+    /**
+     * Sets the chore list this item belongs to.
+     * 
+     * @param choreList the chore list this item belongs to
+     */
+    public void setChoreList(ChoreList choreList) {
+        this.choreList = choreList;
     }
 }

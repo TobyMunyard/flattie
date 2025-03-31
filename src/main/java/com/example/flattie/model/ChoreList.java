@@ -1,8 +1,15 @@
 package com.example.flattie.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class ChoreList {
@@ -14,17 +21,16 @@ public class ChoreList {
     @JoinColumn(name = "flat_id", nullable = false)
     private Flat flat;
 
-    @ManyToOne
-    @JoinColumn(name = "chore_id", nullable = false)
-    private ChoreListItem chore;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "choreListID")  // foreign key in ChoreListItem table
+    private List<ChoreListItem> choreListItems;
 
-    public ChoreList(Flat flat, ChoreListItem chore) {
+    public ChoreList(Flat flat, List<ChoreListItem> choreListItems) {
         this.flat = flat;
-        this.chore = chore;
+        this.choreListItems = choreListItems;
     }
 
     // Getters & Setters
-
     public Long getId() {
         return id;
     }
@@ -39,6 +45,22 @@ public class ChoreList {
 
     public void setFlat(Flat flat) {
         this.flat = flat;
+    }
+
+    public List<ChoreListItem> getChoreListItems() {
+        return choreListItems;
+    }
+
+    public void setChoreListItems(List<ChoreListItem> choreListItems) {
+        this.choreListItems = choreListItems;
+    }
+
+    public void addChore(ChoreListItem chore) {
+        this.choreListItems.add(chore);
+    }
+
+    public void removeChore(ChoreListItem chore) {
+        this.choreListItems.remove(chore);
     }
 
 }

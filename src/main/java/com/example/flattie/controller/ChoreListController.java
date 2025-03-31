@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.ChoreListItem;
+import com.example.flattie.model.ChoreList;
 import com.example.flattie.model.Flat;
 import com.example.flattie.repository.AppUserRepository;
 import com.example.flattie.repository.ChoreListItemRepository;
@@ -38,11 +39,14 @@ public class ChoreListController {
         Flat userFlat = user.getFlat();
         if (userFlat != null) {
             // Fetch chores for the flat using a service method
-            List<ChoreListItem> chores = choreService.getChoresForFlat(userFlat.getId());
+            ChoreList choreList = choreService.getChoreListForFlat(userFlat.getId());
+            List<ChoreListItem> chores = choreList.getChoreListItems();
+            // Add the chores to the model for rendering in the view
             model.addAttribute("chores", chores);
         }
 
-        // Pass the user info (if needed idk)
+        // Pass the user information to the model
+        // This is the current user, which is used in the Thymeleaf template
         model.addAttribute("currentUser", user);
         return "choreList"; // Thymeleaf page
     }

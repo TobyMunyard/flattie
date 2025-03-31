@@ -3,9 +3,6 @@ package com.example.flattie.repository;
 import org.springframework.stereotype.Repository;
 
 import com.example.flattie.model.ChoreList;
-import com.example.flattie.model.ChoreListItem;
-
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,5 +14,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 @Repository
 public interface ChoreListRepository extends JpaRepository<ChoreList, Long> {
-    List<ChoreListItem> findByFlatId(Long flatId);
+    // Method to find the chore list by flat ID.
+    ChoreList findByFlatId(Long flatId);
 }
