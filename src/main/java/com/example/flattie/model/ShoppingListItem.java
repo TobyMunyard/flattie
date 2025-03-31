@@ -14,6 +14,7 @@ public class ShoppingListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String itemName;
     private int quantity;
 
@@ -53,5 +54,9 @@ public class ShoppingListItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String toString(){
+       return "Name is: " + getItemName() + "Quantity is: " + getQuantity();
     }
 }
