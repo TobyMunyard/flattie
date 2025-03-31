@@ -1,6 +1,10 @@
 package com.example.flattie.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Database entity representing a chore list item. Mapped automatically to
@@ -16,16 +20,26 @@ public class ChoreListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Chore name cannot be empty")
     private String choreName;
-    private String assignment;
-    private int priority;
-    private int frequency; // in days
-    private boolean isCompleted;
+
+    private String assignment = "Unassigned"; // Default value
+    
+    private int frequency = 0; // in days, default to 0 for no frequency
+
+    private boolean isCompleted = false; // Default value, user wont add a completed chore.
+    
+    @NotNull
+    @Min(value = 0, message = "Priority must be at least 0")
+    @Max(value = 9, message = "Priority cannot be greater than 9")
+    private int priority = 0; // Default value
 
     // The chore list this item belongs to.
     // This is a foreign key in the database.
+    // CascadeType.MERGE is used to update the chore list when this item is updated.
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "choreListID", referencedColumnName = "id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private ChoreList choreList;
 
     /**
@@ -37,12 +51,12 @@ public class ChoreListItem {
     /**
      * Constructs a new chore list item.
      */
-    public ChoreListItem(String choreName, String assignment, int priority, int frequency, boolean isCompleted) {
+    public ChoreListItem(String choreName, String assignment, int priority, int frequency) {
         this.choreName = choreName;
         this.assignment = assignment;
         this.priority = priority;
         this.frequency = frequency;
-        this.isCompleted = isCompleted;
+        this.isCompleted = false;  // Default to not completed, as a user wont add a completed chore.
     }
 
     /**
@@ -162,7 +176,7 @@ public class ChoreListItem {
     public ChoreList getChoreList() {
         return choreList;
     }
-    
+
     /**
      * Sets the chore list this item belongs to.
      * 
@@ -170,5 +184,15 @@ public class ChoreListItem {
      */
     public void setChoreList(ChoreList choreList) {
         this.choreList = choreList;
+    }
+
+    /**
+     * Returns a string representation of the chore list item.
+     * 
+     * @return a string representation of the chore list item
+     */
+    @Override
+    public String toString() {
+        return String.format("ChoreListItem[id=%d, name='%s', assignedTo='%s']", id, choreName, assignment);
     }
 }

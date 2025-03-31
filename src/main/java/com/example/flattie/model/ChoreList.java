@@ -1,5 +1,6 @@
 package com.example.flattie.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -22,10 +23,15 @@ public class ChoreList {
     private Flat flat;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "choreListID")  // foreign key in ChoreListItem table
+    @JoinColumn(name = "choreListID") // foreign key in ChoreListItem table
     private List<ChoreListItem> choreListItems;
 
-    public ChoreList(Flat flat, List<ChoreListItem> choreListItems) {
+    protected ChoreList() {
+        // For JPA
+        this.choreListItems = new ArrayList<>();
+    }
+
+    public ChoreList(Flat flat, ArrayList<ChoreListItem> choreListItems) {
         this.flat = flat;
         this.choreListItems = choreListItems;
     }
@@ -56,6 +62,13 @@ public class ChoreList {
     }
 
     public void addChore(ChoreListItem chore) {
+        if (this.choreListItems == null) {
+            this.choreListItems = new ArrayList<>();
+        }
+        chore.setChoreList(this); // Set the back-reference
+        // Add the chore to the list
+        // This is needed for the bi-directional relationship to work.
+        // The chore list item needs to know which chore list it belongs to.
         this.choreListItems.add(chore);
     }
 

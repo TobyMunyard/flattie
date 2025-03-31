@@ -49,7 +49,7 @@ public class CreateAccountController {
 
         // Validation done manually because annotations only work for entire entity and
         // manual error messages are nicer for users
-        
+
         if (firstName == null || firstName.isBlank() || firstName.length() > 20) {
             redirectAttributes.addFlashAttribute("error", "First name must be under 20 characters.");
             return "redirect:/createAccount";
