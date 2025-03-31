@@ -101,7 +101,7 @@ public class ChoreListController {
 
         // Add updated list to model for rendering
         model.addAttribute("chores", choreList.getChoreListItems());
-        model.addAttribute("choreListItem", new ChoreListItem()); // Clear the form for next input
+        // model.addAttribute("choreListItem", new ChoreListItem()); // Clear the form for next input
 
         return "choreList"; // Return the same page to show updated chore list
     }

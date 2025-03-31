@@ -1,5 +1,7 @@
 package com.example.flattie.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,6 +13,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
+
+import jakarta.annotation.PostConstruct;
 
 /**
  * Controller class for handling all requests based on user account creation
@@ -80,5 +84,21 @@ public class CreateAccountController {
         appUserService.saveAppUser(newUser);
 
         return "redirect:/login";
+    }
+
+
+    /**
+     * Creates a default user account for testing purposes. This method is called
+     * when the application starts up.
+     */
+    @PostConstruct
+    public void createDefaultUser() {
+        Optional<AppUser> existingUser = appUserService.getAppUserByUsername("admin");
+
+        if (existingUser.isEmpty()) {
+            AppUser admin = new AppUser("Test", "User", "Tester", passwordEncoder.encode("test1234"));
+            appUserService.saveAppUser(admin);
+            System.out.println("Test account created: Tester / test1234");
+        }
     }
 }
