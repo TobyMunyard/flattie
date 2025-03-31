@@ -3,6 +3,7 @@ package com.example.flattie.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class JoinFlatController {
     private FlatService flatService;
 
     @PostMapping("/joinFlat")
-    public String joinFlat(@RequestParam("flat_code") String flatCode, Model model, HttpSession session) {
+    public String joinFlat(@AuthenticationPrincipal AppUser user, @RequestParam("flat_code") String flatCode, Model model) {
         // Retrieve the flat by its join code
         Flat flat = flatService.findByJoinCode(flatCode);
 
@@ -44,10 +45,9 @@ public class JoinFlatController {
         model.addAttribute("flats", flats);
 
         // Set the logged-in user's flat to current flat
-        AppUser currentUser = (AppUser) session.getAttribute("loggedInUser");
-        if (currentUser != null) {
+        if (user != null) {
             // Update the user's flat association in the database
-            appUserService.joinFlat(currentUser, flat);
+            appUserService.joinFlat(user, flat);
         } else {
             return "redirect:/login"; // Not logged in? Send them to login.
         }

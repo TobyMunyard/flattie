@@ -17,5 +17,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ChoreListItemRepository extends JpaRepository<ChoreListItem, Long> {
 
     // Method to find list of chores by choreList ID.
-    List<ChoreListItem> findByListId(Long flatId);
+    List<ChoreListItem> findByChoreList_Id(Long choreListId);
 }
