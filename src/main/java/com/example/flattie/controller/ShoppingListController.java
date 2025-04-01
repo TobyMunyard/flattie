@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,27 +46,18 @@ public class ShoppingListController {
 		List<ShoppingListItem> items = shoppingListService.getAllItems();
 		return ResponseEntity.ok(items);
 	}
+
+	@DeleteMapping("/shopping-list/delete/{itemName}")
+	public ResponseEntity<String> deleteItem(@PathVariable String itemName) {
+		List<ShoppingListItem> items = shoppingListService.getAllItems();
+
+		for (ShoppingListItem listItem : items) {
+			if (listItem.getItemName().equalsIgnoreCase(itemName)) {
+				shoppingListService.deleteItem(listItem.getId());
+				return ResponseEntity.ok("Item deleted successfully");
+			}
+		}
+		return ResponseEntity.status(404).body("Item not found");
+	}
+
 }
-
-
-
-
-	// @PostMapping("path")
-	// public String postMethodName(@RequestBody String entity) {
-	// //TODO: process POST request
-
-	// return entity;
-	// }
-
-	// public String editQuantity(String itemName, int Quantity){
-
-	// }
-
-	// @PostMapping("path")
-	// public String deleteItem(@RequestBody String entity) {
-	// //TODO: process POST request
-
-	// return entity;
-	// }
-
-
