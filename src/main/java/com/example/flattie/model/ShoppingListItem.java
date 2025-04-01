@@ -1,5 +1,7 @@
 package com.example.flattie.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.*;
 
 /**

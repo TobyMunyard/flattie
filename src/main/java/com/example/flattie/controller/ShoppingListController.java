@@ -18,6 +18,7 @@ import com.example.flattie.model.ShoppingListItem;
 import com.example.flattie.service.ShoppingListItemService;
 // import com.example.flattie.service.userRepository;
 // import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 
 /**
  * Controller class for handling all actions related to users logging into their
@@ -47,12 +48,12 @@ public class ShoppingListController {
 		return ResponseEntity.ok(items);
 	}
 
-	@DeleteMapping("/shopping-list/delete/{itemName}")
-	public ResponseEntity<String> deleteItem(@PathVariable String itemName) {
+	@DeleteMapping("/shopping-list/delete/{itemId}")
+	public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
 		List<ShoppingListItem> items = shoppingListService.getAllItems();
 
 		for (ShoppingListItem listItem : items) {
-			if (listItem.getItemName().equalsIgnoreCase(itemName)) {
+			if (listItem.getId() == Integer.parseInt(itemId)) {
 				shoppingListService.deleteItem(listItem.getId());
 				return ResponseEntity.ok("Item deleted successfully");
 			}
@@ -60,4 +61,24 @@ public class ShoppingListController {
 		return ResponseEntity.status(404).body("Item not found");
 	}
 
+	@PutMapping("/shopping-list/update/{id}")
+	public ResponseEntity<String> updateItem(@PathVariable Long id, @RequestBody ShoppingListItem updatedItem) {
+		ShoppingListItem existingItem = shoppingListService.getItembyId(id);
+	
+		if (existingItem != null) {
+			if (updatedItem.getItemName() != null) {
+				existingItem.setItemName(updatedItem.getItemName());
+			}
+			if (updatedItem.getQuantity() != 0) {
+				existingItem.setQuantity(updatedItem.getQuantity());
+			}
+			shoppingListService.updateItem(existingItem);
+			return ResponseEntity.ok("Item updated successfully");
+		}
+		return ResponseEntity.status(404).body("Item not found");
+	}
 }
+	
+
+
+

@@ -46,4 +46,14 @@ public class ShoppingListItemService {
     public void deleteItem(Long id) {
         shoppingListItemRepository.deleteById(id);
     }
+
+    @SuppressWarnings("deprecation")
+    public ShoppingListItem getItembyId(Long id){
+        return shoppingListItemRepository.getById(id);
+    }
+
+    public ShoppingListItem updateItem(ShoppingListItem shoppingListItem) {
+        return shoppingListItemRepository.save(shoppingListItem);
+            }
+
 }
