@@ -32,25 +32,25 @@ function addChoreToTable(chore) {
 }
 
 // Dynamically add delete button functionality to each created chore
-document.getElementById('chore-list').addEventListener('click', function(event) {
+document.getElementById('chore-list').addEventListener('click', function (event) {
     if (event.target && event.target.classList.contains('delete-btn')) {
         const choreId = event.target.getAttribute('data-id');
 
         fetch('/chore/delete/' + choreId, {
             method: 'DELETE'
         })
-        .then(response => {
-            if (response.ok) {
-                // Remove the row from the table without reloading
-                event.target.closest('tr').remove();
-            } else {
-                alert('Failed to delete chore');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting chore:', error);
-            alert('Error deleting chore');
-        });
+            .then(response => {
+                if (response.ok) {
+                    // Remove the row from the table without reloading
+                    event.target.closest('tr').remove();
+                } else {
+                    alert('Failed to delete chore');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting chore:', error);
+                alert('Error deleting chore');
+            });
     }
 });
 
@@ -63,4 +63,42 @@ document.getElementById('search-button').addEventListener('click', function () {
             data.forEach(chore => addChoreToTable(chore));
         });
 });
+
+// Function to handle toggling the completion status of a chore
+document.addEventListener('click', function (event) {
+    // Check if the clicked element is the chore name (the clickable part to toggle completion)
+    if (event.target.classList.contains('chore-name')) {
+        const choreId = event.target.getAttribute('data-id');
+
+        fetch(`/chore/toggleComplete/${choreId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': getCSRFToken()
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to toggle chore status');
+                }
+
+                // Find the row of the clicked chore
+                const choreRow = event.target.closest('tr');
+                // Find the chore name cell in that row
+                const choreNameCell = choreRow.querySelector('.chore-name');
+                
+                // Toggle the 'completed' class
+                choreNameCell.classList.toggle('completed');
+            })
+            .catch(error => {
+                console.error('Error toggling chore status:', error);
+                alert('Could not update chore status.');
+            });
+    }
+});
+
+function getCSRFToken() {
+    const tokenMeta = document.querySelector('meta[name="_csrf"]');
+    return tokenMeta ? tokenMeta.getAttribute('content') : '';
+}
 

@@ -20,7 +20,7 @@
         <button class="openbtn" onclick="openNav()">☰</button>
         <div class="chore-list-container">
             <h1><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
-            
+
             <!-- This form will be used to add a new chore to the list -->
             <form action="/choreList/add" method="post">
                 <div class="input-group">
@@ -56,7 +56,7 @@
                     <div>
                         <p style="text-align: center;">Recurrence (Days)</p>
                         <!-- This needs to discussed in terms of implementation -->
-                        <input type="number" id="frequency" name="frequency"placeholder="Days" value="0" min="0">
+                        <input type="number" id="frequency" name="frequency" placeholder="Days" value="0" min="0">
                     </div>
                     <button type="submit" id="add-chore">Add Chore</button>
                 </div>
@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <table id="chore-table"> <!-- This needs to be populated with the chores from the flat -->
+            <table id="chore-table">
                 <thead>
                     <tr>
                         <th data-sort="chore" style="cursor: pointer;">Chore</th>
@@ -80,9 +80,11 @@
                         <th>Delete</th>
                     </tr>
                 </thead>
-                <tbody id="chore-list"> 
+                <tbody id="chore-list">
                     <tr th:each="chore : ${chores}">
-                        <td th:text="${chore.choreName}"></td>
+                        <td th:text="${chore.choreName}" th:classappend="${chore.completed} ? 'completed' : ''"
+                            class="chore-name" th:attr="data-id=${chore.id}">
+                        </td>
                         <td th:text="${chore.assignment}"></td>
                         <td th:text="${chore.priority}"></td>
                         <td><button th:onclick="'/chore/edit/' + ${chore.id}">Edit</button></td>

@@ -86,4 +86,16 @@ public class ChoreListService {
     public List<ChoreListItem> searchChoreListItemsByName(String name) {
         return choreListItemRepository.findByChoreNameContainingIgnoreCase(name);
     }
+
+    /**
+     * Marks a ChoreListItem as completed.
+     * @param id The id of the ChoreListItem to mark as completed.
+     */
+    public void toggleChoreCompletion(Long id) {
+        ChoreListItem chore = choreListItemRepository.findById(id).orElse(null);
+        if (chore != null) {
+            chore.setCompleted(!chore.isCompleted());
+            choreListItemRepository.save(chore);
+        }
+    }
 }

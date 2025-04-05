@@ -117,6 +117,47 @@ public class ChoreListController {
         return "choreList"; // Return the same page to show updated chore list
     }
 
+    /**
+     * Handles marking a chore as completed and not. The chore is toggled completed
+     * in the
+     * chore list for the currently authenticated user's flat.
+     * 
+     * @param id    The ID of the chore item to be marked as completed
+     * @param user  The currently authenticated user
+     * @param model The model to be populated with the updated chore list
+     * @return The updated chore list page
+     */
+    @PostMapping("/chore/toggleComplete/{id}")
+    public String toggleChoreComplete(@PathVariable Long id, @AuthenticationPrincipal AppUser user, Model model) {
+        if (user == null) {
+            model.addAttribute("error", "You are not logged in.");
+            return "redirect:/login"; // Redirect to login page if user is not logged in
+        }
+
+        // Get the flat from the user
+        Flat userFlat = user.getFlat();
+        if (userFlat == null) {
+            model.addAttribute("error", "You are not assigned to a flat.");
+            return "redirect:/joinFlat"; // Redirect to join flat page if no flat is assigned
+        }
+
+        // Fetch the current chore list for the flat
+        ChoreList choreList = choreListService.getChoreListForFlat(userFlat.getId());
+        if (choreList == null) {
+            model.addAttribute("error", "Chore list not found for your flat.");
+            return "errorPage";
+        }
+
+        // Mark the chore as completed
+        choreListService.toggleChoreCompletion(id);
+
+        // Fetch updated list of chore items after toggle
+        List<ChoreListItem> updatedChores = choreListService.getChoreListItems(choreList.getId());
+        model.addAttribute("chores", updatedChores);
+
+        return "choreList"; // Return the same page to show updated chore list
+    }
+
     @DeleteMapping("/chore/delete/{id}")
     public ResponseEntity<Void> deleteChore(@PathVariable Long id) {
         choreListService.deleteChoreFromFlat(id);
