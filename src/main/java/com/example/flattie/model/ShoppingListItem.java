@@ -1,7 +1,5 @@
 package com.example.flattie.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.*;
 
 /**
@@ -58,7 +56,7 @@ public class ShoppingListItem {
         this.quantity = quantity;
     }
 
-    public String toString(){
-       return "Name is: " + getItemName() + "Quantity is: " + getQuantity();
+    public String toString() {
+        return "Name is: " + getItemName() + "Quantity is: " + getQuantity();
     }
 }

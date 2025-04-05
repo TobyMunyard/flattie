@@ -48,12 +48,12 @@ public class ShoppingListItemService {
     }
 
     @SuppressWarnings("deprecation")
-    public ShoppingListItem getItembyId(Long id){
+    public ShoppingListItem getItembyId(Long id) {
         return shoppingListItemRepository.getById(id);
     }
 
     public ShoppingListItem updateItem(ShoppingListItem shoppingListItem) {
         return shoppingListItemRepository.save(shoppingListItem);
-            }
+    }
 
 }
