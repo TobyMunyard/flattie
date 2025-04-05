@@ -80,13 +80,13 @@
                         <th>Delete</th>
                     </tr>
                 </thead>
-                <tbody id="chore-list">
+                <tbody id="chore-list"> 
                     <tr th:each="chore : ${chores}">
                         <td th:text="${chore.choreName}"></td>
                         <td th:text="${chore.assignment}"></td>
                         <td th:text="${chore.priority}"></td>
                         <td><button th:onclick="'/chore/edit/' + ${chore.id}">Edit</button></td>
-                        <td><button th:onclick="'/chore/delete/' + ${chore.id}">Delete</button></td>
+                        <td><button class="delete-btn" th:attr="data-id=${chore.id}">Delete</button></td>
                     </tr>
                 </tbody>
             </table>
