@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
 
-import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
-import jakarta.servlet.http.HttpSession;
 
 /**
  * Controller class for handling all actions related to users logging into their

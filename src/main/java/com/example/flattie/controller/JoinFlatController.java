@@ -15,8 +15,6 @@ import com.example.flattie.service.AppUserService;
 import com.example.flattie.model.Flat;
 import com.example.flattie.service.FlatService;
 
-import jakarta.servlet.http.HttpSession;
-
 @Controller
 public class JoinFlatController {
 

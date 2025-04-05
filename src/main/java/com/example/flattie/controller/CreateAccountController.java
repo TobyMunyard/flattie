@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.flattie.config.SecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 
