@@ -16,34 +16,6 @@ function closeNav() {
     document.getElementById("main").style.marginLeft = "0";
 }
 
-// document.getElementById('add-chore').addEventListener('click', function () {
-//     const choreName = document.getElementById('chore-input').value;
-//     const assignment = document.getElementById('assignment').value;
-//     const priority = document.getElementById('priority').value;
-//     const frequency = document.getElementById('frequency').value;
-
-//     fetch('/choreList/add', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({
-//             choreName: choreName,
-//             assignment: assignment,
-//             priority: priority,
-//             frequency: frequency
-//         })
-//     }).then(response => response.json())
-//         .then(data => {
-//             if (data.success) {
-//                 // Test alert to confirm success
-//                 alert('Chore added successfully!');
-//                 // Update chore list dynamically
-//                 addChoreToTable(data.chore);
-//             } else {
-//                 alert('Failed to add chore');
-//             }
-//         });
-// });
-
 function addChoreToTable(chore) {
     const table = document.getElementById('chore-list');
     const row = document.createElement('tr');
@@ -52,10 +24,31 @@ function addChoreToTable(chore) {
         <td>${chore.assignment}</td>
         <td>${chore.priority}</td>
         <td><button onclick="editChore(${chore.id})">Edit</button></td>
-        <td><button onclick="deleteChore(${chore.id})">Delete</button></td>
+        <td><button class="delete-btn" data-id="${chore.id}">Delete</button></td>
     `;
     table.appendChild(row);
 }
+
+document.getElementById('chore-list').addEventListener('click', function(event) {
+    if (event.target && event.target.classList.contains('delete-btn')) {
+        const choreId = event.target.getAttribute('data-id');
+        fetch('/chore/delete/' + choreId, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Refresh the page after successful deletion
+                window.location.reload();
+            } else {
+                alert('Failed to delete chore');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting chore:', error);
+            alert('Error deleting chore');
+        });
+    }
+});
 
 document.getElementById('search-button').addEventListener('click', function () {
     const query = document.getElementById('search-chore').value;
@@ -67,12 +60,3 @@ document.getElementById('search-button').addEventListener('click', function () {
         });
 });
 
-function deleteChore(id) {
-    fetch(`/chore/delete/${id}`, { method: 'DELETE' }).then(response => {
-        if (response.ok) {
-            // Remove from table
-            const row = document.querySelector(`#chore-list tr[data-id='${id}']`);
-            row.remove();
-        }
-    });
-}
