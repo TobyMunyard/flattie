@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ChoreListService {
-    
+
     private final ChoreListRepository choreListRepository;
 
     @Autowired
@@ -36,8 +36,8 @@ public class ChoreListService {
      */
     public List<ChoreListItem> getChoreListItems(Long choreListId) {
         return choreListRepository.findById(choreListId)
-            .map(ChoreList::getChoreListItems)
-            .orElse(new ArrayList<>());
+                .map(ChoreList::getChoreListItems)
+                .orElse(new ArrayList<>());
     }
 
     /**
@@ -80,6 +80,7 @@ public class ChoreListService {
 
     /**
      * Searches for a ChoreListItem by its Name.
+     * 
      * @param name The name of the ChoreListItem to search for.
      * @return A list of ChoreListItems that match the given name.
      */
@@ -89,12 +90,37 @@ public class ChoreListService {
 
     /**
      * Marks a ChoreListItem as completed.
+     * 
      * @param id The id of the ChoreListItem to mark as completed.
      */
     public void toggleChoreCompletion(Long id) {
         ChoreListItem chore = choreListItemRepository.findById(id).orElse(null);
         if (chore != null) {
             chore.setCompleted(!chore.isCompleted());
+            choreListItemRepository.save(chore);
+        }
+    }
+
+    /**
+     * Updates an existing ChoreListItem in the database with the values of a provided 
+     * new ChoreListItem. It does not save the new ChoreListItem to the database, 
+     * but rather updates the existing one.
+     * 
+     * @param id The id of the ChoreListItem to edit.
+     * @param newChore The new ChoreListItem with values to copy from.
+     */
+    public void updateChore(Long id, ChoreListItem newChore) {
+        ChoreListItem chore = choreListItemRepository.findById(id).orElse(null);
+        if (chore != null) {
+            // Update all the values of the ChoreListItem
+            chore.setChoreName(newChore.getChoreName());
+            chore.setAssignment(newChore.getAssignment());
+            chore.setFrequency(newChore.getFrequency());
+            chore.setPriority(newChore.getPriority());
+            if (chore.isCompleted()) {
+                chore.setCompleted(false); // Reset completed status to false when editing
+            }
+            // Save the updated ChoreListItem back to the database
             choreListItemRepository.save(chore);
         }
     }

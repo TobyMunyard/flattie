@@ -1,5 +1,7 @@
 package com.example.flattie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -7,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * Database entity representing a chore list item. Mapped automatically to 
+ * Database entity representing a chore list item. Mapped automatically to
  * database schema using ChoreListItemRepository and ChoreListItemService.
  * 
  * @see com.example.flattie.repository.ChoreListItemRepository
@@ -25,11 +27,11 @@ public class ChoreListItem {
     private String choreName;
 
     private String assignment = "Unassigned"; // Default value
-    
+
     private int frequency = 0; // in days, default to 0 for no frequency
 
     private boolean isCompleted = false; // Default value, user wont add a completed chore.
-    
+
     @NotNull
     @Min(value = 0, message = "Priority must be at least 0")
     @Max(value = 9, message = "Priority cannot be greater than 9")
@@ -40,6 +42,7 @@ public class ChoreListItem {
     // CascadeType.MERGE is used to update the chore list when this item is updated.
     @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(name = "choreListID", referencedColumnName = "id")
+    @JsonIgnore
     private ChoreList choreList;
 
     /**
@@ -56,7 +59,7 @@ public class ChoreListItem {
         this.assignment = assignment;
         this.priority = priority;
         this.frequency = frequency;
-        this.isCompleted = false;  // Default to not completed, as a user wont add a completed chore.
+        this.isCompleted = false; // Default to not completed, as a user wont add a completed chore.
     }
 
     /**

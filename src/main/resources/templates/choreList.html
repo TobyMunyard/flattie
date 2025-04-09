@@ -22,7 +22,7 @@
             <h1><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
 
             <!-- This form will be used to add a new chore to the list -->
-            <form action="/choreList/add" method="post">
+            <form id="chore-form">
                 <div class="input-group">
                     <div>
                         <p style="text-align: center;">Chore Name</p>
@@ -58,7 +58,9 @@
                         <!-- This needs to discussed in terms of implementation -->
                         <input type="number" id="frequency" name="frequency" placeholder="Days" value="0" min="0">
                     </div>
+                    <input type="hidden" id="edit-id">
                     <button type="submit" id="add-chore">Add Chore</button>
+                    <button type="button" id="cancel-edit" style="display: none;">Cancel</button>
                 </div>
             </form>
 
@@ -87,7 +89,12 @@
                         </td>
                         <td th:text="${chore.assignment}"></td>
                         <td th:text="${chore.priority}"></td>
-                        <td><button th:onclick="'/chore/edit/' + ${chore.id}">Edit</button></td>
+                        <td>
+                            <button type="button"
+                                th:attr="onclick=|editChore('${chore.id}', '${chore.choreName}', '${chore.assignment}', '${chore.priority}', '${chore.frequency}')|">
+                                Edit
+                            </button>
+                        </td>
                         <td><button class="delete-btn" th:attr="data-id=${chore.id}">Delete</button></td>
                     </tr>
                 </tbody>

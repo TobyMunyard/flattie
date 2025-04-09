@@ -3,6 +3,7 @@ package com.example.flattie.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -83,38 +85,47 @@ public class ChoreListController {
      * @return The updated chore list page
      */
     @PostMapping("/choreList/add")
-    public String addChore(@ModelAttribute ChoreListItem choreListItem, @AuthenticationPrincipal AppUser user,
-            Model model) {
-        if (user == null) {
-            model.addAttribute("error", "You are not logged in.");
-            return "redirect:/login"; // Redirect to login page if user is not logged in
+    @ResponseBody
+    public ResponseEntity<ChoreListItem> addChore(@ModelAttribute ChoreListItem choreListItem,
+            @AuthenticationPrincipal AppUser user) {
+        if (user == null || user.getFlat() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // Get the flat from the user
         Flat userFlat = user.getFlat();
-        if (userFlat == null) {
-            model.addAttribute("error", "You are not assigned to a flat.");
-            return "redirect:/joinFlat"; // Redirect to join flat page if no flat is assigned
-        }
-
-        // Fetch the current chore list for the flat
         ChoreList choreList = choreListService.getChoreListForFlat(userFlat.getId());
+
         if (choreList == null) {
-            model.addAttribute("error", "Chore list not found for your flat.");
-            return "errorPage";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        // Add the new chore item to the chore list
         choreList.addChore(choreListItem);
-        choreListService.saveChoreList(choreList); // Save the updated chore list
+        choreListService.saveChoreList(choreList);
 
-        // Add updated list to model for rendering
-        model.addAttribute("chores", choreList.getChoreListItems());
+        return ResponseEntity.ok(choreListItem);
+    }
 
-        // Clear the form for next input
-        // model.addAttribute("choreListItem", new ChoreListItem());
+    /**
+     * Handles editing the chore item. The chore is updated in the chore list for
+     * the currently authenticated user's flat.
+     * 
+     * @param id            The ID of the chore item to be edited
+     * @param choreListItem The updated chore item data
+     * @param user          The currently authenticated user
+     * @return A response entity indicating the result of the operation
+     */
+    @PostMapping("/chore/edit/{id}")
+    public ResponseEntity<?> editChore(@PathVariable Long id,
+            @ModelAttribute ChoreListItem choreListItem,
+            @AuthenticationPrincipal AppUser user) {
+        // Validate the user and flat
+        if (user == null || user.getFlat() == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized or flat not found");
+        }
 
-        return "choreList"; // Return the same page to show updated chore list
+        // Update the chore item in the database
+        choreListService.updateChore(id, choreListItem);
+        return ResponseEntity.ok(choreListItem); // return updated data
     }
 
     /**
