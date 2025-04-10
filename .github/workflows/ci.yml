@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up JDK
-      uses: actions/setup-java@v3  # Fixed typo (setUp -> setup)
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -23,13 +23,16 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
-    - name: Build and test with Gradle
-      run: ./gradlew build jacocoTestReport  # Added jacocoTestReport
+    - name: Build with tests and coverage
+      run: |
+        ./gradlew build
+        ./gradlew jacocoTestReport
     
     - name: Upload coverage report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4  # Updated to v4
       with:
         name: coverage-report
         path: |
-          build/reports/jacoco/test/html/**
+          build/reports/jacoco/test/html/
           build/reports/jacoco/test/jacocoTestReport.xml
+        if-no-files-found: warn  # Prevents failure if reports missing
