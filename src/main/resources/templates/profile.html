@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -26,10 +27,24 @@
             <h2 th:text="'Welcome, ' + ${user.firstName}"></h2>
             <p th:text="'Name:        ' + ${user.firstName} + ' ' + ${user.lastName}"></p>
             <p th:text="'Username:        ' + ${user.username}"></p>
-            <button id="edit-account-button">Edit Account</button>
-            <form></form>
+            <button id="editAccountButton">Edit Account</button>
+            <div id="editProfileModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeModalBtn" class="close">&times;</span>
+                    <form id="modalForm" action="/updateUser" method="post">
+                        <h2>Edit Account</h2>
+                        <label>First Name:</label>
+                        <input type="text" name="firstName" th:value="${user.firstName}" required>
+                        <label>Last Name:</label>
+                        <input type="text" name="lastName" th:value="${user.lastName}" required>
+                        <label>Username:</label>
+                        <input type="text" name="username" th:value="${user.username}" required>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
             <form th:action="@{/logout}" method="post">
-                <input type="submit" value="Log Out">
+                <button type="submit">Log Out</button>
             </form>
         </section>
     </div>

@@ -3,6 +3,9 @@ package com.example.flattie.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,7 +50,7 @@ public class CreateAccountController {
             @RequestParam("confirmPassword") String confirmPassword, Model model,
             RedirectAttributes redirectAttributes) {
 
-        // In case no errors occur this will satisy thymeleaf
+        // In case no errors occur this will satisfy thymeleaf
         model.addAttribute("error", null);
 
         // Validation done manually because annotations only work for entire entity and
@@ -85,7 +88,6 @@ public class CreateAccountController {
         return "redirect:/login";
     }
 
-
     /**
      * Creates a default user account for testing purposes. This method is called
      * when the application starts up.
@@ -99,5 +101,40 @@ public class CreateAccountController {
             appUserService.saveAppUser(admin);
             System.out.println("Test account created: Tester / test1234");
         }
+    }
+
+    /**
+     * Called when a user submits the edit account form. Can update first name, last
+     * name and username. Password is updated seperately due to security reasons, as
+     * displaying it is not possible and a huge security flaw.
+     * 
+     * @param firstName The first name of the user.
+     * @param lastName  The last name of the user.
+     * @param username  The username for the user's account.
+     * @return A redirect back to the profile page.
+     */
+    @PostMapping("/updateUser")
+    public String updateUserInfo(@AuthenticationPrincipal AppUser authenticatedUser,
+            @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
+            @RequestParam("username") String username) {
+        // Get user by AuthenticationPrincipal in case username is being changed
+        AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
+                .orElse(null);
+        if (existingUser == null) {
+            // Should not be possible, display error page.
+            return "error";
+        }
+        // Update user information and redirect to the same page so they can see results
+        existingUser.setFirstName(firstName);
+        existingUser.setLastName(lastName);
+        existingUser.setUsername(username);
+        appUserService.saveAppUser(existingUser).toString();
+
+        // Refreshes the whole @AuthenticationPrincipal, refreshing user information for
+        // display instead of requiring logout to see changes.
+        UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                existingUser, null, existingUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+        return "redirect:/profilePage";
     }
 }
