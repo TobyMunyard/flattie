@@ -55,7 +55,9 @@ public class FlatService {
         FlatExpense rentExpense = new FlatExpense();
         rentExpense.setFlat(flat);
         rentExpense.setName("Rent");
+        // System.out.println("Weekly Rent: " + flat.getWeeklyRent());
         rentExpense.setTotalAmount(BigDecimal.valueOf(flat.getWeeklyRent()));
+        // System.out.println("Rent Expense Amount: " + rentExpense.getTotalAmount());
         rentExpense.setExpenseMonth(null); // this is for to support monthly tracking, would use LocalDate.now() for this
 
         // Bind RentExpense to flat

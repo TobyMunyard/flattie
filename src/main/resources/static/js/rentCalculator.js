@@ -1,3 +1,4 @@
+// === SIDEBAR TOGGLE ===
 function openNav() {
     const sidebar = document.getElementById("mySidebar");
     const main = document.getElementById("main");
@@ -17,6 +18,8 @@ function closeNav() {
     document.getElementById("main").style.marginLeft = "0";
 }
 
+// === RENT CALCULATOR ===
+// This script handles the dynamic rent calculator functionality, including slider creation, value adjustment, and event handling.
 document.addEventListener('DOMContentLoaded', function () {
     const totalRentElement = document.getElementById('totalRent');
     const slidersContainer = document.getElementById('sliders');
@@ -25,7 +28,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const decreasePeopleButton = document.getElementById('decreasePeople');
     let numPeople = parseInt(numPeopleInput.value);
     let rentValues = Array(numPeople).fill(100 / numPeople); // Initial equal distribution
-    const totalRent = 1000;
+    let totalRent = 0;
+
+    // Fetch the initial rent value from the server
+    fetch('/api/flat/rent')
+        .then(response => response.json())
+        .then(data => {
+            totalRent = parseFloat(data);
+            totalRentElement.textContent = totalRent.toFixed(2);
+            createSliders(); // only create sliders *after* rent is loaded
+            console.log(totalRent);
+        })
+        .catch(error => {
+            console.error("Failed to fetch rent:", error);
+            totalRent = 404; // fallback default
+            totalRentElement.textContent = totalRent.toFixed(2);
+            createSliders();
+        });
+
     let personNames = Array(numPeople).fill('').map((_, i) => `Person ${i + 1}`);
     let sliderLocked = Array(numPeople).fill(false);
 
@@ -137,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         let currentTotalRent = 0
         for (let i = 0; i < numPeople; i++) {
-          currentTotalRent += totalRent * rentValues[i] / 100
+            currentTotalRent += totalRent * rentValues[i] / 100
         }
         totalRentElement.textContent = currentTotalRent.toFixed(2);
     }
@@ -167,5 +187,11 @@ document.addEventListener('DOMContentLoaded', function () {
         createSliders();
     });
 
-    createSliders(); // Initial slider creation
+    // createSliders(); // Initial slider creation
 });
+
+// === CSRF TOKEN FETCHER ===
+function getCSRFToken() {
+    const tokenMeta = document.querySelector('meta[name="_csrf"]');
+    return tokenMeta ? tokenMeta.getAttribute('content') : '';
+}

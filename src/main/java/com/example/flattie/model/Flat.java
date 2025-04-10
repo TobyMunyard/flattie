@@ -2,6 +2,7 @@ package com.example.flattie.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -37,6 +39,9 @@ public class Flat {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "rent_expense_id")
     private FlatExpense rentExpense; // Rent expense associated with the flat
+
+    @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FlatExpense> expenses = new ArrayList<>(); // List of expenses associated with the flat
 
     // Default constructor required by JPA
     protected Flat() {
@@ -113,14 +118,26 @@ public class Flat {
         this.flatDescription = flatDescription;
     }
 
+    // TODO: refactor to phase out the weeklyRent field to use the rentExpense field
+    // This is a temporary solution to allow for the rent expense to be set
     public double getWeeklyRent() {
-        // Get the weekly rent from the rent expense if it exists
-        return (rentExpense != null) ? rentExpense.getTotalAmount().doubleValue() : 0.0;
+        // Try to get a rent expense from the list
+        if (rentExpense != null && rentExpense.getTotalAmount() != null) {
+            double expenseAmount = rentExpense.getTotalAmount().doubleValue();
+            return (expenseAmount > weeklyRent) ? expenseAmount : weeklyRent;
+        }
+        return weeklyRent;
     }
 
     public void setWeeklyRent(double weeklyRent) {
-        this.rentExpense.setTotalAmount(BigDecimal.valueOf(weeklyRent)); // Update the rent expense
-        this.weeklyRent = weeklyRent; // Update the flat's weekly rent
+        this.weeklyRent = weeklyRent; // Set the weekly rent for the flat
+        // Update the rent expense if it exists
+        if (this.rentExpense != null) {
+            this.rentExpense.setTotalAmount(BigDecimal.valueOf(weeklyRent));
+        } else {
+            // Create a new rent expense if it doesn't exist
+            this.rentExpense = new FlatExpense(this, "Rent", BigDecimal.valueOf(weeklyRent), null);
+        }
     }
 
     public int getRooms() {
@@ -145,5 +162,28 @@ public class Flat {
 
     public void setRentExpense(FlatExpense rentExpense) {
         this.rentExpense = rentExpense;
+    }
+
+    public List<FlatExpense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<FlatExpense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public void addExpense(FlatExpense expense) {
+        expenses.add(expense); // Add the expense to the list
+        expense.setFlat(this); // Set the flat reference in the expense
+
+        // If the expense is a rent expense, set it as the rent expense for the flat
+        if ("rent".equalsIgnoreCase(expense.getName())) {
+            this.rentExpense = expense;
+        }
+    }
+
+    public void removeExpense(FlatExpense expense) {
+        expenses.remove(expense);
+        expense.setFlat(null); // Remove the flat reference from the expense
     }
 }
