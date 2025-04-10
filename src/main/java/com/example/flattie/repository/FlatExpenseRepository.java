@@ -12,7 +12,7 @@ public interface FlatExpenseRepository extends JpaRepository<FlatExpense, Long> 
 
     List<FlatExpense> findByFlat(Flat flat);
 
-    List<FlatExpense> findByFlatAndMonth(Flat flat, LocalDate month);
+    List<FlatExpense> findByFlatAndExpenseMonth(Flat flat, LocalDate expenseMonth);
 
     List<FlatExpense> findByFlat_Id(Long flatId);
 }

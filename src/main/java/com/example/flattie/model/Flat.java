@@ -1,5 +1,6 @@
 package com.example.flattie.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import jakarta.persistence.CascadeType;
@@ -8,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 
 @Entity
@@ -31,6 +33,10 @@ public class Flat {
 
     @OneToOne(mappedBy = "flat", cascade = CascadeType.ALL)
     private ChoreList choreList; // Chore list associated with the flat
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "rent_expense_id")
+    private FlatExpense rentExpense; // Rent expense associated with the flat
 
     // Default constructor required by JPA
     protected Flat() {
@@ -108,11 +114,13 @@ public class Flat {
     }
 
     public double getWeeklyRent() {
-        return weeklyRent;
+        // Get the weekly rent from the rent expense if it exists
+        return (rentExpense != null) ? rentExpense.getTotalAmount().doubleValue() : 0.0;
     }
 
     public void setWeeklyRent(double weeklyRent) {
-        this.weeklyRent = weeklyRent;
+        this.rentExpense.setTotalAmount(BigDecimal.valueOf(weeklyRent)); // Update the rent expense
+        this.weeklyRent = weeklyRent; // Update the flat's weekly rent
     }
 
     public int getRooms() {
@@ -129,5 +137,13 @@ public class Flat {
 
     public void setChoreList(ChoreList choreList) {
         this.choreList = choreList;
+    }
+
+    public FlatExpense getRentExpense() {
+        return rentExpense;
+    }
+
+    public void setRentExpense(FlatExpense rentExpense) {
+        this.rentExpense = rentExpense;
     }
 }
