@@ -41,7 +41,7 @@ public class AppUser implements UserDetails {
     @JoinColumn(name = "flat_id", referencedColumnName = "id")
     private Flat flat;
 
-    protected AppUser() {
+    public AppUser() {
     }
 
     public AppUser(String firstName, String lastName, String username, String password) {

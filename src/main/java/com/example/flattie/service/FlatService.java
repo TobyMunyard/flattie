@@ -12,8 +12,8 @@ import com.example.flattie.model.FlatExpense;
 import com.example.flattie.repository.FlatRepository;
 
 /**
- * Service class for database interaction with User entities.
- * Performs actual calling of UserRepository methods.
+ * Service class for database interaction with Flat entities.
+ * Performs actual calling of FlatRepository methods.
  */
 @Service
 public class FlatService {

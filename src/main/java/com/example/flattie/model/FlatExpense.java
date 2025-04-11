@@ -99,4 +99,5 @@ public class FlatExpense {
         delegations.remove(delegation);
         delegation.setFlatExpense(null);
     }
+
 }

@@ -44,7 +44,7 @@ public class Flat {
     private List<FlatExpense> expenses = new ArrayList<>(); // List of expenses associated with the flat
 
     // Default constructor required by JPA
-    protected Flat() {
+    public Flat() {
     }
 
     // Constructor with all fields
