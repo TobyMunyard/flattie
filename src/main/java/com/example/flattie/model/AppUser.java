@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -39,6 +41,7 @@ public class AppUser implements UserDetails {
 
     @ManyToOne(fetch = FetchType.LAZY) // Many users can belong to one flat
     @JoinColumn(name = "flat_id", referencedColumnName = "id", nullable = true)
+    @JsonIgnore // Prevents circular reference when serializing to JSON
     private Flat flat;
 
     public AppUser() {
