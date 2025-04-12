@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
+import com.example.flattie.repository.AppUserRepository;
 // import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.repository.FlatRepository;
 
@@ -22,6 +23,9 @@ public class FlatService {
 
     // @Autowired
     // private FlatExpenseRepository flatExpenseRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     private final FlatRepository flatRepository;
 
@@ -94,7 +98,7 @@ public class FlatService {
      * @param id The id of the Flat to find flatmates for.
      * @return A list of Flatmate entities associated with the Flat.
      */
-    public List<AppUser> getFlatmates(Long id) {
-        return flatRepository.findByFlatId(id);
+    public List<AppUser> getFlatmates(Long flatId) {
+        return appUserRepository.findByFlat_Id(flatId);
     }
 }

@@ -5,10 +5,8 @@ import com.example.flattie.config.TestSecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
-import com.example.flattie.model.FlatExpenseDelegation;
 import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.service.FlatExpenseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +25,6 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,8 +46,6 @@ public class FlatExpenseControllerTest {
 
     @Autowired
     private FlatExpenseController flatExpenseController;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     private AppUser mockUser;
     private Flat mockFlat;

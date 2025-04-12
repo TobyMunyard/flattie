@@ -1,11 +1,8 @@
 package com.example.flattie.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 
 /**
@@ -17,7 +14,6 @@ import com.example.flattie.model.Flat;
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, Long> {
     boolean existsByAddress(String address); // Custom query method to check if an address exists
+
     Flat findByJoinCode(String joinCode); // Custom query method to find a flat by join code
-    List<AppUser> findByFlatId(Long flatId); // Custom query method to find users by flat ID
-    // Empty right now but can be populated with custom queries at a later date.
 }
