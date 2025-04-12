@@ -1,5 +1,6 @@
 package com.example.flattie.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.repository.AppUserRepository;
+import com.example.flattie.repository.FlatRepository;
 
 /**
  * Service class for database interaction with AppUser entities.
@@ -16,6 +18,9 @@ import com.example.flattie.repository.AppUserRepository;
 @Service
 public class AppUserService {
     private final AppUserRepository appUserRepository;
+
+    @Autowired
+    private FlatRepository flatRepository; // Inject FlatRepository
 
     @Autowired
     public AppUserService(AppUserRepository appUserRepository) {
@@ -66,5 +71,16 @@ public class AppUserService {
         user.setFlat(flat);
         // Save the updated user
         appUserRepository.save(user);
+    }
+
+    public List<Flat> getFlatsForUser(AppUser user) {
+        // Assuming AppUser has a relationship with Flat (e.g., @ManyToMany or @OneToMany)
+        List<Flat> flats = new ArrayList<>();
+        flats.add(user.getFlat());
+        return flats;
+    }
+
+    public void saveFlat(Flat flat) {
+        flatRepository.save(flat);
     }
 }

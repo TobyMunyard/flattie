@@ -43,6 +43,9 @@ public class Flat {
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlatExpense> expenses = new ArrayList<>(); // List of expenses associated with the flat
 
+    @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AppUser> users = new ArrayList<>(); // List of users associated with the flat
+
     // Default constructor required by JPA
     public Flat() {
     }
@@ -185,5 +188,23 @@ public class Flat {
     public void removeExpense(FlatExpense expense) {
         expenses.remove(expense);
         expense.setFlat(null); // Remove the flat reference from the expense
+    }
+
+    public List<AppUser> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<AppUser> users) {
+        this.users = users;
+    }
+
+    public void addUser(AppUser user) {
+        this.users.add(user);
+        user.setFlat(this); // Ensure bidirectional consistency
+    }
+
+    public void removeUser(AppUser user) {
+        this.users.remove(user);
+        user.setFlat(null); // Ensure bidirectional consistency
     }
 }

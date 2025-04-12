@@ -67,5 +67,18 @@ public class CreateAccountControllerTest {
         verify(passwordEncoder, times(1)).encode("validPassword");
     }
 
+    @Test
+    public void testMismatchPassword() throws Exception {
+        mockMvc.perform(post("/createAccount")
+                .param("firstName", "John")
+                .param("lastName", "Doe")
+                .param("username", "johnny123")
+                .param("password", "ThisIs2short")
+                .param("confirmPassword", "ThisIs2short1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/createAccount"))
+                .andExpect(flash().attribute("error", "Passwords do not match."));
+    }
+
     
 }
