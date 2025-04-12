@@ -6,6 +6,7 @@ let rentValues = [];
 let numPeople = 1; // Default number of people since you must be signed in AND in a flat to view the page- will be updated on load 
 let personNames = [];
 let expenseId = null;
+let sliderLocked = [];
 let totalRent = 0;
 
 // === SIDEBAR TOGGLE ===
@@ -39,15 +40,6 @@ function clearDirty() {
     document.getElementById('delegation-controls').style.display = 'none';
 }
 
-// === DELEGATION COLLECTION FUNCTION ===
-function restoreDelegations(delegations) {
-    numPeople = delegations.length;
-    rentValues = delegations.map(d => Math.max(0, Math.min(100, (d.amount / totalRent) * 100)));
-    personNames = delegations.map((d, i) => flatmates.find(f => f.id === d.flatmate.id)?.username || `Person ${i + 1}`);
-    sliderLocked = Array(numPeople).fill(false);
-    createSliders();
-}
-
 // === DELEGATION PAYLOAD FUNCTION ===
 // This function collects the delegation payload for saving to the server.
 function collectDelegationPayload() {
@@ -58,6 +50,7 @@ function collectDelegationPayload() {
         };
     });
 }
+
 
 // === RENT CALCULATOR ===
 // This script handles the dynamic rent calculator functionality, including slider creation, value adjustment, and event handling.
@@ -81,8 +74,9 @@ document.addEventListener('DOMContentLoaded', function () {
             totalRentElement.textContent = totalRent.toFixed(2);
             flatmates = flatmateData;
             numPeople = flatmates.length;
-            personNames = flatmates.map(m => m.username);
             createSliders();
+
+            restoreDelegationsFromServer(); // Restore delegations from server
         })
         .catch(error => {
             console.error("Failed to fetch rent or flatmates:", error);
@@ -95,15 +89,18 @@ document.addEventListener('DOMContentLoaded', function () {
             createSliders();
         });
 
-
-    personNames = Array(numPeople).fill('').map((_, i) => `Person ${i + 1}`);
-    let sliderLocked = Array(numPeople).fill(false);
-
     function createSliders() {
+        console.log("🔄 createSliders called. Flatmates:", flatmates);
         slidersContainer.innerHTML = ''; // Clear existing sliders
-        rentValues = Array(numPeople).fill(100 / numPeople); // Reset rent values
+        // Reset rentValues and personNames if they are not set or have incorrect length
+        if (!rentValues || rentValues.length !== numPeople) {
+            rentValues = Array(numPeople).fill(100 / numPeople);
+        }
         personNames = flatmates.map(m => m.username);
-        sliderLocked = Array(numPeople).fill(false);
+        // Reset sliderLocked if it is not set or has incorrect length
+        if (!sliderLocked || sliderLocked.length !== numPeople) {
+            sliderLocked = Array(numPeople).fill(false);
+        }
 
         for (let i = 0; i < numPeople; i++) {
             const sliderContainer = document.createElement('div');
@@ -156,13 +153,13 @@ document.addEventListener('DOMContentLoaded', function () {
             sliderContainer.appendChild(sliderValueContainer);
 
             const lockIcon = document.createElement('i');
-            lockIcon.classList.add('fas', 'fa-lock', 'slider-lock');
-            lockIcon.style.color = sliderLocked[i] ? 'green' : 'red';
+            lockIcon.classList.add('fas', 'fa-unlock', 'slider-lock');
+            lockIcon.style.color = sliderLocked[i] ? 'red' : 'green';
             lockIcon.addEventListener('click', () => {
                 sliderLocked[i] = !sliderLocked[i];
-                lockIcon.classList.toggle('fa-lock', !sliderLocked[i]);
-                lockIcon.classList.toggle('fa-unlock', sliderLocked[i]);
-                lockIcon.style.color = sliderLocked[i] ? 'green' : 'red';
+                lockIcon.classList.toggle('fa-unlock', !sliderLocked[i]);
+                lockIcon.classList.toggle('fa-lock', sliderLocked[i]);
+                lockIcon.style.color = sliderLocked[i] ? 'red' : 'green';
             });
             sliderContainer.appendChild(lockIcon);
 
@@ -175,8 +172,6 @@ document.addEventListener('DOMContentLoaded', function () {
         let sum = rentValues.reduce((acc, val) => acc + val, 0);
         let difference = sum - 100;
 
-        if (difference === 0) return; // No adjustment needed
-        isDirty = true; // Mark as dirty when sliders are adjusted
         let otherSlidersSum = 0;
         let adjustCount = 0;
         for (let i = 0; i < numPeople; i++) {
@@ -185,11 +180,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 adjustCount++;
             }
         }
-
-        if (otherSlidersSum <= 0 || adjustCount === 0) {
-            return;
-        }
-
+        
+        if (difference === 0 || adjustCount === 0 || otherSlidersSum <= 0) return; // No adjustment needed
+        
+        
+        markDirty(); // Mark as dirty when sliders are adjusted
+        
         for (let i = 0; i < numPeople; i++) {
             if (i !== changedIndex && !sliderLocked[i]) {
                 rentValues[i] -= (rentValues[i] / otherSlidersSum) * difference;
@@ -235,6 +231,73 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+    // === DELEGATION COLLECTION FUNCTION ===
+    function restoreDelegations(delegations) {
+        rentValues = delegations.map(d => d.amount / totalRent * 100);
+        personNames = delegations.map((d, i) =>
+            flatmates.find(f => f.id === d.flatmate.id)?.username || `Person ${i + 1}`
+        );
+        updateSliderValues(); // Update the sliders with the restored values
+        updateValidationStatus();
+    }
+
+    // === RESTORE DELEGATIONS FUNCTION ===
+    // This function fetches the delegations from the server and restores them in the UI.
+    async function restoreDelegationsFromServer() {
+        try {
+            const res = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`);
+            const delegations = await res.json();
+
+            if (!delegations || delegations.length === 0) {
+                console.log("ℹ️ No saved delegations — using even split.");
+                rentValues = Array(numPeople).fill(100 / numPeople);
+                updateSliderValues();
+                clearDirty();
+                return;
+            }
+
+            restoreDelegations(delegations);
+            clearDirty();
+        } catch (err) {
+            console.warn("Failed to load delegations from server, resetting to even split.", err);
+            rentValues = Array(numPeople).fill(100 / numPeople);
+            updateSliderValues();
+            clearDirty();
+        }
+    }
+
+
+    // === UNDO BUTTON ===
+    document.getElementById('undoDelegationsBtn').addEventListener('click', restoreDelegationsFromServer);
+
+    // === SAVE BUTTON ===
+    document.getElementById('saveDelegationsBtn').addEventListener('click', async () => {
+        const payload = collectDelegationPayload();
+
+        try {
+            const response = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                const errorMsg = await response.text();
+                alert("❌ Save failed: " + errorMsg);
+                return;
+            }
+
+            clearDirty();
+            document.getElementById('saveStatus').style.display = 'block';
+            setTimeout(() => document.getElementById('saveStatus').style.display = 'none', 2000);
+        } catch (err) {
+            alert("❌ Could not reach server: " + err.message);
+        }
+    });
+
+
     // === FALLBACK CONTROL ===
     window.addEventListener("beforeunload", function (e) {
         if (isDirty) {
@@ -242,39 +305,4 @@ document.addEventListener('DOMContentLoaded', function () {
             e.returnValue = "You have unsaved changes. Are you sure you want to leave?"; // returnValue is marked as deprecated
         }
     });
-});
-
-// === SAVE BUTTON ===
-document.getElementById('saveDelegationsBtn').addEventListener('click', async () => {
-    const payload = collectDelegationPayload();
-
-    try {
-        const response = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            credentials: 'same-origin'
-        });
-
-        if (!response.ok) {
-            const errorMsg = await response.text();
-            alert("❌ Save failed: " + errorMsg);
-            return;
-        }
-
-        clearDirty();
-        document.getElementById('saveStatus').style.display = 'block';
-        setTimeout(() => document.getElementById('saveStatus').style.display = 'none', 2000);
-    } catch (err) {
-        alert("❌ Could not reach server: " + err.message);
-    }
-});
-
-
-// === UNDO BUTTON ===
-document.getElementById('undoDelegationsBtn').addEventListener('click', async () => {
-    const response = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`);
-    const delegations = await response.json();
-    restoreDelegations(delegations);
-    clearDirty();
 });

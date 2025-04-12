@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -85,13 +87,37 @@ public class FlatExpenseController {
             @RequestParam("expenseId") Long expenseId,
             @RequestBody List<FlatExpenseDelegation> delegations) {
         try {
-            FlatExpense updated = flatExpenseService.saveDelegations(user, expenseId, delegations);
-            return ResponseEntity.ok(updated);
+            flatExpenseService.saveDelegations(user, expenseId, delegations);
+            return ResponseEntity.ok("Delegations saved successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
         }
+    }
+
+    /**
+     * Returns the delegations for a specific expense. This method is called when the
+     * user accesses the /api/flat/expense/delegations endpoint.
+     *
+     * @param expenseId The ID of the expense for which to retrieve delegations.
+     * @return A list of delegations associated with the specified expense.
+     */
+    @GetMapping("/api/flat/expense/delegations")
+    @ResponseBody
+    public List<Map<String, Object>> getDelegations(@RequestParam("expenseId") Long expenseId) {
+        FlatExpense expense = flatExpenseRepository.findById(expenseId)
+                .orElseThrow(() -> new IllegalArgumentException("Expense not found"));
+
+        // Only return the flatmate ID and amount (no circular reference risk)
+        return expense.getDelegations().stream()
+                .map(d -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("flatmate", Map.of("id", d.getFlatmate().getId()));
+                    data.put("amount", d.getAmount());
+                    return data;
+                })
+                .toList();
     }
 
     /**
