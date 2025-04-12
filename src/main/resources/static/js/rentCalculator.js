@@ -1,6 +1,7 @@
-// === STATE FLAGS ===
+// === GLOBAL VARIABLES ===
 let isDirty = false;
 let initialDelegations = [];
+let flatmates = []; // Will store flatmate objects with id, username, etc.
 
 // === SIDEBAR TOGGLE ===
 function openNav() {
@@ -36,8 +37,8 @@ function clearDirty() {
 // === DELEGATION COLLECTION FUNCTION ===
 function restoreDelegations(delegations) {
     numPeople = delegations.length;
-    rentValues = delegations.map(d => (d.amount / totalRent) * 100);
-    personNames = delegations.map((_, i) => `Person ${i + 1}`);
+    rentValues = delegations.map(d => Math.max(0, Math.min(100, (d.amount / totalRent) * 100)));
+    personNames = delegations.map((d, i) => flatmates.find(f => f.id === d.flatmate.id)?.username || `Person ${i + 1}`);
     sliderLocked = Array(numPeople).fill(false);
     createSliders();
 }
@@ -47,7 +48,7 @@ function restoreDelegations(delegations) {
 function collectDelegationPayload() {
     return rentValues.map((value, i) => {
         return {
-            flatmate: { id: i + 1 }, // TEMPORARY ID — replace when real flatmate list is loaded
+            flatmate: { id: flatmates[i].id },
             amount: parseFloat((totalRent * value / 100).toFixed(2))
         };
     });
@@ -58,26 +59,31 @@ function collectDelegationPayload() {
 document.addEventListener('DOMContentLoaded', function () {
     const totalRentElement = document.getElementById('totalRent');
     const slidersContainer = document.getElementById('sliders');
-    const numPeopleInput = document.getElementById('numPeople');
-    const increasePeopleButton = document.getElementById('increasePeople');
-    const decreasePeopleButton = document.getElementById('decreasePeople');
-    let numPeople = parseInt(numPeopleInput.value);
+    let numPeople = 1; // Default number of people
     let rentValues = Array(numPeople).fill(100 / numPeople); // Initial equal distribution
     let totalRent = 0;
 
-    // Fetch the initial rent value from the server
-    fetch('/api/flat/rent')
-        .then(response => response.json())
-        .then(data => {
-            totalRent = parseFloat(data);
+    // Fetching initial data from the server - this is to prevent race condiditons and stale values
+    let rentPromise = fetch('/api/flat/rent').then(res => res.json());
+    let flatmatePromise = fetch('/api/flat/flatmates').then(res => res.json());
+
+    // Fetch the rent value and flatmates from the server
+    Promise.all([rentPromise, flatmatePromise])
+        .then(([rentData, flatmateData]) => {
+            totalRent = parseFloat(rentData);
             totalRentElement.textContent = totalRent.toFixed(2);
-            createSliders(); // only create sliders *after* rent is loaded
-            console.log(totalRent);
+            flatmates = flatmateData;
+            numPeople = flatmates.length;
+            personNames = flatmates.map(m => m.username);
+            createSliders();
         })
         .catch(error => {
-            console.error("Failed to fetch rent:", error);
-            totalRent = 404; // fallback default
-            totalRentElement.textContent = totalRent.toFixed(2);
+            console.error("Failed to fetch rent or flatmates:", error);
+            // Fallback setup
+            totalRent = 404;
+            flatmates = [];
+            numPeople = 0;
+            personNames = [];
             createSliders();
         });
 
@@ -87,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function createSliders() {
         slidersContainer.innerHTML = ''; // Clear existing sliders
         rentValues = Array(numPeople).fill(100 / numPeople); // Reset rent values
-        personNames = Array(numPeople).fill('').map((_, i) => personNames[i] || `Person ${i + 1}`);
+        personNames = flatmates.map(m => m.username);
         sliderLocked = Array(numPeople).fill(false);
 
         for (let i = 0; i < numPeople; i++) {
@@ -204,7 +210,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const statusBar = document.getElementById('validationStatus');
         const delegatedTotal = rentValues.reduce((sum, val) => sum + (val * totalRent / 100), 0);
         const isValid = Math.round(delegatedTotal) === Math.round(totalRent);
-
+        
+        document.getElementById('saveDelegationsBtn').disabled = !isValid; // Disable save button if not valid
+        document.getElementById('undoDelegationsBtn').disabled = !isDirty; // Disable undo button if not dirty
+        
         if (isValid) {
             statusBar.textContent = `✅ Total Delegated: $${delegatedTotal.toFixed(2)} / $${totalRent.toFixed(2)} — Ready to save`;
             statusBar.classList.add('valid');
@@ -217,31 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
             statusBar.classList.remove('valid');
         }
     }
-
-    increasePeopleButton.addEventListener('click', function () {
-        numPeople = parseInt(numPeopleInput.value);
-        numPeople++;
-        numPeopleInput.value = numPeople;
-        createSliders();
-    });
-
-    decreasePeopleButton.addEventListener('click', function () {
-        numPeople = parseInt(numPeopleInput.value);
-        if (numPeople > 1) {
-            numPeople--;
-            numPeopleInput.value = numPeople;
-            createSliders();
-        }
-    });
-
-    numPeopleInput.addEventListener('change', function () {
-        numPeople = parseInt(this.value);
-        if (isNaN(numPeople) || numPeople < 1) {
-            numPeople = 1;
-            this.value = 1;
-        }
-        createSliders();
-    });
 
     // === FALLBACK CONTROL ===
     window.addEventListener("beforeunload", function (e) {
@@ -271,7 +255,7 @@ document.getElementById('saveDelegationsBtn').addEventListener('click', async ()
 document.getElementById('undoDelegationsBtn').addEventListener('click', async () => {
     const response = await fetch(`/api/flat/expense/delegations?expenseId=5`);
     const delegations = await response.json();
-    restoreDelegations(delegations); // you'll implement this
+    restoreDelegations(delegations);
     clearDirty();
 });
 

@@ -14,40 +14,42 @@
 
 <body>
 
-    <!-- Directly inject the sidebar from /fragments/ -->
+    <!-- Sidebar -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
+    <!-- Main Content -->
     <div id="main">
         <button class="openbtn" onclick="openNav()">☰</button>
+
         <div class="calculator-container">
             <h1><i class="fas fa-calculator"></i> Rent Calculator</h1>
+
+            <!-- Total Rent Display -->
             <div class="total-rent">
                 Total Rent: $<span id="totalRent">Loading...</span>
             </div>
-            <div id="validationStatus" class="status-bar">
-                <!-- JS will populate this -->
+
+            <!-- Real-time Validation Feedback -->
+            <div id="validationStatus" class="status-bar"></div>
+
+            <!-- Slider Elements Will Be Injected Here -->
+            <div id="sliders" class="sliders-container">
+                <!-- JS will dynamically populate flatmate sliders here -->
             </div>
 
-            <div>
-                <!-- Display the number of people, currently is placeholder, needs to get the account/s assigned to flat and add them instead-->
-                <label for="numPeople">Number of People:</label>
-                <button id="decreasePeople">-</button>
-                <input type="number" id="numPeople" value="1" min="1">
-                <button id="increasePeople">+</button>
+            <!-- Delegation Controls -->
+            <div id="delegation-controls" class="button-group" style="display: none;">
+                <button id="saveDelegationsBtn" disabled>💾 Save</button>
+                <button id="undoDelegationsBtn" disabled>↩️ Undo</button>
             </div>
 
-            <div id="sliders">
-                <!-- Sliders will be added here -->
-                <!-- Slider lock needs to work smh-->
+            <!-- Save Feedback Message -->
+            <div id="saveStatus" style="display:none; color:green; margin-top:5px;">
+                ✅ Changes saved!
             </div>
-
-            <div id="delegation-controls" style="display: none;">
-                <button id="saveDelegationsBtn">Save</button>
-                <button id="undoDelegationsBtn">Undo</button>
-            </div>
-            <div id="saveStatus" style="display:none; color:green; margin-top:5px;">✅ Changes saved!</div>
         </div>
     </div>
+
     <script src="/js/rentCalculator.js"></script>
 </body>
 
