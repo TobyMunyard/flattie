@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
 // import com.example.flattie.repository.FlatExpenseRepository;
@@ -59,7 +60,8 @@ public class FlatService {
         // System.out.println("Weekly Rent: " + flat.getWeeklyRent());
         rentExpense.setTotalAmount(BigDecimal.valueOf(flat.getWeeklyRent()));
         // System.out.println("Rent Expense Amount: " + rentExpense.getTotalAmount());
-        rentExpense.setExpenseMonth(null); // this is for to support monthly tracking, would use LocalDate.now() for this
+        rentExpense.setExpenseMonth(null); // this is for to support monthly tracking, would use LocalDate.now() for
+                                           // this
 
         // Bind RentExpense to flat
         flat.setRentExpense(rentExpense);
@@ -86,13 +88,13 @@ public class FlatService {
         return flat.orElse(null); // Return the flat if found, otherwise return null
     }
 
-    
-
-    /** 
+    /**
      * Finds all flatmates associated with a flat by the flat id.
      * 
      * @param id The id of the Flat to find flatmates for.
      * @return A list of Flatmate entities associated with the Flat.
      */
-
+    public List<AppUser> getFlatmates(Long id) {
+        return flatRepository.findByFlatId(id);
+    }
 }

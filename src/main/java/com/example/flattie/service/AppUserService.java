@@ -26,7 +26,7 @@ public class AppUserService {
     public AppUserService(AppUserRepository appUserRepository) {
         this.appUserRepository = appUserRepository;
     }
- 
+
     /**
      * Gets all users currently in the database.
      * 
@@ -55,7 +55,7 @@ public class AppUserService {
         appUserRepository.deleteById(id);
     }
 
-    public Optional<AppUser> getAppUserByUsername(String username){
+    public Optional<AppUser> getAppUserByUsername(String username) {
         return appUserRepository.getAppUserByUsername(username);
     }
 
@@ -73,8 +73,11 @@ public class AppUserService {
         appUserRepository.save(user);
     }
 
+    // TODO: do we actually need this? its assumed that a user can only be in one
+    // flat at a time
     public List<Flat> getFlatsForUser(AppUser user) {
-        // Assuming AppUser has a relationship with Flat (e.g., @ManyToMany or @OneToMany)
+        // Assuming AppUser has a relationship with Flat (e.g., @ManyToMany or
+        // @OneToMany)
         List<Flat> flats = new ArrayList<>();
         flats.add(user.getFlat());
         return flats;
