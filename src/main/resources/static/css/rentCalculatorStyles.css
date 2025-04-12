@@ -1,0 +1,8 @@
+.status-bar {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+.status-bar.valid { color: green; }
+.status-bar.invalid { color: red; }
+.status-bar.warning { color: orange; }

@@ -1,3 +1,7 @@
+// === STATE FLAGS ===
+let isDirty = false;
+let initialDelegations = [];
+
 // === SIDEBAR TOGGLE ===
 function openNav() {
     const sidebar = document.getElementById("mySidebar");
@@ -16,6 +20,37 @@ function openNav() {
 function closeNav() {
     document.getElementById("mySidebar").style.width = "0";
     document.getElementById("main").style.marginLeft = "0";
+}
+
+// === STATE UPDATE FUNCTIONS ===
+function markDirty() {
+    isDirty = true;
+    document.getElementById('delegation-controls').style.display = 'block';
+}
+
+function clearDirty() {
+    isDirty = false;
+    document.getElementById('delegation-controls').style.display = 'none';
+}
+
+// === DELEGATION COLLECTION FUNCTION ===
+function restoreDelegations(delegations) {
+    numPeople = delegations.length;
+    rentValues = delegations.map(d => (d.amount / totalRent) * 100);
+    personNames = delegations.map((_, i) => `Person ${i + 1}`);
+    sliderLocked = Array(numPeople).fill(false);
+    createSliders();
+}
+
+// === DELEGATION PAYLOAD FUNCTION ===
+// This function collects the delegation payload for saving to the server.
+function collectDelegationPayload() {
+    return rentValues.map((value, i) => {
+        return {
+            flatmate: { id: i + 1 }, // TEMPORARY ID — replace when real flatmate list is loaded
+            amount: parseFloat((totalRent * value / 100).toFixed(2))
+        };
+    });
 }
 
 // === RENT CALCULATOR ===
@@ -100,6 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 rentValues[i] = parseFloat(this.value) * 100 / totalRent;
                 adjustSliders(i);
                 updateSliderValues();
+                markDirty();
             });
             sliderValueContainer.textContent = '$';
             sliderValueContainer.appendChild(percentageInput);
@@ -126,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let difference = sum - 100;
 
         if (difference === 0) return; // No adjustment needed
-
+        isDirty = true; // Mark as dirty when sliders are adjusted
         let otherSlidersSum = 0;
         let adjustCount = 0;
         for (let i = 0; i < numPeople; i++) {
@@ -160,6 +196,26 @@ document.addEventListener('DOMContentLoaded', function () {
             currentTotalRent += totalRent * rentValues[i] / 100
         }
         totalRentElement.textContent = currentTotalRent.toFixed(2);
+        updateValidationStatus()
+    }
+
+
+    function updateValidationStatus() {
+        const statusBar = document.getElementById('validationStatus');
+        const delegatedTotal = rentValues.reduce((sum, val) => sum + (val * totalRent / 100), 0);
+        const isValid = Math.round(delegatedTotal) === Math.round(totalRent);
+
+        if (isValid) {
+            statusBar.textContent = `✅ Total Delegated: $${delegatedTotal.toFixed(2)} / $${totalRent.toFixed(2)} — Ready to save`;
+            statusBar.classList.add('valid');
+            statusBar.classList.remove('invalid');
+        } else {
+            const diff = delegatedTotal - totalRent;
+            const sign = diff > 0 ? 'Overbudget' : 'Underbudget';
+            statusBar.textContent = `❌ Total Delegated: $${delegatedTotal.toFixed(2)} / $${totalRent.toFixed(2)} — ${sign}`;
+            statusBar.classList.add('invalid');
+            statusBar.classList.remove('valid');
+        }
     }
 
     increasePeopleButton.addEventListener('click', function () {
@@ -187,7 +243,36 @@ document.addEventListener('DOMContentLoaded', function () {
         createSliders();
     });
 
-    // createSliders(); // Initial slider creation
+    // === FALLBACK CONTROL ===
+    window.addEventListener("beforeunload", function (e) {
+        if (isDirty) {
+            e.preventDefault();
+            e.returnValue = "You have unsaved changes. Are you sure you want to leave?"; // returnValue is marked as deprecated
+        }
+    });
+});
+
+// === SAVE BUTTON ===
+document.getElementById('saveDelegationsBtn').addEventListener('click', async () => {
+    const payload = collectDelegationPayload();
+
+    await fetch(`/api/flat/expense/delegations?expenseId=5`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    clearDirty();
+    document.getElementById('saveStatus').style.display = 'block';
+    setTimeout(() => document.getElementById('saveStatus').style.display = 'none', 2000);
+});
+
+// === UNDO BUTTON ===
+document.getElementById('undoDelegationsBtn').addEventListener('click', async () => {
+    const response = await fetch(`/api/flat/expense/delegations?expenseId=5`);
+    const delegations = await response.json();
+    restoreDelegations(delegations); // you'll implement this
+    clearDirty();
 });
 
 // === CSRF TOKEN FETCHER ===

@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rent Calculator</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/rentCalculator.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    
+
     <!-- Directly inject the sidebar from /fragments/ -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
@@ -22,6 +23,9 @@
             <h1><i class="fas fa-calculator"></i> Rent Calculator</h1>
             <div class="total-rent">
                 Total Rent: $<span id="totalRent">Loading...</span>
+            </div>
+            <div id="validationStatus" class="status-bar">
+                <!-- JS will populate this -->
             </div>
 
             <div>
@@ -36,6 +40,12 @@
                 <!-- Sliders will be added here -->
                 <!-- Slider lock needs to work smh-->
             </div>
+
+            <div id="delegation-controls" style="display: none;">
+                <button id="saveDelegationsBtn">Save</button>
+                <button id="undoDelegationsBtn">Undo</button>
+            </div>
+            <div id="saveStatus" style="display:none; color:green; margin-top:5px;">✅ Changes saved!</div>
         </div>
     </div>
     <script src="/js/rentCalculator.js"></script>

@@ -79,4 +79,11 @@ public class FlatService {
         return flatRepository.findByJoinCode(joinCode);
     }
 
+    /** 
+     * Finds all flatmates associated with a flat by the flat id.
+     * 
+     * @param id The id of the Flat to find flatmates for.
+     * @return A list of Flatmate entities associated with the Flat.
+     */
+
 }
