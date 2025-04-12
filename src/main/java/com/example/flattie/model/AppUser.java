@@ -37,8 +37,8 @@ public class AppUser implements UserDetails {
     @Size(min = 7, message = "Password must be at least 7 characters long")
     private String password;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "flat_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY) // Many users can belong to one flat
+    @JoinColumn(name = "flat_id", referencedColumnName = "id", nullable = true)
     private Flat flat;
 
     protected AppUser() {

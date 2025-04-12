@@ -25,42 +25,24 @@ public class JoinFlatController {
     private FlatService flatService;
 
     @PostMapping("/joinFlat")
-    public String joinFlat(@AuthenticationPrincipal AppUser user, @RequestParam("flat_code") String flatCode, Model model) {
-        // Retrieve the flat by its join code
-        Flat flat = flatService.findByJoinCode(flatCode);
-
-        if (flat == null) {
-            // If no flat is found, add an error message
-            model.addAttribute("error", "Invalid flat code. Please try again.");
-            return "joinFlat"; // Render the same page with error message
-        } else {
-            // Pass the flat information to the view
-            model.addAttribute("flat", flat);
-        }
-
-        // Retrieve the list of all flats (optional, if needed for the grid)
-        List<Flat> flats = flatService.getAllFlats();
-        model.addAttribute("flats", flats);
-
-        // Set the logged-in user's flat to current flat
-        if (user != null) {
-            // Update the user's flat association in the database
-            appUserService.joinFlat(user, flat);
-        } else {
-            return "redirect:/login"; // Not logged in? Send them to login.
-        }
-
-        return "joinFlat"; // Render the same page with updated information
+public String joinFlat(@AuthenticationPrincipal AppUser user, @RequestParam("flat_code") String flatCode, Model model) {
+    if (user == null) {
+        return "redirect:/login"; // Not logged in? Send them to login.
     }
 
-    @GetMapping("/joinFlatPage")
-    public String showJoinFlatPage(Model model) {
-        // Retrieve the list of all flats
-        List<Flat> flats = flatService.getAllFlats();
+    // Retrieve the flat by its join code
+    Flat flat = flatService.findByJoinCode(flatCode);
 
-        // Add the list of flats to the model
-        model.addAttribute("flats", flats);
+    if (flat == null) {
+        // If no flat is found, add an error message
+        model.addAttribute("error", "Invalid flat code. Please try again.");
+        return "joinFlat"; // Render the same page with error message
+    }
 
-        return "joinFlat"; // Render the joinFlat.html page
+    // Update the user's flat association in the database
+    appUserService.joinFlat(user, flat);
+
+    // Redirect to the Flat Info page with the flat ID
+    return "redirect:/showFlatInfo?flatId=" + flat.getId();
     }
 }

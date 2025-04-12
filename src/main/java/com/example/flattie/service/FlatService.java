@@ -2,6 +2,7 @@ package com.example.flattie.service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,5 +79,13 @@ public class FlatService {
     public Flat findByJoinCode(String joinCode) {
         return flatRepository.findByJoinCode(joinCode);
     }
+
+    public Flat findById(Long id) {
+        // Use the built-in findById method from JpaRepository
+        Optional<Flat> flat = flatRepository.findById(id);
+        return flat.orElse(null); // Return the flat if found, otherwise return null
+    }
+
+    
 
 }
