@@ -104,7 +104,7 @@ public class FlatExpenseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonDelegations))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(expenseId));
+                .andExpect(content().string("Delegations saved successfully."));
 
         verify(flatExpenseService, times(1))
                 .saveDelegations(eq(mockUser), eq(expenseId), any());
