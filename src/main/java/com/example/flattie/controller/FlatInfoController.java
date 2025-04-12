@@ -1,6 +1,8 @@
 package com.example.flattie.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -94,7 +96,18 @@ public class FlatInfoController {
      */
     @GetMapping("/api/flat/flatmates")
     @ResponseBody
-    public List<AppUser> getFlatmates(@AuthenticationPrincipal AppUser user) {
-        return flatService.getFlatmates(user.getFlat().getId());
+    public List<Map<String, Object>> getFlatmates(@AuthenticationPrincipal AppUser user) {
+        // This was a workaround to avoid circular reference issues. Trims the data to
+        // only include the id and username of each flatmate.
+        return flatService.getFlatmates(user.getFlat().getId())
+                .stream()
+                .map(flatmate -> {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("id", flatmate.getId());
+                    data.put("username", flatmate.getUsername());
+                    return data;
+                })
+                .toList();
     }
+
 }

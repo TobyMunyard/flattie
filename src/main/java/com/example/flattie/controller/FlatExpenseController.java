@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,10 +80,30 @@ public class FlatExpenseController {
      */
     @PostMapping("/api/flat/expense/delegations")
     @ResponseBody
-    public FlatExpense setFlatExpenseDelegations(
+    public ResponseEntity<?> setFlatExpenseDelegations(
             @AuthenticationPrincipal AppUser user,
             @RequestParam("expenseId") Long expenseId,
             @RequestBody List<FlatExpenseDelegation> delegations) {
-        return flatExpenseService.saveDelegations(user, expenseId, delegations);
+        try {
+            FlatExpense updated = flatExpenseService.saveDelegations(user, expenseId, delegations);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Returns the rent expense ID for the current user's flat. This method is
+     * called when the user accesses the /api/flat/rent-expense-id endpoint.
+     *
+     * @param user The current authenticated user.
+     * @return The ID of the rent expense associated with the user's flat.
+     */
+    @GetMapping("/api/flat/rent-expense-id")
+    @ResponseBody
+    public Long getRentExpenseId(@AuthenticationPrincipal AppUser user) {
+        return user.getFlat().getRentExpense().getId();
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.FlatExpense;
 import com.example.flattie.model.FlatExpenseDelegation;
+import com.example.flattie.repository.AppUserRepository;
 import com.example.flattie.repository.FlatExpenseDelegationRepository;
 import com.example.flattie.repository.FlatExpenseRepository;
 
@@ -24,6 +25,9 @@ public class FlatExpenseService {
 
     @Autowired
     private FlatExpenseRepository flatExpenseRepository;
+
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Autowired
     private FlatExpenseDelegationRepository flatExpenseDelegationRepository;
@@ -74,24 +78,33 @@ public class FlatExpenseService {
             throw new IllegalArgumentException("Delegation amounts must sum to the total expense amount.");
         }
 
-        // Check if the delegations are associated with the user's flat and validate each
+        // Check if the delegations are associated with the user's flat and validate
+        // each
         // delegation before saving
         for (FlatExpenseDelegation delegation : delegations) {
-            AppUser flatmate = delegation.getFlatmate();
-
-            if (flatmate == null || flatmate.getFlat() == null || flatmate.getFlat().getId() == null) {
-                throw new IllegalArgumentException("Delegation must include a valid flatmate with an associated flat.");
+            Long flatmateId = delegation.getFlatmate() != null ? delegation.getFlatmate().getId() : null;
+            if (flatmateId == null) {
+                throw new IllegalArgumentException("Delegation must include a flatmate ID.");
             }
+
+            AppUser flatmate = appUserRepository.findById(flatmateId)
+                    .orElseThrow(() -> new IllegalArgumentException("Flatmate not found."));
 
             if (!Objects.equals(flatmate.getFlat().getId(), user.getFlat().getId())) {
-                throw new IllegalArgumentException("Delegation flatmate is not part of the user's flat.");
+                throw new IllegalArgumentException("Flatmate is not part of the current user's flat.");
             }
 
+            delegation.setFlatmate(flatmate);
             delegation.setFlatExpense(expense);
+
         }
 
         // Save the delegations and update the expense with the new delegations
-        expense.setDelegations(delegations);
+        expense.getDelegations().clear(); // remove old ones
+        for (FlatExpenseDelegation delegation : delegations) {
+            delegation.setFlatExpense(expense); // set the owning side
+        }
+        expense.getDelegations().addAll(delegations); // re-attach new ones
         flatExpenseDelegationRepository.saveAll(delegations);
         flatExpenseRepository.save(expense);
 

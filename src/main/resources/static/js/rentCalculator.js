@@ -2,6 +2,11 @@
 let isDirty = false;
 let initialDelegations = [];
 let flatmates = []; // Will store flatmate objects with id, username, etc.
+let rentValues = [];
+let numPeople = 1; // Default number of people since you must be signed in AND in a flat to view the page- will be updated on load 
+let personNames = [];
+let expenseId = null;
+let totalRent = 0;
 
 // === SIDEBAR TOGGLE ===
 function openNav() {
@@ -59,18 +64,20 @@ function collectDelegationPayload() {
 document.addEventListener('DOMContentLoaded', function () {
     const totalRentElement = document.getElementById('totalRent');
     const slidersContainer = document.getElementById('sliders');
-    let numPeople = 1; // Default number of people
-    let rentValues = Array(numPeople).fill(100 / numPeople); // Initial equal distribution
-    let totalRent = 0;
+
+    rentValues = Array(numPeople).fill(100 / numPeople); // Initial equal distribution
 
     // Fetching initial data from the server - this is to prevent race condiditons and stale values
     let rentPromise = fetch('/api/flat/rent').then(res => res.json());
     let flatmatePromise = fetch('/api/flat/flatmates').then(res => res.json());
+    let expenseIdPromise = fetch('/api/flat/rent-expense-id').then(res => res.json());
+
 
     // Fetch the rent value and flatmates from the server
-    Promise.all([rentPromise, flatmatePromise])
-        .then(([rentData, flatmateData]) => {
+    Promise.all([rentPromise, flatmatePromise, expenseIdPromise])
+        .then(([rentData, flatmateData, id]) => {
             totalRent = parseFloat(rentData);
+            expenseId = id;
             totalRentElement.textContent = totalRent.toFixed(2);
             flatmates = flatmateData;
             numPeople = flatmates.length;
@@ -81,13 +88,15 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("Failed to fetch rent or flatmates:", error);
             // Fallback setup
             totalRent = 404;
+            expenseId = 0;
             flatmates = [];
             numPeople = 0;
             personNames = [];
             createSliders();
         });
 
-    let personNames = Array(numPeople).fill('').map((_, i) => `Person ${i + 1}`);
+
+    personNames = Array(numPeople).fill('').map((_, i) => `Person ${i + 1}`);
     let sliderLocked = Array(numPeople).fill(false);
 
     function createSliders() {
@@ -101,19 +110,18 @@ document.addEventListener('DOMContentLoaded', function () {
             sliderContainer.classList.add('slider-container');
 
             const profilePicture = document.createElement('img');
+            // This is a placeholder for the profile picture
+            // In a real application, you would fetch the actual profile picture URL from the server
             profilePicture.src = `https://i.pravatar.cc/150?img=${i + 1}`;
             profilePicture.alt = 'Profile Picture';
             profilePicture.classList.add('profile-picture');
             sliderContainer.appendChild(profilePicture);
 
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text';
-            nameInput.classList.add('person-name');
-            nameInput.value = personNames[i];
-            nameInput.addEventListener('change', function () {
-                personNames[i] = this.value;
-            });
-            sliderContainer.appendChild(nameInput);
+            // Create a div for the username
+            const username = document.createElement('p');
+            username.classList.add('person-name');
+            username.textContent = personNames[i];
+            sliderContainer.appendChild(username);
 
             const slider = document.createElement('input');
             slider.type = 'range';
@@ -210,10 +218,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const statusBar = document.getElementById('validationStatus');
         const delegatedTotal = rentValues.reduce((sum, val) => sum + (val * totalRent / 100), 0);
         const isValid = Math.round(delegatedTotal) === Math.round(totalRent);
-        
+
         document.getElementById('saveDelegationsBtn').disabled = !isValid; // Disable save button if not valid
         document.getElementById('undoDelegationsBtn').disabled = !isDirty; // Disable undo button if not dirty
-        
+
         if (isValid) {
             statusBar.textContent = `✅ Total Delegated: $${delegatedTotal.toFixed(2)} / $${totalRent.toFixed(2)} — Ready to save`;
             statusBar.classList.add('valid');
@@ -240,27 +248,33 @@ document.addEventListener('DOMContentLoaded', function () {
 document.getElementById('saveDelegationsBtn').addEventListener('click', async () => {
     const payload = collectDelegationPayload();
 
-    await fetch(`/api/flat/expense/delegations?expenseId=5`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
+    try {
+        const response = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        });
 
-    clearDirty();
-    document.getElementById('saveStatus').style.display = 'block';
-    setTimeout(() => document.getElementById('saveStatus').style.display = 'none', 2000);
+        if (!response.ok) {
+            const errorMsg = await response.text();
+            alert("❌ Save failed: " + errorMsg);
+            return;
+        }
+
+        clearDirty();
+        document.getElementById('saveStatus').style.display = 'block';
+        setTimeout(() => document.getElementById('saveStatus').style.display = 'none', 2000);
+    } catch (err) {
+        alert("❌ Could not reach server: " + err.message);
+    }
 });
+
 
 // === UNDO BUTTON ===
 document.getElementById('undoDelegationsBtn').addEventListener('click', async () => {
-    const response = await fetch(`/api/flat/expense/delegations?expenseId=5`);
+    const response = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`);
     const delegations = await response.json();
     restoreDelegations(delegations);
     clearDirty();
 });
-
-// === CSRF TOKEN FETCHER ===
-function getCSRFToken() {
-    const tokenMeta = document.querySelector('meta[name="_csrf"]');
-    return tokenMeta ? tokenMeta.getAttribute('content') : '';
-}

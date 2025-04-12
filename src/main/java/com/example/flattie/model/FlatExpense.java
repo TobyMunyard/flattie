@@ -86,9 +86,9 @@ public class FlatExpense {
         return delegations;
     }
 
-    public void setDelegations(List<FlatExpenseDelegation> delegations) {
-        this.delegations = delegations;
-    }
+    // public void setDelegations(List<FlatExpenseDelegation> delegations) {
+    //     this.delegations = delegations;
+    // }
 
     public void addDelegation(FlatExpenseDelegation delegation) {
         delegation.setFlatExpense(this);
