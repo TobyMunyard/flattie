@@ -21,42 +21,49 @@
         <div class="chore-list-container">
             <h1><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
 
+            <!-- This div will be used to show the error message when flatmates cannot be loaded -->
+            <div id="flatmate-error" style="display: none; color: red; text-align: center; margin-bottom: 10px;">
+                ⚠️ Could not load flatmates. Please try refreshing or contact support.
+            </div>
+
             <!-- This form will be used to add a new chore to the list -->
             <form id="chore-form">
                 <div class="input-group">
                     <div>
+                        <!-- This input field will be used to add a new chore -->
                         <p style="text-align: center;">Chore Name</p>
                         <input type="text" id="chore-input" name="choreName" placeholder="Add chore" required>
                     </div>
                     <div>
+                        <!-- Assignment -->
                         <p style="text-align: center;">Assign To</p>
                         <select id="assignment" name="assignment">
-                            <option value="Unassigned">Unassigned</option>
-                            <th:block th:each="flatmate : ${flatmates}">
-                                <!-- This will get the flatmates from the flat and inject it via Thymeleaf -->
-                                <option th:value="${flatmate.username}" th:text="${flatmate.username}"></option>
-                            </th:block>
+                            <optgroup label="System">
+                                <option value="Unassigned">Unassigned</option>
+                                <option value="Random">Random</option>
+                            </optgroup>
+                            <optgroup label="Flatmates" id="flatmate-options"></optgroup>
                         </select>
                     </div>
                     <div>
                         <p style="text-align: center;">Priority</p>
                         <select id="priority" name="priority">
-                            <option value="0">Priority 1</option>
                             <option value="1">Priority 1</option>
-                            <option value="2">Priority 2</option>
-                            <option value="3">Priority 3</option>
-                            <option value="4">Priority 4</option>
-                            <option value="5">Priority 5</option>
-                            <option value="6">Priority 6</option>
-                            <option value="7">Priority 7</option>
-                            <option value="8">Priority 8</option>
-                            <option value="9">Priority 9</option>
+                            <option value="2">Priority 1</option>
+                            <option value="3">Priority 2</option>
+                            <option value="4">Priority 3</option>
+                            <option value="5">Priority 4</option>
+                            <option value="6">Priority 5</option>
+                            <option value="7">Priority 6</option>
+                            <option value="8">Priority 7</option>
+                            <option value="9">Priority 8</option>
+                            <option value="10">Priority 9</option>
                         </select>
                     </div>
+                    <!-- This needs to discussed in terms of implementation. removed from view for now. type was "number" -->
                     <div>
-                        <p style="text-align: center;">Recurrence (Days)</p>
-                        <!-- This needs to discussed in terms of implementation -->
-                        <input type="number" id="frequency" name="frequency" placeholder="Days" value="0" min="0">
+                        <!-- <p style="text-align: center;">Recurrence (Days)</p> -->
+                        <input type="hidden" id="frequency" name="frequency" placeholder="Days" value="0" min="0">
                     </div>
                     <input type="hidden" id="edit-id">
                     <button type="submit" id="add-chore">Add Chore</button>

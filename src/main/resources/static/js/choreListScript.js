@@ -1,3 +1,5 @@
+let flatmateUsernames = [];
+
 // === SIDEBAR TOGGLE ===
 function openNav() {
     const sidebar = document.getElementById("mySidebar");
@@ -70,7 +72,7 @@ function editChore(id, name, assignment, priority, frequency) {
     // Change button text to indicate edit mode
     document.getElementById('add-chore').textContent = "Update Chore";
     // show cancel button
-    document.getElementById('cancel-edit').style.display = "inline-block"; 
+    document.getElementById('cancel-edit').style.display = "inline-block";
 }
 
 // === AJAX FORM SUBMISSION (Add / Edit) ===
@@ -81,6 +83,20 @@ document.getElementById('chore-form').addEventListener('submit', function (e) {
     const choreId = document.getElementById('edit-id').value;
     const formData = new FormData(form);
     const url = choreId ? `/chore/edit/${choreId}` : '/choreList/add';
+
+    // Check if the assignment is "Random" and replace it with a random flatmate username
+    // This is done before sending the form data to the server
+    const assignment = formData.get('assignment');
+
+    if (assignment === 'Random') {
+        if (flatmateUsernames.length > 0) {
+            const randomUsername = flatmateUsernames[Math.floor(Math.random() * flatmateUsernames.length)];
+            formData.set('assignment', randomUsername); // Replace "Random" with actual flatmate
+        } else {
+            alert("⚠️ No flatmates available to assign.");
+            return;
+        }
+    }
 
     fetch(url, {
         method: 'POST',
@@ -112,6 +128,48 @@ document.getElementById('chore-form').addEventListener('submit', function (e) {
         .catch(err => {
             console.error('Error saving chore:', err);
             alert('Failed to save chore.');
+        });
+});
+
+// === FETCH FLATMATES FOR ASSIGNMENT ===
+// This function fetches flatmates from the server and populates the assignment dropdown
+document.addEventListener('DOMContentLoaded', () => {
+    const assignmentSelect = document.getElementById('assignment');
+    const form = document.getElementById('chore-form');
+    const errorBanner = document.getElementById('flatmate-error');
+
+    fetch('/api/flat/flatmates')
+        .then(response => {
+            if (!response.ok) throw new Error("Fetch failed");
+            return response.json();
+        })
+        .then(flatmates => {
+            assignmentSelect.innerHTML = `
+                <optgroup label="System">
+                    <option value="Unassigned">Unassigned</option>
+                    <option value="Random">Random</option>
+                </optgroup>
+                <optgroup label="Flatmates" id="flatmate-options"></optgroup>
+            `;
+
+            const flatmateGroup = document.getElementById('flatmate-options');
+            flatmates.forEach(fm => {
+                const opt = document.createElement('option');
+                opt.value = fm.username;
+                opt.textContent = fm.username;
+                flatmateGroup.appendChild(opt);
+
+                flatmateUsernames.push(fm.username); // Store usernames for Random assignment
+            });
+        })
+        .catch(error => {
+            console.error("Failed to fetch flatmates for chore assignment:", error);
+
+            // Show error banner
+            errorBanner.style.display = "block";
+
+            // Disable the form
+            Array.from(form.elements).forEach(el => el.disabled = true);
         });
 });
 
@@ -182,6 +240,21 @@ document.getElementById('search-button').addEventListener('click', function () {
             list.innerHTML = ''; // Clear old rows
             data.forEach(chore => addChoreToTable(chore)); // Populate results
         });
+});
+
+document.getElementById('clear-search').addEventListener('click', function () {
+    let query = document.getElementById('search-chore').value;
+    if (query) {
+        document.getElementById('search-chore').value = ''; // Clear search input
+        query = ''; // Reset query
+        fetch(`/chore/search?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('chore-list');
+                list.innerHTML = ''; // Clear old rows
+                data.forEach(chore => addChoreToTable(chore)); // Populate results
+            });
+    }
 });
 
 // === CSRF TOKEN FETCHER ===
