@@ -129,4 +129,16 @@ public class HomeController {
         model.addAttribute("user", user);
         return "viewFlats";
     }
+
+    /**
+     * Serves the about page of the application from the url "/about". "about" string is
+     * automatically mapped to file "about.html" in resources/templates folder.
+     * 
+     * @return The about page of the application.
+     */
+    @GetMapping("/about")
+    public String about(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
+        return "about";
+    }
 }

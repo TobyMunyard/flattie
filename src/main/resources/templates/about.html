@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Flattie</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>literally 
+
+<body>
+    <header>
+        <h1>About Flattie.com</h1>
+        <p>Making flat life 87% less chaotic (we ran the numbers)</p>
+    </header>
+
+    <!-- Nav bar -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+
+    <div class="container">
+        <!-- Who We Are -->
+        <section>
+            <h2>Who We Are</h2>
+            <p>
+                We're a team of overcaffeinated students, former and existing flatmates, and spreadsheet-weary adults who decided:
+                "What if flatting didn't suck?" That idea became <strong>Flattie.com</strong> — your go-to toolkit for keeping the flat running like a slightly oiled machine.
+            </p>
+        </section>
+
+        <!-- What This App Does -->
+        <section>
+            <h2>What This App Does</h2>
+            <ul>
+                <li><strong>Rent Delegation Calculator:</strong> Fairly split the rent without Excel rage-quits.</li>
+                <li><strong>Chore List:</strong> Assign tasks, mark them done, and eliminate mystery messes.</li>
+                <li><strong>Shopping List:</strong> Share one list, so five people don't buy the same oat milk.</li>
+                <li><strong>Flat Management:</strong> Create, join, and manage flats — code-based, secure, and roommate-friendly.</li>
+            </ul>
+        </section>
+
+        <!-- Why We Built It -->
+        <section>
+            <h2>Why We Built It</h2>
+            <p>
+                Because every flat deserves more peace and fewer passive-aggressive sticky notes. We built Flattie to
+                give flatmates a shared hub where fairness, clarity, and just a pinch of automation can make communal living a little more... livable.
+            </p>
+        </section>
+
+        <!-- How to Get Started -->
+        <section>
+            <h2>How to Get Started</h2>
+            <p>
+                Create an account, make or join a flat, and start delegating like a flat boss. Don't worry — it's easier
+                than assembling a flatpack shelf.
+            </p>
+            <a href="/createAccount" class="cta-button">Create Account</a>
+        </section>
+
+        <!-- Credits -->
+        <section>
+            <h2>Credits</h2>
+            <p>Flattie was built by a team that understands the pain of cleaning schedules, fridge mysteries, and group chats that never vote. Special thanks to:</p>
+            <ul>
+                <li>Lead Developer: You</li>
+                <li>Design & CSS: Also you</li>
+                <li>QA Team: The brave flatmates who tested it live</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
