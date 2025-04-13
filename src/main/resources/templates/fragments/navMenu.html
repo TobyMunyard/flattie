@@ -19,7 +19,7 @@
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/createFlat}">Create Flat</a>
 
     <!-- Flatmate and In Flat -->
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/flatInfo}">Flat Info</a> 
+    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/showFlatInfo}">Flat Info</a> 
 
     <!-- PM only -->
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/viewFlats}">Manage Flats</a>

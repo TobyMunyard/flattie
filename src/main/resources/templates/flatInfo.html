@@ -3,15 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flattie</title>
+    <title>Flat Info - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script>
+        // JavaScript to open and close the modal
+        function openModal() {
+            document.getElementById("editModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("editModal").style.display = "none";
+        }
+    </script>
+    <style>
+        /* Modal styless */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    
-    <!-- Directly inject the sidebar from /fragments/ -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
 
-    <h1>Flat Info</h1>
-    <p>Welcome to flattie.</p>
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+
+    <div class="container">
+        <!-- Display flat details -->
+        <section id="flat-info" th:if="${flat != null}">
+            <h2 th:text="${flat.flatName}">Flat Name</h2>
+            <p><strong>Address:</strong> <span th:text="${flat.address}">Flat Address</span></p>
+            <p><strong>City:</strong> <span th:text="${flat.city}">Flat City</span></p>
+            <p><strong>Postcode:</strong> <span th:text="${flat.postcode}">Flat Postcode</span></p>
+            <p><strong>Description:</strong> <span th:text="${flat.flatDescription}">Flat Description</span></p>
+            <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}">Flat Weekly Rent</span></p>
+            <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}">Flat Rooms</span></p>
+            <button onclick="openModal()" class="button">Edit</button>
+        </section>
+
+        <!-- Show an error message if no flat is available -->
+        <section id="error" th:if="${flat == null}">
+            <h2>Error</h2>
+            <p>You have not joined a flat. Please join a flat to see its details.</p>
+            <a href="/joinFlat" class="button">Join a Flat</a>
+        </section>
+    </div>
+
+    <!-- Modal for editing flat info -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 20px;">Edit Flat Information</h2>
+            <form action="/updateFlatInfo" method="post" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" name="flatId" th:value="${flat.id}" />
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="flatName" style="font-weight: bold;">Flat Name:</label>
+                    <input type="text" id="flatName" name="flatName" th:value="${flat.flatName}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="address" style="font-weight: bold;">Address:</label>
+                    <input type="text" id="address" name="address" th:value="${flat.address}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="city" style="font-weight: bold;">City:</label>
+                    <input type="text" id="city" name="city" th:value="${flat.city}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="postcode" style="font-weight: bold;">Postcode:</label>
+                    <input type="text" id="postcode" name="postcode" th:value="${flat.postcode}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="flatDescription" style="font-weight: bold;">Description:</label>
+                    <textarea id="flatDescription" name="flatDescription" required 
+                              th:text="${flat.flatDescription}" 
+                              style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: none; height: 100px;"></textarea>
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="weeklyRent" style="font-weight: bold;">Weekly Rent:</label>
+                    <input type="number" id="weeklyRent" name="weeklyRent" th:value="${flat.weeklyRent}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="display: flex; flex-direction: column;">
+                    <label for="rooms" style="font-weight: bold;">Number of Rooms:</label>
+                    <input type="number" id="rooms" name="rooms" th:value="${flat.rooms}" required 
+                           style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
+                </div>
+    
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="submit" class="button" 
+                            style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                        Save Changes
+                    </button>
+                    <button type="button" class="button" onclick="closeModal()" 
+                            style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+    </footer>
 </body>
 </html>

@@ -89,17 +89,30 @@ public class CreateAccountController {
     }
 
     /**
-     * Creates a default user account for testing purposes. This method is called
+     * Creates two default user accounts for testing purposes. This method is called
      * when the application starts up.
      */
     @PostConstruct
-    public void createDefaultUser() {
-        Optional<AppUser> existingUser = appUserService.getAppUserByUsername("admin");
+    public void createDefaultUsers() {
+        // Check if the test accounts already exist
+        Optional<AppUser> existingUser1 = appUserService.getAppUserByUsername("Tester");
+        Optional<AppUser> existingUser2 = appUserService.getAppUserByUsername("Tester2");
 
-        if (existingUser.isEmpty()) {
-            AppUser admin = new AppUser("Test", "User", "Tester", passwordEncoder.encode("test1234"));
-            appUserService.saveAppUser(admin);
+        /**
+         * If they don't exist, create them
+         * Note: Passwords are hardcoded for testing purposes. In a real application,
+         * these are encrypted, obviously.
+         */
+        if (existingUser1.isEmpty()) {
+            AppUser user1 = new AppUser("Test", "User", "Tester", passwordEncoder.encode("test1234"));
+            appUserService.saveAppUser(user1);
             System.out.println("Test account created: Tester / test1234");
+        }
+
+        if (existingUser2.isEmpty()) {
+            AppUser user2 = new AppUser("Test2", "User2", "Tester2", passwordEncoder.encode("test1234"));
+            appUserService.saveAppUser(user2);
+            System.out.println("Test account created: Tester2 / test1234");
         }
     }
 

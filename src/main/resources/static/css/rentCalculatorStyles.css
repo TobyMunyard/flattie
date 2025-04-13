@@ -1,0 +1,38 @@
+.status-bar {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.status-bar.valid {
+    color: green;
+}
+
+.status-bar.invalid {
+    color: red;
+}
+
+.status-bar.warning {
+    color: orange;
+}
+
+.status-bar {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.slider-container {
+    margin: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.person-name {
+    font-weight: bold;
+    margin: 0;
+    min-width: 100px;
+}

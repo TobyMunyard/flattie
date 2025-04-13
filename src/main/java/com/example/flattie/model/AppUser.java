@@ -7,6 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -37,11 +39,12 @@ public class AppUser implements UserDetails {
     @Size(min = 7, message = "Password must be at least 7 characters long")
     private String password;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "flat_id", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.LAZY) // Many users can belong to one flat
+    @JoinColumn(name = "flat_id", referencedColumnName = "id", nullable = true)
+    @JsonIgnore // Prevents circular reference when serializing to JSON
     private Flat flat;
 
-    protected AppUser() {
+    public AppUser() {
     }
 
     public AppUser(String firstName, String lastName, String username, String password) {

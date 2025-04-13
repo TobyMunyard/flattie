@@ -119,26 +119,42 @@ public class CreateFlatController {
     }
 
     /**
-     * Creates a default flat if it doesn't already exist in the database.
+     * Creates two default flats if they don't already exist in the database.
      * This method is called after the application context is initialized.
      */
     @PostConstruct
-    public void createDefaultFlat() {
-        Flat existingFlat = flatService.findByJoinCode("123 Default St");
+    public void createDefaultFlats() {
+        // Check if the default flats already exist in the database
+        Flat existingFlat1 = flatService.findByJoinCode("123 Default St");
+        Flat existingFlat2 = flatService.findByJoinCode("456 Default St");
 
-        if (existingFlat == null) {
-            Flat defaultFlat = new Flat(
-                "1234",
-                "Default Flat",
-                "123 Default St",
-                "Default City",
-                "0000",
-                "A default flat for new users.",
-                200.0,
-                3
-            );
-            flatService.saveFlat(defaultFlat);
+        // If they don't exist, create them
+        if (existingFlat1 == null) {
+            Flat defaultFlat1 = new Flat(
+                    "1234",
+                    "Default Flat 1",
+                    "123 Default St",
+                    "Default City",
+                    "0000",
+                    "A default flat for new users.",
+                    200.0,
+                    3);
+            flatService.saveFlat(defaultFlat1);
             System.out.println("Default flat created at 123 Default St");
+        }
+
+        if (existingFlat2 == null) {
+            Flat defaultFlat2 = new Flat(
+                    "5678",
+                    "Default Flat 2",
+                    "456 Default St",
+                    "Default City",
+                    "0000",
+                    "A second default flat for newer, cooler, users.",
+                    200.0,
+                    3);
+            flatService.saveFlat(defaultFlat2);
+            System.out.println("Default flat created at 456 Default St");
         }
     }
 
