@@ -59,6 +59,10 @@ public class AppUserService {
         return appUserRepository.getAppUserByUsername(username);
     }
 
+    public Optional<AppUser> getAppUserById(Long id){
+        return appUserRepository.getAppUserById(id);
+    }
+
     /**
      * Adds a user to a flat. This method is called when a user joins a flat.
      * It sets the flat in the user's database record and saves the updated user.

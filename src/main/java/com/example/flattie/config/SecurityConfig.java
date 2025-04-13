@@ -76,7 +76,7 @@ public class SecurityConfig {
                                                                 "/createAccount", "/h2-console/**", "/css/**",
                                                                 "/js/**", "/error")
                                                 .permitAll()
-                                                .requestMatchers("/logoutPage", "/shoppingList", "/choreList",
+                                                .requestMatchers("/profilePage", "/shoppingList", "/choreList",
                                                                 "/rentCalculator", "/joinFlat", "/flatInfo",
                                                                 "/createFlat", "/viewFlats")
                                                 .authenticated()

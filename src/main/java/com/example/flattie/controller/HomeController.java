@@ -64,16 +64,16 @@ public class HomeController {
     }
 
     /**
-     * Serves the log out page of the application from the url "/logout".
-     * "logout" string is automatically mapped to file "logOut.html" in
+     * Serves the profile page of the application from the url "/profilePage".
+     * "profile" string is automatically mapped to file "profile.html" in
      * resources/templates folder.
      * 
-     * @return The log out page of the application.
+     * @return The profile page for a user.
      */
-    @GetMapping("/logoutPage")
-    public String logOut(@AuthenticationPrincipal AppUser user, Model model) {
+    @GetMapping("/profilePage")
+    public String profilePage(@AuthenticationPrincipal AppUser user, Model model) {
         model.addAttribute("user", user);
-        return "logOut";
+        return "profile";
     }
 
     /**

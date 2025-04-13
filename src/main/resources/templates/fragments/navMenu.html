@@ -11,7 +11,7 @@
     
     
     <!-- Flatmate only -->
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/logoutPage}">Log Out</a>
+    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/profilePage}">Profile</a>
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/shoppingList}">Shopping List</a>
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/choreList}">Chore List</a>
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/rentCalculator}">Rent Calculator</a>

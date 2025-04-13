@@ -17,6 +17,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
+    public Optional<AppUser> getAppUserById(Long id);
+
     public Optional<AppUser> getAppUserByUsername(String username); // Custom query method to find a user by username
+    
     List<AppUser> findByFlat_Id(Long flatId); // Custom query method to find users by flat ID
 }

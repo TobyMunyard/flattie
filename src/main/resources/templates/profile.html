@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Flattie.com</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+
+    <div class="auth-page">
+        <section id="profile">
+            <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
+            <div>
+                <p th:if="${error != null}" th:text="${error}"></p>
+            </div>
+            <h2 th:text="'Welcome, ' + ${user.firstName}"></h2>
+            <p th:text="'Name:        ' + ${user.firstName} + ' ' + ${user.lastName}"></p>
+            <p th:text="'Username:        ' + ${user.username}"></p>
+            <button id="editAccountButton">Edit Account</button>
+            <button id="changePasswordButton">Change Password</button>
+            <div id="editProfileModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeModalBtn" class="close">&times;</span>
+                    <form id="modalForm" action="/updateUser" method="post">
+                        <h2>Edit Account</h2>
+                        <label>First Name:</label>
+                        <input type="text" name="firstName" th:value="${user.firstName}" required>
+                        <label>Last Name:</label>
+                        <input type="text" name="lastName" th:value="${user.lastName}" required>
+                        <label>Username:</label>
+                        <input type="text" name="username" th:value="${user.username}" required>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div id="changePasswordModal" class="modal">
+                <div class="modal-content">
+                    <span id="closePasswordModalBtn" class="close">&times;</span>
+                    <form id="changePasswordModalForm" action="/changePassword" method="post">
+                        <h2>Change Password</h2>
+                        <label>Enter New Password:</label>
+                        <input type="password" name="password" required min="7">
+                        <label>Repeat Password:</label>
+                        <input type="password" name="repeatedPassword" required min="7">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Log Out</button>
+            </form>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+    </footer>
+    <script src="/js/profile.js"></script>
+</body>
+
+</html>
