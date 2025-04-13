@@ -1,26 +1,27 @@
 <!-- inject using fragments/navMenu.html -->
 <nav th:fragment="navMenu">
-    <!-- this needs to change when user is/isn't logged in and if they're a flatmate/PM -->
-     <!-- Always shown -->
+    <!-- Always shown -->
     <a th:href="@{/}">Home</a>
     <a th:href="@{/about}">About</a>
 
     <!-- Logged out -->
     <a th:if="${#authentication == null}" th:href="@{/login}">Login</a>
     <a th:if="${#authentication == null}" th:href="@{/createAccount}">Create Account</a>
-    
-    
-    <!-- Flatmate only -->
+
+    <!-- Logged in, no flat check -->
     <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/profilePage}">Profile</a>
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/shoppingList}">Shopping List</a>
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/choreList}">Chore List</a>
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/rentCalculator}">Rent Calculator</a>
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/joinFlat}">Join Flat</a>
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/createFlat}">Create Flat</a>
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
+        th:href="@{/joinFlat}">Join Flat</a>
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
+        th:href="@{/createFlat}">Create Flat</a>
 
-    <!-- Flatmate and In Flat -->
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/showFlatInfo}">Flat Info</a> 
-
-    <!-- PM only -->
-    <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/viewFlats}">Manage Flats</a>
+    <!-- Logged in AND in flat -->
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        th:href="@{/shoppingList}">Shopping List</a>
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        th:href="@{/choreList}">Chore List</a>
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        th:href="@{/rentCalculator}">Rent Calculator</a>
+    <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        th:href="@{/showFlatInfo}">Flat Info</a>
 </nav>
