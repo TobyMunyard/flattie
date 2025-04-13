@@ -28,6 +28,7 @@
             <p th:text="'Name:        ' + ${user.firstName} + ' ' + ${user.lastName}"></p>
             <p th:text="'Username:        ' + ${user.username}"></p>
             <button id="editAccountButton">Edit Account</button>
+            <button id="changePasswordButton">Change Password</button>
             <div id="editProfileModal" class="modal">
                 <div class="modal-content">
                     <span id="closeModalBtn" class="close">&times;</span>
@@ -39,6 +40,19 @@
                         <input type="text" name="lastName" th:value="${user.lastName}" required>
                         <label>Username:</label>
                         <input type="text" name="username" th:value="${user.username}" required>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div id="changePasswordModal" class="modal">
+                <div class="modal-content">
+                    <span id="closePasswordModalBtn" class="close">&times;</span>
+                    <form id="changePasswordModalForm" action="/changePassword" method="post">
+                        <h2>Change Password</h2>
+                        <label>Enter New Password:</label>
+                        <input type="password" name="password" required min="7">
+                        <label>Repeat Password:</label>
+                        <input type="password" name="repeatedPassword" required min="7">
                         <button type="submit">Submit</button>
                     </form>
                 </div>

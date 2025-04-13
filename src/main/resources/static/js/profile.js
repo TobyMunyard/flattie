@@ -1,3 +1,4 @@
+// Editing account info
 let modal = document.getElementById("editProfileModal");
 let editButton = document.getElementById('editAccountButton');
 let closeBtn = document.getElementById("closeModalBtn");
@@ -10,5 +11,21 @@ window.onclick = (event) => {
 };
 
 document.getElementById("modalForm").onsubmit = (e) => {
+  modal.style.display = "none";
+};
+
+// Changing password
+let changePasswordModal = document.getElementById("changePasswordModal");
+let changePasswordButton = document.getElementById('changePasswordButton');
+let closePasswordModalBtn = document.getElementById("closePasswordModalBtn");
+
+changePasswordButton.onclick = () => changePasswordModal.style.display = "block";
+closePasswordModalBtn.onclick = () => changePasswordModal.style.display = "none";
+
+window.onclick = (event) => {
+  if (event.target === changePasswordModal) changePasswordModal.style.display = "none";
+};
+
+document.getElementById("changePasswordModalForm").onsubmit = (e) => {
   modal.style.display = "none";
 };

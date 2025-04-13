@@ -141,8 +141,33 @@ public class CreateAccountController {
         existingUser.setFirstName(firstName);
         existingUser.setLastName(lastName);
         existingUser.setUsername(username);
-        appUserService.saveAppUser(existingUser).toString();
+        appUserService.saveAppUser(existingUser);
 
+        // Refreshes the whole @AuthenticationPrincipal, refreshing user information for
+        // display instead of requiring logout to see changes.
+        UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+                existingUser, null, existingUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+        return "redirect:/profilePage";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@AuthenticationPrincipal AppUser authenticatedUser,
+            @RequestParam("password") String password, @RequestParam("repeatedPassword") String repeatedPassword) {
+        // Get user by AuthenticationPrincipal in case username is being changed
+        AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
+                .orElse(null);
+        if (existingUser == null) {
+            // Should not be possible, display error page.
+            return "error";
+        }
+
+        if (password.equals(repeatedPassword)) {
+            existingUser.setPassword(passwordEncoder.encode(password));
+        }
+
+        appUserService.saveAppUser(existingUser);
+        
         // Refreshes the whole @AuthenticationPrincipal, refreshing user information for
         // display instead of requiring logout to see changes.
         UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
