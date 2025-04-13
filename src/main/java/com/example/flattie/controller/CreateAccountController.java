@@ -121,6 +121,7 @@ public class CreateAccountController {
      * name and username. Password is updated seperately due to security reasons, as
      * displaying it is not possible and a huge security flaw.
      * 
+     * @param authenticatedUser The user logged in currently.
      * @param firstName The first name of the user.
      * @param lastName  The last name of the user.
      * @param username  The username for the user's account.
@@ -151,9 +152,21 @@ public class CreateAccountController {
         return "redirect:/profilePage";
     }
 
+    /**
+     * Called when a user submits the change password form. Performs same checks as
+     * account creation to ensure values are valid and then makes the changes to the
+     * users password.
+     * 
+     * @param authenticatedUser The user logged in currently.
+     * @param password The new password entered by the user.
+     * @param repeatedPassword The repeat password entry to ensuring correct value is saved.
+     * @param redirectAttributes Attirbutes of the page that will disappear after a redirect, used to display an error (if there is one).
+     * @return A redirect to the user profile page.
+     */
     @PostMapping("/changePassword")
     public String changePassword(@AuthenticationPrincipal AppUser authenticatedUser,
-            @RequestParam("password") String password, @RequestParam("repeatedPassword") String repeatedPassword) {
+            @RequestParam("password") String password, @RequestParam("repeatedPassword") String repeatedPassword,
+            RedirectAttributes redirectAttributes) {
         // Get user by AuthenticationPrincipal in case username is being changed
         AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
                 .orElse(null);
@@ -162,12 +175,20 @@ public class CreateAccountController {
             return "error";
         }
 
-        if (password.equals(repeatedPassword)) {
-            existingUser.setPassword(passwordEncoder.encode(password));
+        if (password == null || password.isBlank() || password.length() < 7 || password.length() > 50) {
+            redirectAttributes.addFlashAttribute("error", "Password must be at least 7 characters long.");
+            return "redirect:/profilePage";
         }
 
+        if (!password.equals(repeatedPassword)) {
+            redirectAttributes.addFlashAttribute("error", "Passwords do not match.");
+            return "redirect:/profilePage";
+        }
+
+        // Inputs are valid, change the password and update the user
+        existingUser.setPassword(passwordEncoder.encode(password));
         appUserService.saveAppUser(existingUser);
-        
+
         // Refreshes the whole @AuthenticationPrincipal, refreshing user information for
         // display instead of requiring logout to see changes.
         UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(

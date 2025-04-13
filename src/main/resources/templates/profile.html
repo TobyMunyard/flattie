@@ -24,6 +24,9 @@
     <div class="auth-page">
         <section id="profile">
             <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
+            <div>
+                <p th:if="${error != null}" th:text="${error}"></p>
+            </div>
             <h2 th:text="'Welcome, ' + ${user.firstName}"></h2>
             <p th:text="'Name:        ' + ${user.firstName} + ' ' + ${user.lastName}"></p>
             <p th:text="'Username:        ' + ${user.username}"></p>
