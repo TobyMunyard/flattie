@@ -130,7 +130,7 @@ public class CreateAccountController {
     @PostMapping("/updateUser")
     public String updateUserInfo(@AuthenticationPrincipal AppUser authenticatedUser,
             @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
-            @RequestParam("username") String username) {
+            @RequestParam("username") String username, RedirectAttributes redirectAttributes) {
         // Get user by AuthenticationPrincipal in case username is being changed
         AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
                 .orElse(null);
@@ -138,6 +138,22 @@ public class CreateAccountController {
             // Should not be possible, display error page.
             return "error";
         }
+
+        if (firstName == null || firstName.isBlank() || firstName.length() > 20) {
+            redirectAttributes.addFlashAttribute("error", "First name must be under 20 characters.");
+            return "redirect:/profilePage";
+        }
+
+        if (lastName == null || lastName.isBlank() || lastName.length() > 40) {
+            redirectAttributes.addFlashAttribute("error", "Last name must be under 40 characters.");
+            return "redirect:/profilePage";
+        }
+
+        if (username == null || username.isBlank() || username.length() < 5 || username.length() > 20) {
+            redirectAttributes.addFlashAttribute("error", "Username must be between 5 and 20 characters.");
+            return "redirect:/profilePage";
+        }
+
         // Update user information and redirect to the same page so they can see results
         existingUser.setFirstName(firstName);
         existingUser.setLastName(lastName);
