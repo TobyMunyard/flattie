@@ -5,54 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flat Info - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <script>
-        // JavaScript to open and close the modal
-        function openModal() {
-            document.getElementById("editModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("editModal").style.display = "none";
-        }
-    </script>
-    <style>
-        /* Modal styless */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 50%;
-            border-radius: 8px;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/flatInfoStyles.css">
 </head>
 <body>
     <header>
@@ -72,6 +25,7 @@
             <p><strong>Description:</strong> <span th:text="${flat.flatDescription}">Flat Description</span></p>
             <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}">Flat Weekly Rent</span></p>
             <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}">Flat Rooms</span></p>
+            <p><strong>Flat Join Code:</strong> <span th:text="${flat.joinCode}">Flat Join Code</span></p>
             <button onclick="openModal()" class="button">Edit</button>
         </section>
 
@@ -147,9 +101,10 @@
             </form>
         </div>
     </div>
+    <script src="/js/flatInfoScript.js"></script>
 
     <footer>
-        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
     </footer>
 </body>
 </html>
