@@ -104,7 +104,7 @@ public class CreateAccountController {
     public void createDefaultUsers() {
         // Check if the test accounts already exist
         Optional<AppUser> existingUser1 = appUserService.getAppUserByUsername("Tester");
-        Optional<AppUser> existingUser2 = appUserService.getAppUserByUsername("Tester2");
+        Optional<AppUser> existingUser2 = appUserService.getAppUserByUsername("JaneDoe");
 
         /**
          * If they don't exist, create them
@@ -118,9 +118,9 @@ public class CreateAccountController {
         }
 
         if (existingUser2.isEmpty()) {
-            AppUser user2 = new AppUser("Test2", "User2", "Tester2", passwordEncoder.encode("test1234"));
+            AppUser user2 = new AppUser("Jane", "Doe", "JaneDoe", passwordEncoder.encode("pass123"));
             appUserService.saveAppUser(user2);
-            System.out.println("Test account created: Tester2 / test1234");
+            System.out.println("Test account created: JaneDoe / pass123");
         }
     }
 
