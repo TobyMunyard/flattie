@@ -31,6 +31,7 @@ public class AppUser implements UserDetails {
     @NotBlank(message = "Last name cannot be null")
     private String lastName;
 
+    @Column(unique = true)
     @NotBlank(message = "Username cannot be null")
     @Size(min = 5, message = "Username must be at least 5 characters long")
     private String username;
