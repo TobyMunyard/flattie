@@ -53,6 +53,14 @@ public class CreateAccountController {
         // In case no errors occur this will satisfy thymeleaf
         model.addAttribute("error", null);
 
+        // Check username is unique
+        Optional<AppUser> optionalUser = appUserService.getAppUserByUsername(username);
+
+        if (optionalUser.isPresent()) {
+            redirectAttributes.addFlashAttribute("error", "Username in use.");
+            return "redirect:/createAccount";
+        }
+
         // Validation done manually because annotations only work for entire entity and
         // manual error messages are nicer for users
 
@@ -122,9 +130,9 @@ public class CreateAccountController {
      * displaying it is not possible and a huge security flaw.
      * 
      * @param authenticatedUser The user logged in currently.
-     * @param firstName The first name of the user.
-     * @param lastName  The last name of the user.
-     * @param username  The username for the user's account.
+     * @param firstName         The first name of the user.
+     * @param lastName          The last name of the user.
+     * @param username          The username for the user's account.
      * @return A redirect back to the profile page.
      */
     @PostMapping("/updateUser")
@@ -138,6 +146,16 @@ public class CreateAccountController {
             // Should not be possible, display error page.
             return "error";
         }
+
+        // Check username is unique
+        Optional<AppUser> optionalUser = appUserService.getAppUserByUsername(username);
+
+        if (optionalUser.isPresent() && !(authenticatedUser.getUsername().equals(username))) {
+            redirectAttributes.addFlashAttribute("error", "Username in use.");
+            return "redirect:/profilePage";
+        }
+
+        // Other validation
 
         if (firstName == null || firstName.isBlank() || firstName.length() > 20) {
             redirectAttributes.addFlashAttribute("error", "First name must be under 20 characters.");
@@ -173,10 +191,13 @@ public class CreateAccountController {
      * account creation to ensure values are valid and then makes the changes to the
      * users password.
      * 
-     * @param authenticatedUser The user logged in currently.
-     * @param password The new password entered by the user.
-     * @param repeatedPassword The repeat password entry to ensuring correct value is saved.
-     * @param redirectAttributes Attirbutes of the page that will disappear after a redirect, used to display an error (if there is one).
+     * @param authenticatedUser  The user logged in currently.
+     * @param password           The new password entered by the user.
+     * @param repeatedPassword   The repeat password entry to ensuring correct value
+     *                           is saved.
+     * @param redirectAttributes Attirbutes of the page that will disappear after a
+     *                           redirect, used to display an error (if there is
+     *                           one).
      * @return A redirect to the user profile page.
      */
     @PostMapping("/changePassword")
