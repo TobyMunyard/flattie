@@ -135,7 +135,7 @@ public class CreateFlatController {
 
     // Method to generate a random alphanumeric code
     private String generateRandomCode() {
-        return java.util.UUID.randomUUID().toString().substring(0, 5); // Generate an 5-character random code
+        return java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase(); // Generate a 5-character random code in uppercase
     }
 
     /**

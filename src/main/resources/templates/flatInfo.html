@@ -27,6 +27,14 @@
             <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}">Flat Rooms</span></p>
             <p><strong>Flat Join Code:</strong> <span th:text="${flat.joinCode}">Flat Join Code</span></p>
             <button onclick="openModal()" class="button">Edit</button>
+
+            <!-- Leave Flat Button -->
+            <form action="/leaveFlat" method="post" style="margin-top: 20px; display: block;">
+                <button type="submit" class="button" 
+                    style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                    Leave Flat
+                </button>
+            </form>
         </section>
 
         <!-- Show an error message if no flat is available -->
