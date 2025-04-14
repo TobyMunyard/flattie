@@ -7,3 +7,6 @@ By downloading the source code from this repository! Simply run the application 
 
 ## Languages
 Flattie's backend is built using [Java](https://www.java.com/en/) with [Spring](https://spring.io/). The frontend is built in standard HTML, CSS and JavaScript with the [Thymeleaf](https://www.thymeleaf.org/) template engine to merge the content of the front and back. The data is currently stored in a in-memory [H2](https://www.h2database.com/html/main.html) SQL database for the purposes of testing and ease of use.
+
+## Project Documentation
+[Link to Project Management sheet](https://otagouni-my.sharepoint.com/:x:/r/personal/claca067_student_otago_ac_nz/Documents/INFO310_Project_Management_Template_v1.xlsx?d=w757b37d9e9464d6b9e71a45096e7c35c&csf=1&web=1&e=q7btoE)
