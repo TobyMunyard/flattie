@@ -1,6 +1,7 @@
 package com.example.flattie.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
+import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatService;
 
 import jakarta.annotation.PostConstruct;
@@ -23,6 +26,9 @@ public class CreateFlatController {
 
     @Autowired
     FlatService flatService;
+
+    @Autowired
+    AppUserService appUserService;
 
     /**
      * Displays the create flat page.
@@ -48,7 +54,9 @@ public class CreateFlatController {
      *         displayed.
      */
     @PostMapping("/createFlat")
-    public String createFlat(@RequestParam("flatName") String flatName,
+    public String createFlat(
+            @AuthenticationPrincipal AppUser user,
+            @RequestParam("flatName") String flatName,
             @RequestParam("address") String address,
             @RequestParam("city") String city,
             @RequestParam("postcode") String postcode,
@@ -110,7 +118,19 @@ public class CreateFlatController {
         Flat newFlat = new Flat(joinCode, flatName, address, city, postcode, flatDescription, weeklyRent, rooms);
         flatService.saveFlat(newFlat);
 
-        return "redirect:/viewFlats"; // Redirect to a dashboard or success page
+        // Join the current user to the new flat automatically
+        //TODO: Check if the user already belongs to a flat before joining
+        if (user.getFlat() == null) {
+            user.setFlat(newFlat);
+            appUserService.saveAppUser(user);
+            System.out.println("Flat created with join code: " + joinCode);
+        } else {
+            System.err.println("User already belongs to a flat. Cannot join a new one.");
+        }
+
+        // Redirect to the flat info page with a success message
+        redirectAttributes.addFlashAttribute("success", "Flat created and joined successfully!");
+        return "redirect:/showFlatInfo"; // Redirect to the flat info page
     }
 
     // Method to generate a random alphanumeric code
