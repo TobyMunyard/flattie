@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.ui.Model;
 
@@ -25,6 +26,7 @@ import com.example.flattie.service.EmailService;
  * Controller class for the maintenance ticket system. Maps URLs to html pages.
  * Handles the creation and management of maintenance tickets.
  */
+@Controller
 public class ContactController {
     @Autowired
     private MaintenanceTicketRepository ticketRepository;
@@ -37,8 +39,13 @@ public class ContactController {
 
     @GetMapping("/contacts") // Show contacts + ticket list
     public String showContacts(@AuthenticationPrincipal AppUser user, Model model) {
-        List<Flat> flats = flatService.getAllFlats();
-        model.addAttribute("flats", flats);
+        Flat flat = user.getFlat();
+        if (flat == null)
+            return "redirect:/joinFlat";
+        if (flat.getPropertyManager() == null)
+            return "redirect:/propertyManagerForm";
+
+        model.addAttribute("flat", flat);
         model.addAttribute("user", user);
         return "contacts";
     }
