@@ -83,11 +83,11 @@ public class HomeController {
      * 
      * @return The flat info page of the application.
      */
-    @GetMapping("/flatInfo")
-    public String flatInfo(@AuthenticationPrincipal AppUser user, Model model) {
-        model.addAttribute("user", user);
-        return "flatInfo";
-    }
+    // @GetMapping("/showFlatInfo")
+    // public String flatInfo(@AuthenticationPrincipal AppUser user, Model model) {
+    //     model.addAttribute("user", user);
+    //     return "flatInfo";
+    // }
 
     /**
      * Serves the shopping list page of the application from the url
@@ -131,7 +131,8 @@ public class HomeController {
     }
 
     /**
-     * Serves the about page of the application from the url "/about". "about" string is
+     * Serves the about page of the application from the url "/about". "about"
+     * string is
      * automatically mapped to file "about.html" in resources/templates folder.
      * 
      * @return The about page of the application.

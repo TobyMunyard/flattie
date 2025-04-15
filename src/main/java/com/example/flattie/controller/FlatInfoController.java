@@ -88,6 +88,31 @@ public class FlatInfoController {
         return "redirect:/showFlatInfo";
     }
 
+    @PostMapping("/leaveFlat")
+    public String leaveFlat(@AuthenticationPrincipal AppUser user, Model model) {
+    // Check if the user is logged in
+    if (user == null) {
+        return "redirect:/login"; // Redirect to login if the user is not authenticated
+    }
+
+    // Check if the user belongs to a flat
+    Flat flat = user.getFlat();
+    if (flat == null) {
+        model.addAttribute("error", "You are not part of any flat to leave.");
+        return "error"; // Render an error page
+    }
+
+    // Remove the user from the flat
+    user.setFlat(null);
+    appUserService.saveAppUser(user);
+
+    
+    model.addAttribute("success", "You have successfully left the flat.");
+
+    // Redirect to a suitable page 
+    return "redirect:/";
+}
+
     /**
      * Endpoint to get the flatmates of the currently authenticated user.
      * 

@@ -9,6 +9,7 @@
   <a th:if="${#authentication == null}" th:href="@{/createAccount}">Create Account</a>
 
   <!-- Logged in (no flat yet) -->
+  <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/profilePage}">Profile</a>
   <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
     th:href="@{/joinFlat}">Join Flat</a>
   <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
@@ -23,6 +24,6 @@
     th:href="@{/rentCalculator}">Rent Calculator</a>
   <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
     th:href="@{/showFlatInfo}">Flat Info</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/viewFlats}">Manage Flats</a>
+  <!-- <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+    th:href="@{/viewFlats}">Manage Flats</a> -->
 </div>

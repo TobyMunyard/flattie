@@ -25,24 +25,25 @@ public class JoinFlatController {
     private FlatService flatService;
 
     @PostMapping("/joinFlat")
-public String joinFlat(@AuthenticationPrincipal AppUser user, @RequestParam("flat_code") String flatCode, Model model) {
-    if (user == null) {
-        return "redirect:/login"; // Not logged in? Send them to login.
-    }
+    public String joinFlat(@AuthenticationPrincipal AppUser user, @RequestParam("flat_code") String flatCode,
+            Model model) {
+        if (user == null) {
+            return "redirect:/login"; // Not logged in? Send them to login.
+        }
 
-    // Retrieve the flat by its join code
-    Flat flat = flatService.findByJoinCode(flatCode);
+        // Retrieve the flat by its join code
+        Flat flat = flatService.findByJoinCode(flatCode);
 
-    if (flat == null) {
-        // If no flat is found, add an error message
-        model.addAttribute("error", "Invalid flat code. Please try again.");
-        return "joinFlat"; // Render the same page with error message
-    }
+        if (flat == null) {
+            // If no flat is found, add an error message
+            model.addAttribute("error", "Invalid flat code. Please try again.");
+            return "joinFlat"; // Render the same page with error message
+        }
 
-    // Update the user's flat association in the database
-    appUserService.joinFlat(user, flat);
+        // Update the user's flat association in the database
+        appUserService.joinFlat(user, flat);
 
-    // Redirect to the Flat Info page with the flat ID
-    return "redirect:/showFlatInfo?flatId=" + flat.getId();
+        // Redirect to the Flat Info page with the flat ID
+        return "redirect:/showFlatInfo?flatId=" + flat.getId();
     }
 }
