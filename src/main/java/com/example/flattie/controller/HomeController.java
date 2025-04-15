@@ -144,15 +144,15 @@ public class HomeController {
     }
 
     /**
-     * Serves the contact page of the application from the url "/contact". "contact"
-     * string is automatically mapped to file "contact.html" in resources/templates
+     * Serves the ticket page of the application from the url "/ticket". "ticket"
+     * string is automatically mapped to file "ticket.html" in resources/templates
      * folder.
      * 
-     * @return The contact page of the application.
+     * @return The ticket page of the application.
      */
-    @GetMapping("/contact")
+    @GetMapping("/ticket")
     public String contact(@AuthenticationPrincipal AppUser user, Model model) {
         model.addAttribute("user", user);
-        return "contact";
+        return "ticket";
     }
 }
