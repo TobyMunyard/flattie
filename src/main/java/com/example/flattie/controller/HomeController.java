@@ -142,4 +142,17 @@ public class HomeController {
         model.addAttribute("user", user);
         return "about";
     }
+
+    /**
+     * Serves the contact page of the application from the url "/contact". "contact"
+     * string is automatically mapped to file "contact.html" in resources/templates
+     * folder.
+     * 
+     * @return The contact page of the application.
+     */
+    @GetMapping("/contact")
+    public String contact(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
+        return "contact";
+    }
 }

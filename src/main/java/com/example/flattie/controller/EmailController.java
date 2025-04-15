@@ -16,7 +16,7 @@ public class EmailController {
     @GetMapping("/test-email")
     public String testEmail() {
         emailService.sendEmail(
-                "brooklynigtaylor@gmail.com",
+                "fakeAddress@gmail.com",
                 "Test from Flattie",
                 "This is a test email from your system.");
         return "Email attempted to send.";
