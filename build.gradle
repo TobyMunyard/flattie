@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    // other dependencies...
+    implementation 'org.springframework.boot:spring-boot-starter-mail' // Spring Boot Starter Mail for sending emails
 
     
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.5.0' // Thymeleaf Layout Dialect dependency
