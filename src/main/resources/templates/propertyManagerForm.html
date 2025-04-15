@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Property Manager - Flattie</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/propertyManagerFormStyles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+    <div class="auth-page">
+        <h1>Add Property Manager</h1>
+
+        <form th:action="@{/propertyManager/save}" method="post">
+            <div class="form-group">
+                <label for="name">Manager Name</label>
+                <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Manager Email</label>
+                <input type="email" id="email" name="email" placeholder="manager@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number (optional)</label>
+                <input type="tel" id="phone" name="phone" placeholder="+64 123 456 789">
+            </div>
+
+            <button type="submit">Save</button>
+        </form>
+    </div>
+    <script src="/js/propertyManagerFormScript.js"></script>
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
