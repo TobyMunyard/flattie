@@ -6,11 +6,13 @@ import java.util.UUID;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.Model;
 
 import com.example.flattie.model.AppUser;
@@ -50,35 +52,18 @@ public class ContactController {
         return "contacts";
     }
 
-    @PostMapping("/maintenance/request")
-    public String requestMaintenance(@AuthenticationPrincipal AppUser user,
-            @RequestParam String description,
-            @RequestParam String managerEmail,
-            RedirectAttributes redirectAttributes) {
-        MaintenanceTicket ticket = new MaintenanceTicket();
-        ticket.setDescription(description);
-        ticket.setFlat(user.getFlat());
-        ticket.setStatus("PENDING");
-        ticket.setConfirmationToken(UUID.randomUUID().toString());
-        ticket.setSubmittedBy(user.getUsername());
-        ticket.setSubmittedAt(LocalDateTime.now());
+    @GetMapping("/propertyManagerForm") // Redirect when no PM is assigned
+    public String showPropertyManagerForm(@AuthenticationPrincipal AppUser user, Model model) {
+        Flat flat = user.getFlat();
+        if (flat == null)
+            return "redirect:/joinFlat";
 
-        ticketRepository.save(ticket);
-
-        String confirmLink = "http://localhost:8080/maintenance/confirm/" + ticket.getConfirmationToken();
-
-        emailService.sendMaintenanceEmail(
-                managerEmail,
-                "Maintenance Request for " + user.getFlat().getFlatName(),
-                "Issue: " + description + "\n\nMark as resolved: " + confirmLink);
-
-        redirectAttributes.addFlashAttribute("success", "Ticket submitted and email sent!");
-        return "redirect:/maintenanceList";
+        model.addAttribute("flat", flat);
+        return "propertyManagerForm";
     }
 
-    @GetMapping("/propertyManagerForm") // Redirect when no PM is assigned
     @PostMapping("/propertyManager/save")
-    public String savePropertyManager(@AuthenticationPrincipal AppUser user,
+    public String savePropertyManagerForm(@AuthenticationPrincipal AppUser user,
             @RequestParam String name,
             @RequestParam String email,
             @RequestParam(required = false) String phone) {

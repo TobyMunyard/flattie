@@ -1,7 +1,11 @@
 package com.example.flattie.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.example.flattie.model.Flat;
 import com.example.flattie.model.MaintenanceTicket;
 
 /**
@@ -12,5 +16,7 @@ import com.example.flattie.model.MaintenanceTicket;
  */
 @Repository
 public interface MaintenanceTicketRepository extends JpaRepository<MaintenanceTicket, Long> {
-    MaintenanceTicket findByTicketID(String ID); // Custom query method to find a maintenance by ID
+    MaintenanceTicket findByConfirmationToken(String confirmationToken); // Custom query method to find a maintenance by confirmation token
+
+    List<MaintenanceTicket> findByFlat(Flat flat);
 }
