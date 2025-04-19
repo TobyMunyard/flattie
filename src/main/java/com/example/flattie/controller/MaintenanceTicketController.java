@@ -28,7 +28,10 @@ public class MaintenanceTicketController {
     public String ticketPage(@AuthenticationPrincipal AppUser user, Model model) {
         Flat flat = user.getFlat();
         List<MaintenanceTicket> tickets = ticketService.getTicketsForFlat(flat);
+
+        model.addAttribute("flat", flat);
         model.addAttribute("tickets", tickets);
+
         return "ticket";
     }
 
