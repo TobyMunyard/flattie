@@ -33,12 +33,13 @@ public class Flat {
     private double weeklyRent; // Weekly rent for the flat
     private int rooms; // Number of rooms in the flat
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "property_manager_id")
     private PropertyManager propertyManager; // Property manager associated with the flat
 
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MaintenanceTicket> maintenanceTickets = new ArrayList<>(); // List of maintenance tickets associated with the flat
+    private List<MaintenanceTicket> maintenanceTickets = new ArrayList<>(); // List of maintenance tickets associated
+                                                                            // with the flat
 
     @OneToOne(mappedBy = "flat", cascade = CascadeType.ALL)
     private ChoreList choreList; // Chore list associated with the flat
@@ -216,10 +217,10 @@ public class Flat {
     }
 
     // public void setPropertyManager(PropertyManager manager) {
-    //     this.propertyManager = manager; // Set the property manager for the flat
-    //     if (manager != null) {
-    //         manager.setFlat(this); // Ensure bidirectional consistency
-    //     }
+    // this.propertyManager = manager; // Set the property manager for the flat
+    // if (manager != null) {
+    // manager.setFlat(this); // Ensure bidirectional consistency
+    // }
     // }
 
     public void addMaintenanceTicket(MaintenanceTicket ticket) {

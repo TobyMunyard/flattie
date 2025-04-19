@@ -14,7 +14,7 @@
     </header>
 
     <div class="auth-page">
-        <section>
+        <section th:if="${flat.propertyManager != null}">
             <h2>Submit a Request</h2>
             <form th:action="@{/maintenance/request}" method="post">
                 <div class="form-group">
@@ -34,6 +34,15 @@
                 <button type="submit">Submit Ticket</button>
             </form>
         </section>
+
+        <!-- If no PM assigned -->
+        <section th:if="${flat.propertyManager == null}">
+            <h2>Property Manager Not Assigned</h2>
+            <p>This flat does not currently have a property manager linked. You must assign one before submitting
+                tickets.</p>
+            <a class="button" href="/propertyManagerForm">Assign Property Manager</a>
+        </section>
+
 
         <section>
             <h2>Your Flat’s Tickets</h2>

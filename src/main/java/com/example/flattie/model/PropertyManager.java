@@ -17,7 +17,7 @@ public class PropertyManager {
     private String email;
     private String phone;
 
-    @OneToOne(mappedBy = "propertyManager", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "propertyManager")
     private Flat flat;
 
     // Default constructor required by JPA

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
+import com.example.flattie.model.PropertyManager;
+import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatService;
 
@@ -26,6 +28,9 @@ public class FlatInfoController {
 
     @Autowired
     private FlatService flatService;
+
+    @Autowired
+    private FlatRepository flatRepo;
 
     @GetMapping("/showFlatInfo")
     public String showFlatInfo(@AuthenticationPrincipal AppUser user, Model model) {
@@ -90,28 +95,27 @@ public class FlatInfoController {
 
     @PostMapping("/leaveFlat")
     public String leaveFlat(@AuthenticationPrincipal AppUser user, Model model) {
-    // Check if the user is logged in
-    if (user == null) {
-        return "redirect:/login"; // Redirect to login if the user is not authenticated
+        // Check if the user is logged in
+        if (user == null) {
+            return "redirect:/login"; // Redirect to login if the user is not authenticated
+        }
+
+        // Check if the user belongs to a flat
+        Flat flat = user.getFlat();
+        if (flat == null) {
+            model.addAttribute("error", "You are not part of any flat to leave.");
+            return "error"; // Render an error page
+        }
+
+        // Remove the user from the flat
+        user.setFlat(null);
+        appUserService.saveAppUser(user);
+
+        model.addAttribute("success", "You have successfully left the flat.");
+
+        // Redirect to a suitable page
+        return "redirect:/";
     }
-
-    // Check if the user belongs to a flat
-    Flat flat = user.getFlat();
-    if (flat == null) {
-        model.addAttribute("error", "You are not part of any flat to leave.");
-        return "error"; // Render an error page
-    }
-
-    // Remove the user from the flat
-    user.setFlat(null);
-    appUserService.saveAppUser(user);
-
-    
-    model.addAttribute("success", "You have successfully left the flat.");
-
-    // Redirect to a suitable page 
-    return "redirect:/";
-}
 
     /**
      * Endpoint to get the flatmates of the currently authenticated user.
@@ -133,6 +137,53 @@ public class FlatInfoController {
                     return data;
                 })
                 .toList();
+    }
+
+    /**
+     * Endpoint to show the property manager form.
+     * 
+     * @param user  The currently authenticated user.
+     * @param model The model to be used in the view.
+     * @return The name of the view to be rendered.
+     */
+    @GetMapping("/propertyManagerForm") // Redirect when no PM is assigned
+    public String showPropertyManagerForm(@AuthenticationPrincipal AppUser user, Model model) {
+        Flat flat = user.getFlat();
+        if (flat == null)
+            return "redirect:/joinFlat";
+
+        model.addAttribute("flat", flat);
+        return "propertyManagerForm";
+    }
+
+    /**
+     * Endpoint to save the property manager form data.
+     * 
+     * @param user  The currently authenticated user.
+     * @param name  The name of the property manager.
+     * @param email The email of the property manager.
+     * @param phone The phone number of the property manager (optional).
+     * @return A redirect to the flat info page.
+     */
+    @PostMapping("/propertyManager/save")
+    public String savePropertyManagerForm(@AuthenticationPrincipal AppUser user,
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam(required = false) String phone) {
+        Flat flat = user.getFlat();
+        if (flat == null)
+            return "redirect:/joinFlat";
+
+        PropertyManager manager = new PropertyManager();
+        manager.setName(name);
+        manager.setEmail(email);
+        manager.setPhone(phone);
+        manager.setFlat(flat);
+
+        flat.setPropertyManager(manager);
+        flatRepo.save(flat); // cascade saves manager too
+
+        return "redirect:/showFlatInfo"; // Redirect to flat info page
     }
 
 }
