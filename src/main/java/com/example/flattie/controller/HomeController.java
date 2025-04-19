@@ -142,31 +142,4 @@ public class HomeController {
         model.addAttribute("user", user);
         return "about";
     }
-
-    /**
-     * Serves the ticket page of the application from the url "/ticket". "ticket"
-     * string is automatically mapped to file "ticket.html" in resources/templates
-     * folder.
-     * 
-     * @return The ticket page of the application.
-     */
-    @GetMapping("/ticket")
-    public String contact(@AuthenticationPrincipal AppUser user, Model model) {
-        model.addAttribute("user", user);
-        return "ticket";
-    }
-
-    /**
-     * Serves the property manager form page of the application from the url
-     * "/propertyManagerForm". "propertyManagerForm" string is automatically mapped
-     * to file
-     * "propertyManagerForm.html" in resources/templates folder.
-     * 
-     * @return The property manager form page of the application.
-     */
-    @GetMapping("/propertyManagerForm")
-    public String propertyManagerForm(@AuthenticationPrincipal AppUser user, Model model) {
-        model.addAttribute("user", user);
-        return "propertyManagerForm";
-    }
 }

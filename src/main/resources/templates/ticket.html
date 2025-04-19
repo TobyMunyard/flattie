@@ -1,67 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact / Maintenance - Flattie.com</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="ticketsStyles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Maintenance Requests - Flattie.com</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/ticketsStyles.css">
 </head>
+
 <body>
+    <header>
+        <h1>Maintenance Requests</h1>
+    </header>
 
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">☰</button>
-        <div class="maintenance-container">
-            <h1><i class="fas fa-wrench"></i> Maintenance Requests</h1>
+    <div class="auth-page">
+        <section>
+            <h2>Submit a Request</h2>
+            <form th:action="@{/maintenance/request}" method="post">
+                <div class="form-group">
+                    <label for="description">Issue Description:</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
 
-            <section class="maintenance-form">
-                <h2>Submit a New Request</h2>
-                <form id="maintenance-request-form" action="/maintenance/request" method="post">
-                    <div class="form-group">
-                        <label for="issue-description">Issue Description:</label>
-                        <textarea id="issue-description" name="issue-description" rows="4" placeholder="Describe the issue..." required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="issue-location">Location (Optional):</label>
-                        <input type="text" id="issue-location" name="issue-location" placeholder="e.g., Kitchen Sink, Bedroom Window">
-                    </div>
-                    <div class="form-group">
-                        <label for="urgency">Urgency:</label>
-                        <select id="urgency" name="urgency" required>
-                            <option value="Low">Low</option>
-                            <option value="Medium">Medium</option>
-                            <option value="High">High</option>
-                        </select>
-                    </div>
-                    <button type="submit">Submit Request</button>
-                </form>
-            </section>
+                <div class="form-group">
+                    <label for="urgency">Urgency:</label>
+                    <select id="urgency" name="urgency" required>
+                        <option value="LOW">Low</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="HIGH">High</option>
+                    </select>
+                </div>
 
-            <section class="maintenance-list">
-                <h2>Submitted Tickets</h2>
-                <table id="ticket-table">
-                    <thead>
-                        <tr>
-                            <th>Issue</th>
-                            <th>Location</th>
-                            <th>Urgency</th>
-                            <th>Submitted</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ticket-list">
-                        <!-- Tickets will be added here -->
-                    </tbody>
-                </table>
-            </section>
-        </div>
+                <button type="submit">Submit Ticket</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Your Flat’s Tickets</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Urgency</th>
+                        <th>Status</th>
+                        <th>Submitted At</th>
+                        <th>Submitted By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ticket : ${tickets}">
+                        <td th:text="${ticket.description}"></td>
+                        <td th:text="${ticket.urgency}"></td>
+                        <td th:text="${ticket.status}"></td>
+                        <td th:text="${#temporals.format(ticket.submittedAt, 'dd MMM yyyy HH:mm')}"></td>
+                        <td th:text="${ticket.submittedBy}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </div>
-    <script src="/js/ticketsScript.js"></script>
+    <p th:if="${success}" th:text="${success}"></p>
 
     <footer>
-        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+        <p>&copy; 2025 Flattie.com</p>
     </footer>
 </body>
+
 </html>
