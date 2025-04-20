@@ -15,6 +15,8 @@ public class MaintenanceTicket {
     private Long id;
 
     private String description;
+    private String location; // e.g., "Kitchen", "Bathroom", etc.
+    private String imageUrl; // URL to an image of the issue
     private String type; // e.g., "PLUMBING", "ELECTRICAL", etc.
     private String urgency; // e.g., "LOW", "MEDIUM", "HIGH"
     private String status; // e.g., "PENDING", "RESOLVED"
@@ -119,5 +121,21 @@ public class MaintenanceTicket {
 
     public void setFlat(Flat flat) {
         this.flat = flat;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
