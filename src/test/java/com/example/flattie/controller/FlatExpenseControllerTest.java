@@ -61,15 +61,16 @@ public class FlatExpenseControllerTest {
 
         HandlerMethodArgumentResolver authPrincipalResolver = new HandlerMethodArgumentResolver() {
             @Override
-            public boolean supportsParameter(org.springframework.core.MethodParameter parameter) {
+            public boolean supportsParameter(
+                    @SuppressWarnings("null") org.springframework.core.MethodParameter parameter) {
                 return parameter.getParameterAnnotation(AuthenticationPrincipal.class) != null;
             }
 
             @Override
-            public Object resolveArgument(org.springframework.core.MethodParameter parameter,
-                                          ModelAndViewContainer mavContainer,
-                                          NativeWebRequest webRequest,
-                                          WebDataBinderFactory binderFactory) {
+            public Object resolveArgument(@SuppressWarnings("null") org.springframework.core.MethodParameter parameter,
+                    @SuppressWarnings("null") ModelAndViewContainer mavContainer,
+                    @SuppressWarnings("null") NativeWebRequest webRequest,
+                    @SuppressWarnings("null") WebDataBinderFactory binderFactory) {
                 return mockUser;
             }
         };

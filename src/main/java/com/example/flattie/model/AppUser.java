@@ -44,6 +44,8 @@ public class AppUser implements UserDetails {
     @JoinColumn(name = "flat_id", referencedColumnName = "id", nullable = true)
     @JsonIgnore // Prevents circular reference when serializing to JSON
     private Flat flat;
+    
+    private String profileImage; // URL to the user's profile image
 
     public AppUser() {
     }
@@ -136,4 +138,19 @@ public class AppUser implements UserDetails {
         return true;
     }
 
+    public void setProfileImage(String path) {
+        this.profileImage = path;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    public String getRole() {
+        return "ROLE_USER"; // Placeholder for role, can be updated later
+    }
 }

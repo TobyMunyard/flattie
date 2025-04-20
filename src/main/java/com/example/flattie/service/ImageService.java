@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ImageService {
-    private static final String UPLOAD_BASE = "uploads/";
 
     public String saveImage(MultipartFile file, String subfolder) throws IOException {
         if (file == null || file.isEmpty()) {

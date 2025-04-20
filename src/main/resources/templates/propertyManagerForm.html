@@ -16,6 +16,10 @@
         <h1>Flattie.com</h1>
         <p>Your one-stop shop for flatmate management</p>
     </header>
+
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+    
     <div class="auth-page">
         <h1>Add Property Manager</h1>
 
