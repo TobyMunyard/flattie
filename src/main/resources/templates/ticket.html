@@ -12,7 +12,14 @@
     <!-- Sidebar -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    
+    <!-- Modal if no property manager -->
+    <div th:if="${flat.propertyManager == null}" class="modal-overlay">
+        <div class="modal">
+            <h2>Property Manager Missing</h2>
+            <p>You need to assign a Property Manager before submitting maintenance tickets.</p>
+            <a class="button" href="/propertyManagerForm">Assign Now</a>
+        </div>
+    </div>
 
     <div class="auth-page" th:classappend="${flat.propertyManager == null} ? 'blurred'">
         <section>

@@ -38,6 +38,17 @@ public class MaintenanceTicketController {
 
     @GetMapping("/ticket")
     public String ticketPage(@AuthenticationPrincipal AppUser user, Model model) {
+        // Check if user is logged in and has a flat assigned
+        if (user == null) {
+            return "redirect:/login"; // Redirect to login if not logged in
+        }
+
+        // Check if the user has a flat assigned
+        if (user.getFlat() == null) {
+            return "redirect:/joinFlat"; // Redirect to login if no flat assigned
+        }
+
+        // Get the user's flat and tickets
         Flat flat = user.getFlat();
         List<MaintenanceTicket> tickets = ticketService.getTicketsForFlat(flat);
 
