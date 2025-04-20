@@ -125,6 +125,7 @@ input[type="range"] {
     width: 150px;
     height: 20px;
     -webkit-appearance: horizontal;
+    appearance: horizontal;
     writing-mode: horizontal-tb;
     transform: rotate(0deg);
     margin: 10px 0;
@@ -202,6 +203,20 @@ input[type="number"] {
     align-items: center;
 }
 
+.sidebar-header {
+    color: #aaa;
+    text-transform: uppercase;
+    font-size: 12px;
+    padding: 8px 32px 4px;
+    margin-top: 16px;
+    border-bottom: 1px solid #444;
+    letter-spacing: 1px;
+}
+
+.sidebar-section a {
+    padding-left: 32px;
+    /* match .sidebar a left padding */
+}
 
 /* ========================== */
 /*    ChoreList Page Styles   */
@@ -379,10 +394,12 @@ footer {
 }
 
 /* Keep Me Logged In Checkbox */
- .keep-logged-in {
+.keep-logged-in {
     display: flex;
-    align-items: center; /* Aligns checkbox and label vertically */
-    gap: 5px; /* Keeps spacing consistent */
+    align-items: center;
+    /* Aligns checkbox and label vertically */
+    gap: 5px;
+    /* Keeps spacing consistent */
     margin-top: 7.5px;
 }
 
@@ -390,7 +407,8 @@ footer {
     font-size: 16px;
     line-height: 1;
     cursor: pointer;
-    white-space: nowrap; /* Prevents text from wrapping */
+    white-space: nowrap;
+    /* Prevents text from wrapping */
 }
 
 .keep-logged-in input[type="checkbox"] {
@@ -398,7 +416,8 @@ footer {
     height: 16px;
     cursor: pointer;
     margin: 0px;
-    transform: translateY(4.5px); /* Slight alignment */
+    transform: translateY(4.5px);
+    /* Slight alignment */
 }
 
 /* ========================== */
@@ -556,7 +575,8 @@ footer {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin: 20px auto; /* Center the form on the page */
+    margin: 20px auto;
+    /* Center the form on the page */
 }
 
 /* Form Input Fields */

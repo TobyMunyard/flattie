@@ -33,7 +33,7 @@ public class MaintenanceTicketService {
         ticket.setConfirmationToken(UUID.randomUUID().toString());
         ticket.setManagerEmail(user.getFlat().getPropertyManager().getEmail());
 
-        return ticketRepo.save(ticket);
+        return ticket;
     }
 
     public boolean resolveTicket(String token) {

@@ -5,69 +5,90 @@
     <meta charset="UTF-8">
     <title>Maintenance Requests - Flattie.com</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/ticketsStyles.css">
+    <link rel="stylesheet" href="/css/ticketStyles.css">
 </head>
 
 <body>
-    <header>
-        <h1>Maintenance Requests</h1>
-    </header>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    <div class="auth-page">
-        <section th:if="${flat.propertyManager != null}">
-            <h2>Submit a Request</h2>
-            <form th:action="@{/maintenance/request}" method="post">
-                <div class="form-group">
-                    <label for="description">Issue Description:</label>
-                    <textarea id="description" name="description" rows="4" required></textarea>
-                </div>
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰</button>
+        <!-- Modal if no property manager -->
+        <div th:if="${flat.propertyManager == null}" class="modal-overlay">
+            <div class="modal">
+                <h2>Property Manager Missing</h2>
+                <p>You need to assign a Property Manager before submitting maintenance tickets.</p>
+                <a class="button" href="/propertyManagerForm">Assign Now</a>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="urgency">Urgency:</label>
-                    <select id="urgency" name="urgency" required>
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
-                    </select>
-                </div>
+        <div class="auth-page" th:classappend="${flat.propertyManager == null} ? 'blurred'">
+            <section>
+                <h2>Submit a Request</h2>
+                <form th:action="@{/maintenance/request}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="description">Issue Description:</label>
+                        <textarea id="description" name="description" rows="4" required></textarea>
+                    </div>
 
-                <button type="submit">Submit Ticket</button>
-            </form>
-        </section>
+                    <div class="form-group">
+                        <label for="location">Location:</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Kitchen sink">
+                    </div>
 
-        <!-- If no PM assigned -->
-        <section th:if="${flat.propertyManager == null}">
-            <h2>Property Manager Not Assigned</h2>
-            <p>This flat does not currently have a property manager linked. You must assign one before submitting
-                tickets.</p>
-            <a class="button" href="/propertyManagerForm">Assign Property Manager</a>
-        </section>
+                    <div class="form-group">
+                        <label for="urgency">Urgency:</label>
+                        <select id="urgency" name="urgency" required>
+                            <option value="LOW">Low</option>
+                            <option value="MEDIUM">Medium</option>
+                            <option value="HIGH">High</option>
+                        </select>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="image">Upload Photo (optional):</label>
+                        <input type="file" id="image" name="image" accept="image/*">
+                    </div>
 
-        <section>
-            <h2>Your Flat’s Tickets</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Urgency</th>
-                        <th>Status</th>
-                        <th>Submitted At</th>
-                        <th>Submitted By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="ticket : ${tickets}">
-                        <td th:text="${ticket.description}"></td>
-                        <td th:text="${ticket.urgency}"></td>
-                        <td th:text="${ticket.status}"></td>
-                        <td th:text="${#temporals.format(ticket.submittedAt, 'dd MMM yyyy HH:mm')}"></td>
-                        <td th:text="${ticket.submittedBy}"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+                    <button type="submit">Submit Ticket</button>
+                </form>
+            </section>
+
+            <section>
+                <h2>Your Flat's Tickets</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Location</th>
+                            <th>Urgency</th>
+                            <th>Status</th>
+                            <th>Submitted At</th>
+                            <th>Submitted By</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="ticket : ${tickets}">
+                            <td th:text="${ticket.description}"></td>
+                            <td th:text="${ticket.location} ?: '-'"></td>
+                            <td th:text="${ticket.urgency}"></td>
+                            <td th:text="${ticket.status}"></td>
+                            <td th:text="${#temporals.format(ticket.submittedAt, 'dd MMM yyyy HH:mm')}"></td>
+                            <td th:text="${ticket.submittedBy}"></td>
+                            <td>
+                                <a th:if="${ticket.imageUrl != null}" th:href="@{${ticket.imageUrl}}"
+                                    target="_blank">View</a>
+                                <span th:if="${ticket.imageUrl == null}">—</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
     </div>
+    <script src="/js/ticketScript.js"></script>
     <p th:if="${success}" th:text="${success}"></p>
 
     <footer>

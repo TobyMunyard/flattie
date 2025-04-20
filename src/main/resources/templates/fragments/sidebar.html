@@ -1,31 +1,34 @@
-<!-- inject using fragments/sidebar.html -->
-<div th:fragment="sidebar" id="mySidebar" class="sidebar">
-  <!-- Always shown -->
-  <a th:href="@{/}">Home</a>
-  <a th:href="@{/about}">About</a>
+<div class="sidebar" id="mySidebar" th:fragment="sidebar">
 
-  <!-- Logged out -->
-  <a th:if="${#authentication == null}" th:href="@{/login}">Login</a>
-  <a th:if="${#authentication == null}" th:href="@{/createAccount}">Create Account</a>
+  <!-- Nav stuff -->
+  <div class="sidebar-section">
+    <p class="sidebar-header">Navigation</p>
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/about}">About</a>
+  </div>
+  
+  <!-- Flatmate tools -->
+  <div class="sidebar-section" th:if="${currentUser?.flat != null}">
+    <p class="sidebar-header">Flat Tools</p>
+    <a th:href="@{/choreList}">Chore List</a>
+    <a th:href="@{/shoppingList}">Shopping List</a>
+    <a th:href="@{/rentCalculator}">Rent Calculator</a>
+    <a th:href="@{/ticket}">Tickets</a>
+  </div>
+  
+  <!-- Flat Setup -->
+  <div class="sidebar-section" th:if="${currentUser?.flat == null}">
+    <p class="sidebar-header">Flat Setup</p>
+    <a th:href="@{/joinFlat}">Join Flat</a>
+    <a th:href="@{/createFlat}">Create Flat</a>
+  </div>
+  
+  <!-- Account Section -->
+  <div class="sidebar-section">
+    <p class="sidebar-header">Account</p>
+    <a th:if="${#authentication == null}" th:href="@{/login}">Login</a>
+    <a th:if="${#authentication == null}" th:href="@{/createAccount}">Create Account</a>
+    <a th:if="${currentUser != null}" th:href="@{/profilePage}">Profile</a>
+  </div>
 
-  <!-- Logged in (no flat yet) -->
-  <a th:if="${#authentication != null and #authentication.authenticated}" th:href="@{/profilePage}">Profile</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
-    th:href="@{/joinFlat}">Join Flat</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat == null}"
-    th:href="@{/createFlat}">Create Flat</a>
-
-  <!-- Logged in AND in a flat -->
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/shoppingList}">Shopping List</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/choreList}">Chore List</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/rentCalculator}">Rent Calculator</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/showFlatInfo}">Flat Info</a>
-  <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/ticket}">Tickets</a>
-  <!-- <a th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
-    th:href="@{/viewFlats}">Manage Flats</a> -->
 </div>

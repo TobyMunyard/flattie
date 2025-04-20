@@ -1,3 +1,4 @@
+// === SIDEBAR TOGGLE ===
 function openNav() {
     const sidebar = document.getElementById("mySidebar");
     const main = document.getElementById("main");
