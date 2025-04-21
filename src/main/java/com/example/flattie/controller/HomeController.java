@@ -118,6 +118,21 @@ public class HomeController {
     }
 
     /**
+     * Serves the expenses page of the application from the url
+     * "/expense". "expense" string is automatically mapped to file "expense.html"
+     * in
+     * resources/templates folder.
+     * 
+     * @return The expense page of the application.
+     * @param user  The current authenticated user. 
+     */
+    @GetMapping("/expense")
+    public String expense(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
+        return "expense";
+    }
+
+    /**
      * Serves the viewFlats page of the application from the url "/viewFlats".
      * "viewFlats" string is automatically mapped to file "viewFlats.html" in
      * resources/templates folder.
