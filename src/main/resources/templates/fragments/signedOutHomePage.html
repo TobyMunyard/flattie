@@ -1,0 +1,28 @@
+<div th:if="${#authentication == null}" th:fragment="signedOutHomePage">
+
+    <div class="container">
+        <section class="hero">
+            <h2>Welcome to Flattie.com!</h2>
+            <p>The easiest way to manage shared living.</p>
+            <a href="createAccount" class="cta-button">Sign Up Now</a>
+            <p>Login or Register to Unlock all our awesome features!</p>
+        </section>
+
+        <section id="features">
+            <h2>Features</h2>
+            <ul>
+                <li>Shared Shopping List - Never forget who's buying the milk again!</li>
+                <li>Rent Delegation Calculator - Split the rent fairly, no more arguments!</li>
+                <li>Todo List - Keep track of chores and who's doing what!</li>
+                <li>...and more!</li>
+            </ul>
+        </section>
+
+        <section id="about">
+            <h2>About</h2>
+            <p>Flattie.com helps you manage your flatting needs with ease and efficiency. We're dedicated to making
+                shared living simpler and more enjoyable.</p>
+        </section>
+    </div>
+
+</div>

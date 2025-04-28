@@ -1,0 +1,8 @@
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}" th:fragment="signedInAndInFlatHomePage">
+
+    <div class="container">
+        <h2>Noticeboard</h2>
+        <p>Some notice!</p>
+    </div>
+
+</div>

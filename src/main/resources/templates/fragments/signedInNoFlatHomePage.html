@@ -1,0 +1,13 @@
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser.flat == null}" th:fragment="signedInNoFlatHomePage">
+
+    <div class="container">
+        <section class="hero">
+            <h2>Welcome to Flattie.com!</h2>
+            <p>Join a flat to use the noticeboard!</p>
+            <a href="joinFlat" class="cta-button">Join Flat</a>
+        </section>
+
+       
+    </div>
+
+</div>

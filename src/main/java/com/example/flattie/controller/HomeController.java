@@ -21,7 +21,8 @@ public class HomeController {
      * @return The index page of the application.
      */
     @GetMapping("/")
-    public String home() {
+    public String home(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "index";
     }
 
