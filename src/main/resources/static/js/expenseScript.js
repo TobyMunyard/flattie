@@ -22,13 +22,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const expenseAmountInput = document.getElementById('expense-amount');
     const expenseDescriptionInput = document.getElementById('expense-description');
 
-    // --- Sample Data ---
-    let flatmates = ['Alice', 'Bob', 'Charlie']; // Replace with actual flatmate data later
-    let expenses = [
-        { id: 1, name: "Groceries", amount: 150.75, description: "Weekly shop at Coles", delegations: { 'Alice': 50.25, 'Bob': 50.25, 'Charlie': 50.25 } },
-        { id: 2, name: "Electricity Bill", amount: 95.00, description: "Monthly power", delegations: { 'Alice': 31.67, 'Bob': 31.67, 'Charlie': 31.66 } }
-    ];
-    let nextExpenseId = 3;
+    // --- Data Fetching ---
+    Promise.all([
+        fetch('/api/flat/flatmates').then(res => res.json()),
+        fetch('/api/flat/expenses').then(res => res.json())
+    ]).then(([flatmateData, expenseData]) => {
+        flatmates = flatmateData;  // Full objects (keep id + username)
+        expenses = expenseData.map(e => ({
+            id: e.id,
+            name: e.name,
+            amount: parseFloat(e.totalAmount),
+            description: e.description || '',
+            delegations: {} // will be filled per-expense later
+        }));
+        renderExpenses();
+    }).catch(err => {
+        console.error("Failed to load initial data", err);
+    });
+
 
     // --- Functions ---
 
@@ -73,12 +84,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Add event listener for edit split button
         cardHeader.querySelector('.edit-split-btn').addEventListener('click', (e) => {
-            const sliderContainer = e.target.closest('.expense-card').querySelector('.expense-sliders-container');
-            const isVisible = sliderContainer.style.display !== 'none';
-            sliderContainer.style.display = isVisible ? 'none' : 'block';
-            if (!isVisible && !sliderContainer.hasChildNodes()) { // Only create sliders if not already created and visible
-                createSlidersForExpense(expense, sliderContainer);
-            }
+            // const sliderContainer = e.target.closest('.expense-card').querySelector('.expense-sliders-container');
+            // const isVisible = sliderContainer.style.display !== 'none';
+            // sliderContainer.style.display = isVisible ? 'none' : 'block';
+            // if (!isVisible && !sliderContainer.hasChildNodes()) { // Only create sliders if not already created and visible
+            //     createSlidersForExpense(expense, sliderContainer);
+            // }
+            fetch(`/api/flat/expense/delegations?expenseId=${expense.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(d => {
+                        const userId = d.flatmate.id;
+                        const flatmate = flatmates.find(f => f.id === userId);
+                        if (flatmate) expense.delegations[flatmate.username] = d.amount;
+                    });
+                    createSlidersForExpense(expense, sliderContainer);
+                })
+                .catch(err => console.error("Failed to load delegations", err));
         });
 
         card.appendChild(cardHeader);
@@ -166,7 +188,15 @@ document.addEventListener('DOMContentLoaded', function () {
             // Add lock icon (optional, maybe too complex for now)
 
             container.appendChild(sliderDiv);
+
         });
+        // Add save button
+        const saveButton = document.createElement('button');
+        saveButton.textContent = '💾 Save';
+        saveButton.classList.add('save-delegation-btn');
+        saveButton.addEventListener('click', () => saveDelegations(expense));
+        container.appendChild(saveButton);
+        
         updateSliderAmountsAndTotal(-1, rentValues, totalAmount, container, flatmates, expense); // Initial update for total/remaining
     }
 
@@ -237,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    function addExpense() {
+    async function addExpense() {
         const name = expenseNameInput.value.trim();
         const amountStr = expenseAmountInput.value;
         const description = expenseDescriptionInput.value.trim();
@@ -253,36 +283,89 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Default: Split evenly
-        const numPeople = flatmates.length;
-        const initialSplit = amount / numPeople;
-        const delegations = {};
-        flatmates.forEach(fmName => {
-            delegations[fmName] = initialSplit;
-        });
-
-
-        const newExpense = {
-            id: nextExpenseId++,
-            name: name,
-            amount: amount,
-            description: description,
-            delegations: delegations
+        const payload = {
+            name,
+            totalAmount: amountStr,
+            expenseMonth: new Date().toISOString().split('T')[0] // YYYY-MM-DD
         };
 
-        expenses.push(newExpense);
-        renderExpenses();
+        try {
+            const res = await fetch('/api/flat/expense/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        // Clear form
-        expenseNameInput.value = '';
-        expenseAmountInput.value = '';
-        expenseDescriptionInput.value = '';
+            const json = await res.json();
+            if (json.status === "success") {
+                const newExpense = {
+                    id: json.data.expenseId,
+                    name,
+                    amount,
+                    description,
+                    delegations: {}
+                };
+                expenses.push(newExpense);
+                renderExpenses();
+                expenseNameInput.value = '';
+                expenseAmountInput.value = '';
+                expenseDescriptionInput.value = '';
+            } else {
+                alert("❌ " + json.message);
+            }
+        } catch (err) {
+            alert("❌ Failed to create expense: " + err.message);
+        }
     }
 
-    function deleteExpense(id) {
-        expenses = expenses.filter(expense => expense.id !== id);
-        renderExpenses();
+    async function deleteExpense(id) {
+        try {
+            const res = await fetch(`/api/flat/expense/delete?id=${id}`, {
+                method: 'POST'
+            });
+            const json = await res.json();
+            if (json.status === "success") {
+                expenses = expenses.filter(e => e.id !== id);
+                renderExpenses();
+            } else {
+                alert("❌ " + json.message);
+            }
+        } catch (err) {
+            alert("❌ Failed to delete expense: " + err.message);
+        }
     }
+
+    async function saveDelegations(expense) {
+        const payload = [];
+
+        for (const flatmate of flatmates) {
+            const amount = expense.delegations[flatmate.username];
+            if (amount == null) continue;
+
+            payload.push({
+                flatmate: { id: flatmate.id },
+                amount: parseFloat(amount.toFixed(2))
+            });
+        }
+
+        try {
+            const res = await fetch(`/api/flat/expense/delegations?expenseId=${expense.id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const json = await res.json();
+            if (json.status === "success") {
+                alert("✅ Delegations saved!");
+            } else {
+                alert("❌ " + json.message);
+            }
+        } catch (err) {
+            alert("❌ Failed to save delegations: " + err.message);
+        }
+    }
+
 
     // --- Event Listeners ---
     addExpenseBtn.addEventListener('click', addExpense);
