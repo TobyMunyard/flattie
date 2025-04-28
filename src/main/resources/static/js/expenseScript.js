@@ -1,3 +1,7 @@
+// Global variables
+let flatmates = [];
+let expenses = [];
+
 function openNav() {
     const sidebar = document.getElementById("mySidebar");
     const main = document.getElementById("main");
@@ -42,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // --- Functions ---
-
     function renderExpenses() {
         expenseListContainer.innerHTML = ''; // Clear existing list
         expenses.forEach(expense => {
@@ -84,23 +87,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Add event listener for edit split button
         cardHeader.querySelector('.edit-split-btn').addEventListener('click', (e) => {
-            // const sliderContainer = e.target.closest('.expense-card').querySelector('.expense-sliders-container');
-            // const isVisible = sliderContainer.style.display !== 'none';
-            // sliderContainer.style.display = isVisible ? 'none' : 'block';
-            // if (!isVisible && !sliderContainer.hasChildNodes()) { // Only create sliders if not already created and visible
-            //     createSlidersForExpense(expense, sliderContainer);
-            // }
-            fetch(`/api/flat/expense/delegations?expenseId=${expense.id}`)
-                .then(res => res.json())
-                .then(data => {
-                    data.forEach(d => {
-                        const userId = d.flatmate.id;
-                        const flatmate = flatmates.find(f => f.id === userId);
-                        if (flatmate) expense.delegations[flatmate.username] = d.amount;
-                    });
-                    createSlidersForExpense(expense, sliderContainer);
-                })
-                .catch(err => console.error("Failed to load delegations", err));
+            const sliderContainer = e.target.closest('.expense-card').querySelector('.expense-sliders-container');
+            const isVisible = sliderContainer.style.display !== 'none';
+            sliderContainer.style.display = isVisible ? 'none' : 'block';
+
+            if (!isVisible && !sliderContainer.hasChildNodes()) {
+                fetch(`/api/flat/expense/delegations?expenseId=${expense.id}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        data.forEach(d => {
+                            expense.delegations[d.flatmate.id] = d.amount;
+                        });
+                        createSlidersForExpense(expense, sliderContainer);
+                    })
+                    .catch(err => console.error("Failed to load delegations", err));
+            }
         });
 
         card.appendChild(cardHeader);
@@ -110,37 +111,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function createSlidersForExpense(expense, container) {
-        container.innerHTML = ''; // Clear previous sliders if any
-        let currentDelegations = { ...expense.delegations }; // Copy delegations for this instance
+        container.innerHTML = '';
         let totalAmount = expense.amount;
         let numPeople = flatmates.length;
 
-        // Initialize delegations if they don't exist or don't match flatmates
-        if (!currentDelegations || Object.keys(currentDelegations).length !== numPeople) {
-            const initialSplit = totalAmount / numPeople;
-            currentDelegations = {};
-            flatmates.forEach(name => {
-                currentDelegations[name] = initialSplit;
-            });
-            expense.delegations = { ...currentDelegations }; // Update main expense object
-        }
-
-
-        let rentValues = flatmates.map(name => (currentDelegations[name] / totalAmount) * 100); // Calculate percentage for sliders
+        let rentValues = flatmates.map(flatmate => {
+            const amount = expense.delegations[flatmate.id] || 0;
+            return (amount / totalAmount) * 100;
+        });
         let sliderLocked = Array(numPeople).fill(false);
 
         const totalDisplay = document.createElement('div');
         totalDisplay.classList.add('expense-split-total');
-        totalDisplay.textContent = `Total: $${totalAmount.toFixed(2)} | Remaining: $0.00`; // Initial remaining
         container.appendChild(totalDisplay);
 
-
-        flatmates.forEach((name, i) => {
+        flatmates.forEach((flatmate, i) => {
             const sliderDiv = document.createElement('div');
-            sliderDiv.classList.add('slider-container', 'expense-slider'); // Reuse some rent-calc styles
+            sliderDiv.classList.add('slider-container', 'expense-slider');
 
             const nameLabel = document.createElement('span');
-            nameLabel.textContent = name;
+            nameLabel.textContent = flatmate.username;
             nameLabel.style.marginRight = '10px';
             sliderDiv.appendChild(nameLabel);
 
@@ -156,114 +146,76 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const amountInput = document.createElement('input');
             amountInput.type = 'number';
-            amountInput.value = currentDelegations[name].toFixed(2);
+            amountInput.value = (totalAmount * rentValues[i] / 100).toFixed(2);
             amountInput.min = '0';
             amountInput.max = totalAmount.toFixed(2);
             amountInput.step = '0.01';
-            sliderValueContainer.textContent = '$'; // Prefix for amount input
+            sliderValueContainer.textContent = '$';
             sliderValueContainer.appendChild(amountInput);
-
 
             slider.addEventListener('input', function () {
                 rentValues[i] = parseFloat(this.value);
                 adjustSliders(i, rentValues, sliderLocked, numPeople);
-                updateSliderAmountsAndTotal(i, rentValues, totalAmount, container, flatmates, expense);
+                updateSliderAmountsAndTotal(expense, rentValues, container, totalAmount);
             });
 
             amountInput.addEventListener('change', function () {
-                let enteredAmount = parseFloat(this.value);
-                if (isNaN(enteredAmount) || enteredAmount < 0) enteredAmount = 0;
-                if (enteredAmount > totalAmount) enteredAmount = totalAmount;
-                this.value = enteredAmount.toFixed(2); // Format input
-
-                rentValues[i] = (enteredAmount / totalAmount) * 100;
+                rentValues[i] = (parseFloat(this.value) / totalAmount) * 100;
                 adjustSliders(i, rentValues, sliderLocked, numPeople);
-                updateSliderAmountsAndTotal(i, rentValues, totalAmount, container, flatmates, expense);
-
+                updateSliderAmountsAndTotal(expense, rentValues, container, totalAmount);
             });
-
 
             sliderDiv.appendChild(slider);
             sliderDiv.appendChild(sliderValueContainer);
-            // Add lock icon (optional, maybe too complex for now)
-
             container.appendChild(sliderDiv);
-
         });
-        // Add save button
+
         const saveButton = document.createElement('button');
         saveButton.textContent = '💾 Save';
         saveButton.classList.add('save-delegation-btn');
         saveButton.addEventListener('click', () => saveDelegations(expense));
         container.appendChild(saveButton);
-        
-        updateSliderAmountsAndTotal(-1, rentValues, totalAmount, container, flatmates, expense); // Initial update for total/remaining
+
+        updateSliderAmountsAndTotal(expense, rentValues, container, totalAmount);
     }
 
     function adjustSliders(changedIndex, rentValues, sliderLocked, numPeople) {
         let sum = rentValues.reduce((acc, val) => acc + val, 0);
         let difference = sum - 100;
-
-        if (Math.abs(difference) < 0.01) return; // Allow for small floating point inaccuracies
+        if (Math.abs(difference) < 0.01) return;
 
         let adjustableSliders = [];
-        let adjustableSum = 0;
-
         for (let i = 0; i < numPeople; i++) {
             if (i !== changedIndex && !sliderLocked[i]) {
                 adjustableSliders.push(i);
-                adjustableSum += rentValues[i];
             }
         }
 
-        if (adjustableSliders.length === 0 || adjustableSum <= 0 && difference > 0) {
-            // If no sliders to adjust or trying to increase when sum is 0, force the changed slider back if possible
-            rentValues[changedIndex] -= difference;
-            rentValues[changedIndex] = Math.max(0, Math.min(100, rentValues[changedIndex]));
-            return;
-        }
+        if (adjustableSliders.length === 0) return;
 
-        let totalAdjustment = -difference; // Amount to add/remove across other sliders
-
+        let adjustment = difference / adjustableSliders.length;
         adjustableSliders.forEach(i => {
-            let adjustment = (rentValues[i] / adjustableSum) * totalAdjustment;
-            let newValue = rentValues[i] + adjustment;
-            rentValues[i] = Math.max(0, Math.min(100, newValue)); // Clamp value
+            rentValues[i] -= adjustment;
+            rentValues[i] = Math.max(0, Math.min(100, rentValues[i]));
         });
-
-
-        // Final pass to ensure sum is exactly 100 due to clamping/rounding
-        sum = rentValues.reduce((acc, val) => acc + val, 0);
-        difference = sum - 100;
-
-        if (Math.abs(difference) > 0.01 && adjustableSliders.length > 0) {
-            // Distribute remaining difference evenly if small
-            let adjustmentPerSlider = difference / adjustableSliders.length;
-            adjustableSliders.forEach(i => {
-                rentValues[i] -= adjustmentPerSlider;
-                rentValues[i] = Math.max(0, Math.min(100, rentValues[i]));
-            });
-        }
     }
 
-
-    function updateSliderAmountsAndTotal(changedIndex, rentValues, totalAmount, container, flatmates, expense) {
+    function updateSliderAmountsAndTotal(expense, rentValues, container, totalAmount) {
         const sliders = container.querySelectorAll('.slider');
         const amountInputs = container.querySelectorAll('.slider-value input[type="number"]');
-        let currentTotalDelegated = 0;
 
-        flatmates.forEach((name, i) => {
-            const delegatedAmount = (totalAmount * rentValues[i]) / 100;
-            expense.delegations[name] = delegatedAmount; // Update the main expense object's delegation
-            currentTotalDelegated += delegatedAmount;
-            amountInputs[i].value = delegatedAmount.toFixed(2);
-            sliders[i].value = rentValues[i]; // Ensure slider position matches
+        flatmates.forEach((flatmate, i) => {
+            const amount = (totalAmount * rentValues[i]) / 100;
+            expense.delegations[flatmate.id] = amount;
+            amountInputs[i].value = amount.toFixed(2);
+            sliders[i].value = rentValues[i];
         });
 
         const totalDisplay = container.querySelector('.expense-split-total');
-        const remaining = totalAmount - currentTotalDelegated;
+        const delegatedTotal = rentValues.reduce((sum, val) => sum + (val * totalAmount / 100), 0);
+        const remaining = totalAmount - delegatedTotal;
         totalDisplay.textContent = `Total: $${totalAmount.toFixed(2)} | Remaining: $${remaining.toFixed(2)}`;
-        totalDisplay.style.color = Math.abs(remaining) > 0.01 ? 'red' : 'inherit'; // Highlight if not balanced
+        totalDisplay.style.color = Math.abs(remaining) > 0.01 ? 'red' : 'inherit';
     }
 
 
@@ -320,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function deleteExpense(id) {
         try {
-            const res = await fetch(`/api/flat/expense/delete?id=${id}`, {
+            const res = await fetch(`/api/flat/expense/delete/${id}`, {
                 method: 'POST'
             });
             const json = await res.json();
@@ -336,28 +288,41 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function saveDelegations(expense) {
-        const payload = [];
-
-        for (const flatmate of flatmates) {
-            const amount = expense.delegations[flatmate.username];
-            if (amount == null) continue;
-
-            payload.push({
-                flatmate: { id: flatmate.id },
-                amount: parseFloat(amount.toFixed(2))
-            });
-        }
-
+        const payload = flatmates.map(flatmate => ({
+            flatmate: { id: flatmate.id },
+            amount: parseFloat((expense.delegations[flatmate.id] || 0).toFixed(2))
+        }));
+    
         try {
             const res = await fetch(`/api/flat/expense/delegations?expenseId=${expense.id}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-
+    
             const json = await res.json();
             if (json.status === "success") {
+                // ✅ Delegations saved successfully!
                 alert("✅ Delegations saved!");
+    
+                // Auto-collapse the sliders
+                const card = document.querySelector(`.expense-card[data-id="${expense.id}"]`);
+                const sliderContainer = card.querySelector('.expense-sliders-container');
+                sliderContainer.style.display = 'none';
+    
+                // Small success message (optional nicer UX)
+                const successMessage = document.createElement('div');
+                successMessage.textContent = "Delegations Saved!";
+                successMessage.style.color = "green";
+                successMessage.style.fontWeight = "bold";
+                successMessage.style.textAlign = "center";
+                successMessage.style.marginTop = "10px";
+                sliderContainer.parentElement.insertBefore(successMessage, sliderContainer);
+    
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 1500);
+    
             } else {
                 alert("❌ " + json.message);
             }
@@ -365,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("❌ Failed to save delegations: " + err.message);
         }
     }
-
+    
 
     // --- Event Listeners ---
     addExpenseBtn.addEventListener('click', addExpense);

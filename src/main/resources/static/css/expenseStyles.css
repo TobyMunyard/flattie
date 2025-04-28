@@ -1,0 +1,173 @@
+/* Expenses Page Styles */
+.expenses-container {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 90%;
+    max-width: 900px;
+    margin-top: 30px;
+}
+
+.add-expense-form {
+    margin-bottom: 30px;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.add-expense-form h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #e44d26;
+}
+
+.add-expense-form input[type="text"],
+.add-expense-form input[type="number"],
+.add-expense-form textarea {
+    width: calc(100% - 24px);
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 2px solid #f39c12;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.add-expense-form textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.add-expense-form button {
+    padding: 12px 24px;
+    border: none;
+    background-color: #e67e22;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.add-expense-form button:hover {
+    background-color: #d35400;
+}
+
+#expense-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.expense-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.expense-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.expense-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expense-card-header > div:first-child {
+    flex-grow: 1;
+}
+
+.expense-card-header h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.expense-card-header .expense-description {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 10px 0;
+}
+
+.expense-card-header > div:last-child {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.expense-card-header button {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.9em;
+}
+
+.expense-card-header button i {
+    margin-right: 5px;
+}
+
+.expense-card-header .edit-split-btn {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.expense-card-header .edit-split-btn:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+.expense-card-header .delete-expense-btn {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.expense-card-header .delete-expense-btn:hover {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.expense-sliders-container {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eee;
+}
+
+.expense-slider .slider-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.expense-slider .slider {
+    flex-grow: 1;
+    margin: 0 10px;
+    width: auto;
+}
+
+.expense-slider .slider-value {
+    width: 80px;
+    text-align: right;
+    margin-top: 0;
+}
+
+.expense-slider .slider-value input[type="number"] {
+    width: 70px;
+}
+
+.expense-split-total {
+    text-align: right;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}

@@ -1,6 +1,7 @@
 package com.example.flattie.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,7 +66,7 @@ public class FlatExpenseController {
      */
     @GetMapping("/api/flat/expenses")
     @ResponseBody
-    public List<FlatExpense> getCurrentUserFlatExpenses(@AuthenticationPrincipal AppUser user, Model model) {
+    public List<Map<String, Object>> getCurrentUserFlatExpenses(@AuthenticationPrincipal AppUser user, Model model) {
         // Might not need the model, but it's here for future use?
         Flat flat = user.getFlat();
         List<FlatExpense> expenses = flatExpenseRepository.findByFlat(flat);
@@ -73,7 +74,14 @@ public class FlatExpenseController {
         // Filter out the rent expense from the list of expenses
         expenses.removeIf(expense -> expense.getName().equals("Rent"));
 
-        return expenses;
+        return expenses.stream().map(expense -> {
+            Map<String, Object> expenseMap = new HashMap<>();
+            expenseMap.put("id", expense.getId());
+            expenseMap.put("name", expense.getName());
+            expenseMap.put("totalAmount", expense.getTotalAmount());
+            expenseMap.put("expenseMonth", expense.getExpenseMonth());
+            return expenseMap;
+        }).toList();
     }
 
     /**
@@ -90,11 +98,11 @@ public class FlatExpenseController {
             @RequestBody List<FlatExpenseDelegation> delegations) {
         try {
             flatExpenseService.saveDelegations(user, expenseId, delegations);
-            return ResponseEntity.ok("Delegations saved successfully.");
+            return ResponseEntity.ok(ResponseApi.success("Delegations saved successfully.")); // ✅
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ResponseApi.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ResponseApi.error("Failed to save delegations: ") + e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseApi.error("Failed to save delegations: " + e.getMessage()));
         }
     }
 
@@ -180,7 +188,7 @@ public class FlatExpenseController {
     @ResponseBody
     public ResponseEntity<?> deleteExpense(
             @AuthenticationPrincipal AppUser user,
-            @RequestParam("id") Long id) {
+            @PathVariable("id") Long id) {
         try {
             flatExpenseService.deleteExpense(user, id);
             return ResponseEntity.ok(ResponseApi.success("Expense deleted successfully."));
