@@ -2,7 +2,20 @@
 
     <div class="container">
         <h2>Noticeboard</h2>
-        <p>Some notice!</p>
+        <button id="createNoticeButton">Add Notice</button>
+        <div id="createNoticeModal" class="modal">
+            <div class="modal-content">
+                <span id="closeModalBtn" class="close">&times;</span>
+                <form id="modalForm" action="/createNotice" method="post">
+                    <h2>Create Notice</h2>
+                    <label>Title:</label>
+                    <input type="text" name="title" required>
+                    <label>Description:</label>
+                    <input type="text" name="description" required>
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+        </div>
     </div>
 
 </div>
