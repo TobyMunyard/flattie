@@ -1,7 +1,10 @@
-<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}" th:fragment="signedInAndInFlatHomePage">
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+    th:fragment="signedInAndInFlatHomePage">
 
     <div class="container">
         <h2>Noticeboard</h2>
+        <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+            th:replace="~{fragments/signedInAndInFlatHomePage :: noticeboard}"></div>
         <button id="createNoticeButton">Add Notice</button>
         <div id="createNoticeModal" class="modal">
             <div class="modal-content">
@@ -18,4 +21,14 @@
         </div>
     </div>
 
+</div>
+
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null and currentUser.flat.noticeBoard.size() > 0}"
+    th:fragment="noticeboard">
+    <div th:each="notice : ${currentUser.flat.noticeBoard}">
+        Title:
+        <h4 th:text="${notice.title}"></h4>
+        Description:
+        <h4 th:text="${notice.description}"></h4>
+    </div>
 </div>
