@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses - Flattie.com</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/expenseStyles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">☰</button>
+        <div class="expenses-container">
+            <h1><i class="fas fa-dollar-sign"></i> Flat Expenses</h1>
+
+            <div class="add-expense-form">
+                <h2>Add New Expense</h2>
+                <input type="text" id="expense-name" placeholder="Expense Name" required>
+                <input type="number" id="expense-amount" placeholder="Amount ($)" min="0" step="0.01" required>
+                <textarea id="expense-description" placeholder="Description (optional)"></textarea>
+                <button id="add-expense-btn">Add Expense</button>
+            </div>
+
+            <h2>Current Expenses</h2>
+            <div id="expense-list">
+                <!-- Expense cards will be added here -->
+            </div>
+        </div>
+    </div>
+    <script src="/js/expenseScript.js"></script>
+
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
+</body>
+</html>

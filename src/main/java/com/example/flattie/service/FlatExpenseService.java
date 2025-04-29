@@ -1,6 +1,7 @@
 package com.example.flattie.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.flattie.model.AppUser;
+import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
 import com.example.flattie.model.FlatExpenseDelegation;
 import com.example.flattie.repository.AppUserRepository;
@@ -111,4 +113,61 @@ public class FlatExpenseService {
         // Return the updated expense with delegations
         return expense;
     }
+
+    /**
+     * Creates a new FlatExpense and saves it to the database. This method is
+     * responsible for validating the expense data and ensuring that it is correctly
+     * associated with the user's flat.
+     *
+     * @param user         The current authenticated user.
+     * @param name         The name of the expense.
+     * @param amount       The total amount of the expense.
+     * @param expenseMonth The month of the expense (optional).
+     * @return The created FlatExpense object.
+     */
+    @Transactional
+    public FlatExpense createExpense(AppUser user, String name, BigDecimal amount, LocalDate expenseMonth) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Expense name is required.");
+        }
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Total amount must be greater than zero.");
+        }
+
+        Flat flat = user.getFlat();
+        FlatExpense expense = new FlatExpense(flat, name, amount,
+                expenseMonth != null ? expenseMonth : LocalDate.now());
+        return flatExpenseRepository.save(expense);
+    }
+
+    /**
+     * Deletes a FlatExpense from the database. This method checks if the expense
+     * belongs to the user's flat before deleting it.
+     *
+     * @param user The current authenticated user.
+     * @param id   The ID of the FlatExpense to delete.
+     */
+    @Transactional
+    public void deleteExpense(AppUser user, Long id) {
+        FlatExpense expense = flatExpenseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Expense not found"));
+
+        if (!expense.getFlat().getId().equals(user.getFlat().getId())) {
+            throw new IllegalArgumentException("Unauthorized to delete this expense.");
+        }
+
+        flatExpenseRepository.delete(expense);
+    }
+
+    /**
+     * Finds a FlatExpense by its ID.
+     *
+     * @param id The ID of the FlatExpense to find.
+     * @return The FlatExpense if found, otherwise null.
+     */
+    public FlatExpense findById(Long id) {
+        return flatExpenseRepository.findById(id).orElse(null);
+    }
+
 }

@@ -1,12 +1,14 @@
 package com.example.flattie.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import com.example.flattie.model.FlatExpense;
 import com.example.flattie.model.FlatExpenseDelegation;
 import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.service.FlatExpenseService;
+import com.example.flattie.util.ResponseApi;
 
 @Controller
 /**
@@ -63,7 +66,7 @@ public class FlatExpenseController {
      */
     @GetMapping("/api/flat/expenses")
     @ResponseBody
-    public List<FlatExpense> getCurrentUserFlatExpenses(@AuthenticationPrincipal AppUser user, Model model) {
+    public List<Map<String, Object>> getCurrentUserFlatExpenses(@AuthenticationPrincipal AppUser user, Model model) {
         // Might not need the model, but it's here for future use?
         Flat flat = user.getFlat();
         List<FlatExpense> expenses = flatExpenseRepository.findByFlat(flat);
@@ -71,7 +74,14 @@ public class FlatExpenseController {
         // Filter out the rent expense from the list of expenses
         expenses.removeIf(expense -> expense.getName().equals("Rent"));
 
-        return expenses;
+        return expenses.stream().map(expense -> {
+            Map<String, Object> expenseMap = new HashMap<>();
+            expenseMap.put("id", expense.getId());
+            expenseMap.put("name", expense.getName());
+            expenseMap.put("totalAmount", expense.getTotalAmount());
+            expenseMap.put("expenseMonth", expense.getExpenseMonth());
+            return expenseMap;
+        }).toList();
     }
 
     /**
@@ -88,16 +98,17 @@ public class FlatExpenseController {
             @RequestBody List<FlatExpenseDelegation> delegations) {
         try {
             flatExpenseService.saveDelegations(user, expenseId, delegations);
-            return ResponseEntity.ok("Delegations saved successfully.");
+            return ResponseEntity.ok(ResponseApi.success("Delegations saved successfully.")); // ✅
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseApi.error(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(ResponseApi.error("Failed to save delegations: " + e.getMessage()));
         }
     }
 
     /**
-     * Returns the delegations for a specific expense. This method is called when the
+     * Returns the delegations for a specific expense. This method is called when
+     * the
      * user accesses the /api/flat/expense/delegations endpoint.
      *
      * @param expenseId The ID of the expense for which to retrieve delegations.
@@ -131,5 +142,58 @@ public class FlatExpenseController {
     @ResponseBody
     public Long getRentExpenseId(@AuthenticationPrincipal AppUser user) {
         return user.getFlat().getRentExpense().getId();
+    }
+
+    /**
+     * Creates a new flat expense. This method is called when the user accesses the
+     * /api/flat/expense/create endpoint.
+     *
+     * @param user The current authenticated user.
+     * @param body The request body containing the expense details.
+     * @return A response entity containing the ID of the created expense or an
+     *         error message.
+     */
+    @PostMapping("/api/flat/expense/create")
+    @ResponseBody
+    public ResponseEntity<?> createExpense(
+            @AuthenticationPrincipal AppUser user,
+            @RequestBody Map<String, String> body) {
+        try {
+            String name = body.get("name");
+            String amountStr = body.get("totalAmount");
+            String monthStr = body.get("expenseMonth");
+
+            BigDecimal amount = new BigDecimal(amountStr);
+            LocalDate expenseMonth = (monthStr != null && !monthStr.isBlank())
+                    ? LocalDate.parse(monthStr)
+                    : LocalDate.now();
+
+            FlatExpense expense = flatExpenseService.createExpense(user, name, amount, expenseMonth);
+            return ResponseEntity.ok(ResponseApi.success("Expense created successfully.",
+                    Map.of("expenseId", expense.getId())));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseApi.error("Failed to create expense: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Deletes a flat expense. This method is called when the user accesses the
+     * /api/flat/expense/delete endpoint.
+     *
+     * @param user The current authenticated user.
+     * @param id   The ID of the expense to delete.
+     * @return A response entity indicating the success or failure of the deletion.
+     */
+    @PostMapping("/api/flat/expense/delete/{id}")
+    @ResponseBody
+    public ResponseEntity<?> deleteExpense(
+            @AuthenticationPrincipal AppUser user,
+            @PathVariable("id") Long id) {
+        try {
+            flatExpenseService.deleteExpense(user, id);
+            return ResponseEntity.ok(ResponseApi.success("Expense deleted successfully."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseApi.error("Failed to delete expense: " + e.getMessage()));
+        }
     }
 }
