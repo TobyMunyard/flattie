@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
+    public Notice getNoticeById(Long id);
 }

@@ -269,7 +269,8 @@ public class Flat {
     }
 
     public void removeNotice(Notice notice){
+        System.out.println(noticeBoard.get(0).toString());
+        System.out.println(notice.toString());
         noticeBoard.remove(notice);
-        notice.setFlat(null);
     }
 }

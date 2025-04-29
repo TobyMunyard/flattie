@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.Notice;
+import com.example.flattie.service.FlatService;
 import com.example.flattie.service.NoticeService;
 
 @Controller
@@ -16,6 +17,9 @@ public class NoticeBoardController {
 
     @Autowired
     NoticeService noticeService;
+
+    @Autowired
+    FlatService flatService;
 
     @PostMapping("/createNotice")
     public String createNotice(@RequestParam("title") String title,
@@ -27,6 +31,18 @@ public class NoticeBoardController {
         userFlat.addNotice(newNotice);
         noticeService.saveNotice(newNotice);
 
+        return "redirect:/";
+    }
+
+    @PostMapping("/deleteNotice")
+    public String deleteNotice(@RequestParam("noticeId") Long noticeId, @AuthenticationPrincipal AppUser user) {
+        Flat userFlat = user.getFlat();
+        Notice noticeToDelete = noticeService.getNoticeById(noticeId);
+
+        userFlat.removeNotice(noticeToDelete);
+        flatService.saveFlat(userFlat);
+        
+        noticeService.deleteById(noticeId);
         return "redirect:/";
     }
 }

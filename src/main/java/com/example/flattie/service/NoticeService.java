@@ -16,7 +16,15 @@ public class NoticeService {
         this.noticeRepository = noticeRepository;
     }
 
-    public void saveNotice(Notice notice){
+    public void saveNotice(Notice notice) {
         noticeRepository.save(notice);
+    }
+
+    public void deleteById(Long id) {
+        noticeRepository.deleteById(id);
+    }
+
+    public Notice getNoticeById(Long id) {
+        return noticeRepository.getNoticeById(id);
     }
 }

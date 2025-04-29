@@ -30,5 +30,9 @@
         <h4 th:text="${notice.title}"></h4>
         Description:
         <h4 th:text="${notice.description}"></h4>
+        <form id="modalForm" action="/deleteNotice" method="post">
+            <input type="hidden" name="noticeId" th:value="${notice.id}" />
+            <button type="submit">&times;</button>
+        </form>
     </div>
 </div>
