@@ -38,6 +38,7 @@ public class JoinFlatController {
         }
 
         // Update the user's flat association in the database
+      
         appUserService.joinFlat(user, flat);
 
         // Redirect to the Flat Info page with the flat ID
