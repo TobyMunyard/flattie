@@ -3,6 +3,10 @@ package com.example.flattie.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.example.flattie.model.Role; // Import the Role enum or class
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -26,6 +30,9 @@ public class Flat {
 
     @Column(unique = true) // Ensure the address is unique in the database
     private String address; // Address of the flat
+
+    @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL)
+    private List<FlatMembership> members; // List of admin members
 
     private String city; // City where the flat is located
     private String postcode; // Postcode of the flat
@@ -251,4 +258,58 @@ public class Flat {
             propertyManager.setFlat(this); // Ensure bidirectional consistency
         }
     }
+
+    public List<FlatMembership> getMembers() {
+        return members; // Return the list of flat members
+    }
+
+    public void setMembers(List<FlatMembership> members) {
+        this.members = members; // Set the list of flat members
+    }
+
+    public void addMember(FlatMembership member) {
+        this.members.add(member); // Add the member to the list
+
+    }
+
+    public void removeMember(FlatMembership member) {
+        this.members.remove(member); // Remove the member from the list
+
+    }
+
+    public Optional<AppUser> getOwner() {
+        return members.stream()
+                .filter(m -> m.getRole().equals(Role.OWNER)) // Filter for the owner role
+                .map(FlatMembership::getUser)
+                .findFirst();
+    }
+
+    public List<AppUser> getAdmins() {
+        return members.stream()
+                .filter(m -> m.getRole() == Role.ADMIN)
+                .map(FlatMembership::getUser)
+                .collect(Collectors.toList());
+    }
+
+    public List<AppUser> getMembersByRole(Role role) {
+        return members.stream()
+                .filter(m -> m.getRole() == role)
+                .map(FlatMembership::getUser)
+                .collect(Collectors.toList());
+    }
+
+    public boolean isAdmin(AppUser user) {
+        return members.stream()
+            .anyMatch(m -> m.getUser().equals(user) && m.getRole() == Role.ADMIN);
+    }
+
+    public Optional<Role> getRoleOfUser(AppUser user) {
+        return members.stream()
+            .filter(m -> m.getUser().equals(user))
+            .map(m -> (Role) m.getRole())
+            .findFirst();
+    }
+    
+    
+
 }

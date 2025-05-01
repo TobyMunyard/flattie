@@ -78,6 +78,7 @@ public class FlatInfoController {
         }
 
         // Update the flat details
+        
         flat.setFlatName(flatName);
         flat.setAddress(address);
         flat.setCity(city);
