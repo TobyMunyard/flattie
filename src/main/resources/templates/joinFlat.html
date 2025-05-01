@@ -1,54 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Join Flat - Flattie.com</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="/css/joinFlat.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/joinFlat.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
     <header>
-        <h1>Flattie.com</h1>
-        <p>Your one-stop shop for flatmate management</p>
+      <h1>Flattie.com</h1>
+      <p>Your one-stop shop for flatmate management</p>
     </header>
 
     <!-- Directly inject the nav menu from /fragments/ -->
     <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div class="container">
-        <!-- Show the "Join Flat" form only if no flat is found -->
-        <section id="join-flat" th:unless="${flat != null}">
-            <i class="fas fa-home login-icon"></i>
-            <h2>Join Flat</h2>
-            <form action="/joinFlat" method="post">
-                <label for="flat_code">Flat Code</label>
-                <input type="text" id="flat_code" name="flat_code" placeholder="Enter flat code" required>
-
-                <button type="submit">Join</button>
-            </form>
-        </section>
-
-        <!-- Display flats in a grid -->
-        <section id="flats-grid" th:if="${flats != null}">
-            <h2>Joined Flats</h2>
-            <div class="grid-container">
-                <div class="flat-card" th:each="flat : ${flats}">
-                    <h3 th:text="${flat.flatName}"></h3>
-                    <p><strong>Address:</strong> <span th:text="${flat.address}"></span></p>
-                    <p><strong>City:</strong> <span th:text="${flat.city}"></span></p>
-                    <p><strong>Postcode:</strong> <span th:text="${flat.postcode}"></span></p>
-                    <p><strong>Description:</strong> <span th:text="${flat.flatDescription}"></span></p>
-                    <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}"></span></p>
-                    <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}"></span></p>
-                </div>
+      <!-- Show the "Join Flat" form only if no flat is found -->
+      <section id="join-flat" th:unless="${flat != null}">
+        <i class="fas fa-home login-icon"></i>
+        <h2>Join Flat</h2>
+        <form action="/joinFlat" method="post">
+          <label for="flat_code">Flat Code</label>
+          <input
+            type="text"
+            id="flat_code"
+            name="flat_code"
+            placeholder="Enter flat code"
+            required
+          />
+          <div class="waiver-section">
+            <p>Please read the waiver to continue.</p>
+            <div
+              class="waiver-text"
+              style="
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 10px;
+                max-height: 150px;
+                overflow-y: auto;
+              "
+            >
+              
+              By joining this flat, I acknowledge that I am entering a shared
+              living environment and agree to:
+              <ul>
+                <li>Respect communal spaces and housemates' privacy</li>
+                <li>
+                  Share cleaning, shopping, and other responsibilities fairly
+                </li>
+                <li>Communicate respectfully to resolve any disputes</li>
+                <li>
+                  Comply with any rules or terms agreed upon by flat members
+                </li>
+              </ul>
             </div>
-        </section>
+            <label>
+              <input type="checkbox" name="waiverAccepted" required />
+              I accept the waiver terms
+            </label>
+          </div>
+          <button type="submit">Join</button>
+          <!-- Display error message if needed -->
+          <p th:if="${error}" th:text="${error}" style="color: red"></p>
+        </form>
+      </section>
+
+      <!-- Display flats in a grid -->
+      <section id="flats-grid" th:if="${flats != null}">
+        <h2>Joined Flats</h2>
+        <div class="grid-container">
+          <div class="flat-card" th:each="flat : ${flats}">
+            <h3 th:text="${flat.flatName}"></h3>
+            <p>
+              <strong>Address:</strong> <span th:text="${flat.address}"></span>
+            </p>
+            <p><strong>City:</strong> <span th:text="${flat.city}"></span></p>
+            <p>
+              <strong>Postcode:</strong>
+              <span th:text="${flat.postcode}"></span>
+            </p>
+            <p>
+              <strong>Description:</strong>
+              <span th:text="${flat.flatDescription}"></span>
+            </p>
+            <p>
+              <strong>Weekly Rent:</strong>
+              <span th:text="${flat.weeklyRent}"></span>
+            </p>
+            <p>
+              <strong>Number of Rooms:</strong>
+              <span th:text="${flat.rooms}"></span>
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
 
     <footer>
-        <p>&copy; 2024 Flattie.com. All rights reserved.</p>
+      <p>&copy; 2024 Flattie.com. All rights reserved.</p>
     </footer>
-</body>
+  </body>
 </html>
