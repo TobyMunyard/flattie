@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+</head>
+
+<body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
+    <!-- Nav bar -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+    <div id="calendar"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var flatId = /*[[${flatId}]]*/ 1;
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                select: function (info) {
+                    var title = prompt('Enter Event Title:');
+                    if (title) {
+                        fetch('/api/events/flat/' + flatId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                title: title,
+                                date: info.startStr
+                            })
+                        })
+                        .then(() => calendar.refetchEvents())
+                        .catch(error => console.log('Error adding event: ', error));
+                    }
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    fetch('/api/events/flat/' + flatId)
+                        .then(response => response.json())
+                        .then(data => {
+                            successCallback(data.map(event => ({
+                                title: event.title,
+                                start: event.date
+                            })));
+                        })
+                        .catch(error => {
+                            console.log('Error fetching events:', error);
+                            failureCallback(error);
+                        });
+                }
+            });
+            
+            calendar.render();
+        });
+    </script>
+
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>

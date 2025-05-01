@@ -58,6 +58,9 @@ public class Flat {
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Notice> noticeBoard = new ArrayList<>(); // List of notices associated with the flat
 
+    @OneToMany(mappedBy = "flat")
+    private List<Event> events;  // List of events on the flat calender
+
     // Default constructor required by JPA
     public Flat() {
     }
