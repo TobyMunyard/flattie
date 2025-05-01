@@ -21,7 +21,8 @@ public class HomeController {
      * @return The index page of the application.
      */
     @GetMapping("/")
-    public String home() {
+    public String home(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
         return "index";
     }
 
@@ -124,7 +125,7 @@ public class HomeController {
      * resources/templates folder.
      * 
      * @return The expense page of the application.
-     * @param user  The current authenticated user. 
+     * @param user The current authenticated user.
      */
     @GetMapping("/expense")
     public String expense(@AuthenticationPrincipal AppUser user, Model model) {
@@ -156,5 +157,19 @@ public class HomeController {
     public String about(@AuthenticationPrincipal AppUser user, Model model) {
         model.addAttribute("user", user);
         return "about";
+    }
+
+    /**
+     * Serves the about page of the application from the url "/calendar". "calendar"
+     * string is
+     * automatically mapped to file "calendar.html" in resources/templates folder.
+     * 
+     * @return The calender page of the application.
+     */
+    @GetMapping("/calendar")
+    public String calendar(@AuthenticationPrincipal AppUser user, Model model) {
+        model.addAttribute("user", user);
+        model.addAttribute("flatId", user.getFlat().getId());
+        return "calendar";
     }
 }

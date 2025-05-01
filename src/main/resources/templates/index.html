@@ -6,48 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flattie - Flatmate Management</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/profile.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
+<header>
+    <h1>Flattie.com</h1>
+    <p>Your one-stop shop for flatmate management</p>
+</header>
+
+<!-- Directly inject the nav menu from /fragments/ -->
+<div th:replace="~{fragments/navMenu :: navMenu}"></div>
+
 <body>
-    <header>
-        <h1>Flattie.com</h1>
-        <p>Your one-stop shop for flatmate management</p>
-    </header>
+    <!-- Not logged in -->
 
-    <!-- Directly inject the nav menu from /fragments/ -->
-    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+    <div th:if="${#authentication == null}" th:replace="~{fragments/signedOutHomePage :: signedOutHomePage}"></div>
 
-    <div class="container">
-        <section class="hero">
-            <h2>Welcome to Flattie.com!</h2>
-            <p>The easiest way to manage shared living.</p>
-            <a href="createAccount" class="cta-button">Sign Up Now</a>
-            <p>Login or Register to Unlock all our awesome features!</p>
-        </section>
+    <!-- Logged in AND NOT in flat -->
 
-        <section id="features">
-            <h2>Features</h2>
-            <ul>
-                <li>Shared Shopping List - Never forget who's buying the milk again!</li>
-                <li>Rent Delegation Calculator - Split the rent fairly, no more arguments!</li>
-                <li>Todo List - Keep track of chores and who's doing what!</li>
-                <li>...and more!</li>
-            </ul>
-        </section>
+    <div th:if="${#authentication != null and #authentication.authenticated and currentUser.flat == null}"
+        th:replace="~{fragments/signedInNoFlatHomePage :: signedInNoFlatHomePage}"></div>
 
-        <section id="about">
-            <h2>About</h2>
-            <p>Flattie.com helps you manage your flatting needs with ease and efficiency. We're dedicated to making
-                shared living simpler and more enjoyable.</p>
-        </section>
-    </div>
+    <!-- Logged in AND in flat -->
 
-    <footer>
-        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
-    </footer>
+    <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        th:replace="~{fragments/signedInAndInFlatHomePage :: signedInAndInFlatHomePage}"></div>
+
 </body>
 
+<footer>
+    <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+</footer>
+<script src="/js/noticeBoard.js"></script>
 </html>

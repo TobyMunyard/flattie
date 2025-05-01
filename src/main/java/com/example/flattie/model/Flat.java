@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -53,6 +54,12 @@ public class Flat {
 
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppUser> users = new ArrayList<>(); // List of users associated with the flat
+
+    @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Notice> noticeBoard = new ArrayList<>(); // List of notices associated with the flat
+
+    @OneToMany(mappedBy = "flat")
+    private List<Event> events;  // List of events on the flat calender
 
     // Default constructor required by JPA
     public Flat() {
@@ -250,5 +257,23 @@ public class Flat {
         if (propertyManager != null) {
             propertyManager.setFlat(this); // Ensure bidirectional consistency
         }
+    }
+
+    public List<Notice> getNoticeBoard() {
+        return noticeBoard;
+    }
+
+    public void setNoticeBoard(List<Notice> noticeBoard) {
+        this.noticeBoard = noticeBoard;
+    }
+
+    public void addNotice(Notice notice) {
+        noticeBoard.add(notice);
+    }
+
+    public void removeNotice(Notice notice){
+        System.out.println(noticeBoard.get(0).toString());
+        System.out.println(notice.toString());
+        noticeBoard.remove(notice);
     }
 }
