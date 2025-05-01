@@ -23,3 +23,25 @@
     cursor: pointer;
   }
   
+  label {
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  input {
+    width: 94%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+  textarea {
+    width: 94%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+  }

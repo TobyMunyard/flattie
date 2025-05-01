@@ -14,7 +14,7 @@
                     <label>Title:</label>
                     <input type="text" name="title" required>
                     <label>Description:</label>
-                    <input type="text" name="description" required>
+                    <textarea name="description" required rows="4" cols="30"></textarea>
                     <button type="submit">Create</button>
                 </form>
             </div>
@@ -26,10 +26,10 @@
 <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null and currentUser.flat.noticeBoard.size() > 0}"
     th:fragment="noticeboard">
     <div th:each="notice : ${currentUser.flat.noticeBoard}">
-        Title:
         <h4 th:text="${notice.title}"></h4>
-        Description:
-        <h4 th:text="${notice.description}"></h4>
+        <p th:text="${notice.description}"></p>
+        <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>
+
         <form id="modalForm" action="/deleteNotice" method="post">
             <input type="hidden" name="noticeId" th:value="${notice.id}" />
             <button type="submit">&times;</button>
