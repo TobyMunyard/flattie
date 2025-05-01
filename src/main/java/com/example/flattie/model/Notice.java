@@ -7,6 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+/**
+ * Notice entity to be displayed on the home page noticeboard for logged in users in a flat.
+ */
 @Entity
 public class Notice {
 

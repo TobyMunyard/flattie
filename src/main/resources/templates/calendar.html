@@ -27,13 +27,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             var flatId = /*[[${flatId}]]*/ 1;
-            
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 selectable: true,
                 select: function (info) {
                     var title = prompt('Enter Event Title:');
                     if (title) {
+                        // Post sent for creating new events on the calendar
                         fetch('/api/events/flat/' + flatId, {
                             method: 'POST',
                             headers: {
@@ -44,11 +45,12 @@
                                 date: info.startStr
                             })
                         })
-                        .then(() => calendar.refetchEvents())
-                        .catch(error => console.log('Error adding event: ', error));
+                            .then(() => calendar.refetchEvents())
+                            .catch(error => console.log('Error adding event: ', error));
                     }
                 },
-                events: function(fetchInfo, successCallback, failureCallback) {
+                events: function (fetchInfo, successCallback, failureCallback) {
+                    // Retrieves all events from a flat to populate the calendar
                     fetch('/api/events/flat/' + flatId)
                         .then(response => response.json())
                         .then(data => {
@@ -63,7 +65,7 @@
                         });
                 }
             });
-            
+
             calendar.render();
         });
     </script>

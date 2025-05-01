@@ -12,6 +12,9 @@ import com.example.flattie.model.Notice;
 import com.example.flattie.service.FlatService;
 import com.example.flattie.service.NoticeService;
 
+/**
+ * Controller for adding and removing notices from a flat noticeboard.
+ */
 @Controller
 public class NoticeBoardController {
 
@@ -21,6 +24,14 @@ public class NoticeBoardController {
     @Autowired
     FlatService flatService;
 
+    /**
+     * Creates a new notice to display on the flat noticeboard.
+     * 
+     * @param title The title of the notice.
+     * @param description A description of the notice specifics.
+     * @param user The user who created the notice (currently logged in).
+     * @return A redirect to the home page (where the noticeboard is).
+     */
     @PostMapping("/createNotice")
     public String createNotice(@RequestParam("title") String title,
             @RequestParam("description") String description,
@@ -34,6 +45,13 @@ public class NoticeBoardController {
         return "redirect:/";
     }
 
+    /**
+     * Deletes a notice from the noticeboard. Called when "X" button is clicked.
+     * 
+     * @param noticeId The id number of the notice being deleted.
+     * @param user The user who is currently logged in.
+     * @return A redirect to the home page (where the noticeboard is).
+     */
     @PostMapping("/deleteNotice")
     public String deleteNotice(@RequestParam("noticeId") Long noticeId, @AuthenticationPrincipal AppUser user) {
         Flat userFlat = user.getFlat();

@@ -11,6 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+/**
+ * Event entity for events added to a flat calendar.
+ */
 @Entity
 public class Event {
 
