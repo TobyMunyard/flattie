@@ -1,6 +1,7 @@
 package com.example.flattie.repository;
 
 import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import java.util.List;
@@ -12,5 +13,8 @@ public interface FlatMembershipRepository extends JpaRepository<FlatMembership, 
     Optional<FlatMembership> findByFlatAndUser(Flat flat, AppUser user);
     List<FlatMembership> findAllByFlat(Flat flat);
     void deleteByFlatAndUser(Flat flat, AppUser user);
+    List<FlatMembership> findByFlatAndStatus(Flat flat, FlatMembershipStatus status);
 }
+
+
 

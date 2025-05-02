@@ -11,15 +11,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
+import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
+import com.example.flattie.model.Role;
 import com.example.flattie.service.AppUserService;
+import com.example.flattie.service.FlatMembershipService;
 import com.example.flattie.service.FlatService;
 
 import jakarta.annotation.PostConstruct;
-
-/**
- * Controller class for handling all requests based on flat creation
- * within the system.
- */
 
 @Controller
 public class CreateFlatController {
@@ -28,31 +27,16 @@ public class CreateFlatController {
     FlatService flatService;
 
     @Autowired
+    FlatMembershipService flatMembershipService;
+
+    @Autowired
     AppUserService appUserService;
 
-    /**
-     * Displays the create flat page.
-     * 
-     * @return The create flat HTML page.
-     */
     @GetMapping("/createFlat")
     public String showCreateFlatPage() {
-        return "createFlat"; // This should match the name of your HTML file (without .html)
+        return "createFlat";
     }
 
-    /**
-     * Called upon the submission of the flat creation form. Checks that input
-     * values are valid.
-     * 
-     * @param flatName        The name of the flat.
-     * @param address         The address of the flat.
-     * @param city            The city where the flat is located.
-     * @param postcode        The postcode of the flat.
-     * @param flatDescription A description of the flat.
-     * @return If details are valid, redirect to a success page or dashboard.
-     *         Otherwise, redirect back to the flat creation page with the error
-     *         displayed.
-     */
     @PostMapping("/createFlat")
     public String createFlat(
             @AuthenticationPrincipal AppUser user,
@@ -66,10 +50,8 @@ public class CreateFlatController {
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // In case no errors occur this will satisfy Thymeleaf
         model.addAttribute("error", null);
 
-        // Validation for flat inputs
         if (flatName == null || flatName.isBlank() || flatName.length() > 50) {
             redirectAttributes.addFlashAttribute("error", "Flat name must be under 50 characters.");
             return "redirect:/createFlat";
@@ -80,7 +62,6 @@ public class CreateFlatController {
             return "redirect:/createFlat";
         }
 
-        // Check if the address already exists
         if (flatService.addressExists(address)) {
             redirectAttributes.addFlashAttribute("error", "A flat with this address already exists.");
             return "redirect:/createFlat";
@@ -111,71 +92,48 @@ public class CreateFlatController {
             return "redirect:/createFlat";
         }
 
-        // Generate a random join code
         String joinCode = generateRandomCode();
-
-        // All inputs are valid, create the flat
         Flat newFlat = new Flat(joinCode, flatName, address, city, postcode, flatDescription, weeklyRent, rooms);
         flatService.saveFlat(newFlat);
 
-        // Join the current user to the new flat automatically
-        //TODO: Check if the user already belongs to a flat before joining
         if (user.getFlat() == null) {
             user.setFlat(newFlat);
             appUserService.saveAppUser(user);
+
+            FlatMembership membership = new FlatMembership();
+            membership.setFlat(newFlat);
+            membership.setUser(user);
+            membership.setRole(Role.OWNER);
+            membership.setStatus(FlatMembershipStatus.APPROVED);
+
+            flatMembershipService.save(membership);
+
             System.out.println("Flat created with join code: " + joinCode);
-        } else {
-            System.err.println("User already belongs to a flat. Cannot join a new one.");
         }
 
-        // Redirect to the flat info page with a success message
         redirectAttributes.addFlashAttribute("success", "Flat created and joined successfully!");
-        return "redirect:/showFlatInfo"; // Redirect to the flat info page
+        return "redirect:/showFlatInfo";
     }
 
-    // Method to generate a random alphanumeric code
     private String generateRandomCode() {
-        return java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase(); // Generate a 5-character random code in uppercase
+        return java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
-    /**
-     * Creates two default flats if they don't already exist in the database.
-     * This method is called after the application context is initialized.
-     */
     @PostConstruct
     public void createDefaultFlats() {
-        // Check if the default flats already exist in the database
         Flat existingFlat1 = flatService.findByJoinCode("123 Default St");
         Flat existingFlat2 = flatService.findByJoinCode("456 Default St");
 
-        // If they don't exist, create them
         if (existingFlat1 == null) {
-            Flat defaultFlat1 = new Flat(
-                    "1234",
-                    "Default Flat 1",
-                    "123 Default St",
-                    "Default City",
-                    "0000",
-                    "A default flat for new users.",
-                    200.0,
-                    3);
+            Flat defaultFlat1 = new Flat("1234", "Default Flat 1", "123 Default St", "Default City", "0000", "A default flat for new users.", 200.0, 3);
             flatService.saveFlat(defaultFlat1);
             System.out.println("Default flat created at 123 Default St");
         }
 
         if (existingFlat2 == null) {
-            Flat defaultFlat2 = new Flat(
-                    "5678",
-                    "Default Flat 2",
-                    "456 Default St",
-                    "Default City",
-                    "0000",
-                    "A second default flat for newer, cooler, users.",
-                    200.0,
-                    3);
+            Flat defaultFlat2 = new Flat("5678", "Default Flat 2", "456 Default St", "Default City", "0000", "A second default flat for newer, cooler, users.", 200.0, 3);
             flatService.saveFlat(defaultFlat2);
             System.out.println("Default flat created at 456 Default St");
         }
     }
-
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Role;
@@ -16,6 +17,7 @@ public class FlatMembershipService {
 
     @Autowired
     private FlatMembershipRepository repository;
+
 
     public Optional<FlatMembership> getMembership(Flat flat, AppUser user) {
         return repository.findByFlatAndUser(flat, user);
@@ -35,4 +37,14 @@ public class FlatMembershipService {
     public void removeUserFromFlat(Flat flat, AppUser user) {
         repository.deleteByFlatAndUser(flat, user);
     }
+
+	public void save(FlatMembership membership) {
+		repository.save(membership);
+	}
+
+    public List<FlatMembership> findPendingByFlat(Flat flat) {
+    return repository.findByFlatAndStatus(flat, FlatMembershipStatus.PENDING);
+}
+
+	
 }

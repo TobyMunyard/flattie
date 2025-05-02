@@ -33,4 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     });
+
+    // Enable check requests button navigation
+    const checkRequestsBtn = document.getElementById('checkRequestsBtn');
+    if (checkRequestsBtn) {
+        const flatId = checkRequestsBtn.dataset.flatid;
+        checkRequestsBtn.href = `/pendingRequests.html?flatId=${flatId}`;
+    }
 });

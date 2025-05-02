@@ -5,6 +5,7 @@ import com.example.flattie.model.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import com.example.flattie.model.FlatMembershipStatus;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
@@ -19,8 +20,27 @@ public class FlatMembership {
 	@ManyToOne
 	private Flat flat;
 
+	public Flat getFlat() {
+		return flat;
+	}
+
+	public void setFlat(Flat flat) {
+		this.flat = flat;
+	}
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	@Enumerated(EnumType.STRING)
+	private FlatMembershipStatus status;
+
+	public FlatMembershipStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(FlatMembershipStatus status) {
+		this.status = status;
+	}
 
 	public Object getRole() {
 		return this.role;

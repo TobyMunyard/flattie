@@ -18,7 +18,6 @@
     <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div class="container">
-        <!-- Display flat details -->
         <section id="flat-info" th:if="${flat != null}">
             <h2 th:text="${flat.flatName}">Flat Name</h2>
             <p><strong>Address:</strong> <span th:text="${flat.address}">Flat Address</span></p>
@@ -28,6 +27,7 @@
             <p><strong>Weekly Rent:</strong> <span th:text="${flat.weeklyRent}">Flat Weekly Rent</span></p>
             <p><strong>Number of Rooms:</strong> <span th:text="${flat.rooms}">Flat Rooms</span></p>
             <p><strong>Flat Join Code:</strong> <span th:text="${flat.joinCode}">Flat Join Code</span></p>
+
             <p><strong>Property Manager:</strong></p>
             <div th:if="${flat.propertyManager != null}">
                 <p>Name: <span th:text="${flat.propertyManager.name}"></span></p>
@@ -41,18 +41,25 @@
                 <a class="button" href="/propertyManagerForm">Set Property Manager</a>
             </div>
 
+            <!-- Check Join Requests button -->
+            <div th:if="${membership != null and (membership.role == 'OWNER' or membership.role == 'ADMIN')}">
+                <a th:href="@{/pendingRequests.html(flatId=${flat.id})}" class="button"
+                   style="background-color: #007BFF; color: white; padding: 10px 20px; margin-top: 10px; display: inline-block; border-radius: 5px; text-decoration: none;">
+                   Check Join Requests
+                </a>
+            </div>
+
+            <!-- Edit Button -->
             <button onclick="openModal()" class="button">Edit</button>
 
             <!-- Leave Flat Button -->
-            <form action="/leaveFlat" method="post" style="margin-top: 20px; display: block;">
-                <button type="submit" class="button"
-                    style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            <form action="/leaveFlat" method="post" style="margin-top: 20px;">
+                <button type="submit" class="button" style="background-color: #f44336; color: white;">
                     Leave Flat
                 </button>
             </form>
         </section>
 
-        <!-- Show an error message if no flat is available -->
         <section id="error" th:if="${flat == null}">
             <h2>Error</h2>
             <p>You have not joined a flat. Please join a flat to see its details.</p>
@@ -60,69 +67,44 @@
         </section>
     </div>
 
-    <!-- Modal for editing flat info -->
+    <!-- Edit Flat Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
-            <h2 style="text-align: center; margin-bottom: 20px;">Edit Flat Information</h2>
-            <form action="/updateFlatInfo" method="post" style="display: flex; flex-direction: column; gap: 15px;">
+            <h2>Edit Flat Information</h2>
+            <form action="/updateFlatInfo" method="post">
                 <input type="hidden" name="flatId" th:value="${flat.id}" />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="flatName" style="font-weight: bold;">Flat Name:</label>
-                    <input type="text" id="flatName" name="flatName" th:value="${flat.flatName}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="flatName">Flat Name:</label>
+                <input type="text" id="flatName" name="flatName" th:value="${flat.flatName}" required />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="address" style="font-weight: bold;">Address:</label>
-                    <input type="text" id="address" name="address" th:value="${flat.address}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" th:value="${flat.address}" required />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="city" style="font-weight: bold;">City:</label>
-                    <input type="text" id="city" name="city" th:value="${flat.city}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" th:value="${flat.city}" required />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="postcode" style="font-weight: bold;">Postcode:</label>
-                    <input type="text" id="postcode" name="postcode" th:value="${flat.postcode}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="postcode">Postcode:</label>
+                <input type="text" id="postcode" name="postcode" th:value="${flat.postcode}" required />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="flatDescription" style="font-weight: bold;">Description:</label>
-                    <textarea id="flatDescription" name="flatDescription" required th:text="${flat.flatDescription}"
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px; resize: none; height: 100px;"></textarea>
-                </div>
+                <label for="flatDescription">Description:</label>
+                <textarea id="flatDescription" name="flatDescription" required
+                    th:text="${flat.flatDescription}"></textarea>
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="weeklyRent" style="font-weight: bold;">Weekly Rent:</label>
-                    <input type="number" id="weeklyRent" name="weeklyRent" th:value="${flat.weeklyRent}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="weeklyRent">Weekly Rent:</label>
+                <input type="number" id="weeklyRent" name="weeklyRent" th:value="${flat.weeklyRent}" required />
 
-                <div style="display: flex; flex-direction: column;">
-                    <label for="rooms" style="font-weight: bold;">Number of Rooms:</label>
-                    <input type="number" id="rooms" name="rooms" th:value="${flat.rooms}" required
-                        style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;" />
-                </div>
+                <label for="rooms">Number of Rooms:</label>
+                <input type="number" id="rooms" name="rooms" th:value="${flat.rooms}" required />
 
-                <div style="text-align: center; margin-top: 20px;">
-                    <button type="submit" class="button"
-                        style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                        Save Changes
-                    </button>
-                    <button type="button" class="button" onclick="closeModal()"
-                        style="background-color: #f44336; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-                        Cancel
-                    </button>
+                <div class="modal-buttons">
+                    <button type="submit" class="button" style="background-color: #4CAF50;">Save Changes</button>
+                    <button type="button" class="button" onclick="closeModal()" style="background-color: #f44336;">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
+
     <script src="/js/flatInfoScript.js"></script>
 
     <footer>

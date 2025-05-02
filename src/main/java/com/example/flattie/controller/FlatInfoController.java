@@ -3,21 +3,33 @@ package com.example.flattie.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
+import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
 import com.example.flattie.model.PropertyManager;
+import com.example.flattie.model.Role;
 import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.service.AppUserService;
+import com.example.flattie.service.FlatMembershipService;
 import com.example.flattie.service.FlatService;
 
 @Controller
@@ -28,6 +40,9 @@ public class FlatInfoController {
 
     @Autowired
     private FlatService flatService;
+
+    @Autowired
+    private FlatMembershipService flatMembershipService;
 
     @Autowired
     private FlatRepository flatRepo;
@@ -41,6 +56,13 @@ public class FlatInfoController {
 
         // Retrieve the flat associated with the user
         Flat flat = user.getFlat();
+
+        Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, user);
+        if (membership.isEmpty() || membership.get().getStatus() != FlatMembershipStatus.APPROVED) {
+            return "redirect:/pendingApproval"; // or show an error page
+        }
+        model.addAttribute("membership", membership.get());
+
 
         if (flat == null) {
             // If the user has not joined any flat, show an error message
@@ -78,7 +100,7 @@ public class FlatInfoController {
         }
 
         // Update the flat details
-        
+
         flat.setFlatName(flatName);
         flat.setAddress(address);
         flat.setCity(city);
@@ -186,5 +208,82 @@ public class FlatInfoController {
 
         return "redirect:/showFlatInfo"; // Redirect to flat info page
     }
+
+    @GetMapping("/flats/{flatId}/pendingRequests")
+    public String viewPendingRequests(
+            @AuthenticationPrincipal AppUser admin,
+            Model model) throws Exception {
+        Flat flat = admin.getFlat();
+         Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, admin);
+                
+
+        if (membership.isPresent() && membership.get().getRole() == Role.MEMBER) {
+            throw new Exception("Only admins or owners can view join requests.");
+        }
+
+        List<FlatMembership> pending = flatMembershipService.findPendingByFlat(flat);
+        model.addAttribute("flat", flat);
+        model.addAttribute("pendingRequests", pending);
+        return "pendingRequests"; // View file (e.g. pendingRequests.jsp or .html)
+    }
+
+@PutMapping("/api/flats/{flatId}/members/{userId}/approve")
+@ResponseBody
+public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
+                                                 @PathVariable Long userId,
+                                                 @AuthenticationPrincipal AppUser adminUser) {
+
+    Flat flat = adminUser.getFlat();
+
+    if (flat == null || !flat.getId().equals(flatId)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+    }
+
+    Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+    if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+    }
+
+    Optional<AppUser> joiningUser = appUserService.getAppUserById(userId);
+
+    FlatMembership request = flatMembershipService
+            .getMembership(flat, joiningUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")))
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
+
+    if (request.getStatus() != FlatMembershipStatus.PENDING) {
+        return ResponseEntity.badRequest().body("User is not pending approval.");
+    }
+
+    request.setStatus(FlatMembershipStatus.APPROVED);
+    flatMembershipService.save(request);
+
+    return ResponseEntity.ok("User approved.");
+}
+
+@DeleteMapping("/api/flats/{flatId}/members/{userId}/reject")
+@ResponseBody
+public ResponseEntity<String> rejectJoinRequest(@PathVariable Long flatId,
+                                                @PathVariable Long userId,
+                                                @AuthenticationPrincipal AppUser adminUser) {
+
+    Flat flat = adminUser.getFlat();
+
+    if (flat == null || !flat.getId().equals(flatId)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+    }
+
+    Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+    if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+    }
+
+   Optional<AppUser> joiningUser = appUserService.getAppUserById(userId);
+   flatMembershipService.removeUserFromFlat(flat, joiningUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
+
+    return ResponseEntity.ok("User rejected.");
+}
+
+
+
 
 }
