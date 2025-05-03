@@ -14,3 +14,5 @@ Flattie's backend is built using [Java](https://www.java.com/en/) with [Spring](
 [Test Cases sheet](https://otagouni-my.sharepoint.com/:x:/g/personal/munto996_student_otago_ac_nz/EeXHTrGbHcZKqObsVfxbZfcB9Xcl8IfszyXp6Y8CJZIMUw?e=iLY5hz)
 
 [Milestone One slides](https://otagouni-my.sharepoint.com/:p:/g/personal/munto996_student_otago_ac_nz/ERJHrdyYuyNEk_DKz6XG5OIBI0At0_OlHR-CX5dC2NnjaA?e=OSpul3)
+
+[Risk sheet](https://otagouni-my.sharepoint.com/:x:/g/personal/munto996_student_otago_ac_nz/ESK3Y5bN101PlSYBQOzHdxsB81JnFpmG4ZtUYkwM-R4Z_w?e=xuyFVs)
