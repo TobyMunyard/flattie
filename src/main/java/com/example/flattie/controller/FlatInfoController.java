@@ -223,38 +223,45 @@ public class FlatInfoController {
         return "pendingRequests"; // View file (e.g. pendingRequests.jsp or .html)
     }
 
-@PutMapping("/api/flats/{flatId}/members/{userId}/approve")
-@ResponseBody
-public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
-                                                 @PathVariable Long userId,
-                                                 @AuthenticationPrincipal AppUser adminUser) {
-
-    Flat flat = adminUser.getFlat();
-
-    if (flat == null || !flat.getId().equals(flatId)) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
-    }
-
-    Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
-    if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
-    }
-
-    Optional<AppUser> joiningUser = appUserService.getAppUserById(userId);
-
-    FlatMembership request = flatMembershipService
-            .getMembership(flat, joiningUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")))
+    @PutMapping("/api/flats/{flatId}/members/{userId}/approve")
+    @ResponseBody
+    public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
+                                                     @PathVariable Long userId,
+                                                     @AuthenticationPrincipal AppUser adminUser) {
+    
+        Flat flat = adminUser.getFlat();
+    
+        if (flat == null || !flat.getId().equals(flatId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+        }
+    
+        Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+        if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+        }
+    
+        AppUser joiningUser = appUserService.getAppUserById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    
+        FlatMembership request = flatMembershipService
+            .getMembership(flat, joiningUser)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
-
-    if (request.getStatus() != FlatMembershipStatus.PENDING) {
-        return ResponseEntity.badRequest().body("User is not pending approval.");
+    
+        if (request.getStatus() != FlatMembershipStatus.PENDING) {
+            return ResponseEntity.badRequest().body("User is not pending approval.");
+        }
+    
+        // 
+        request.setStatus(FlatMembershipStatus.APPROVED);
+        joiningUser.setFlat(flat);
+        
+ 
+        appUserService.saveAppUser(joiningUser);
+        flatMembershipService.save(request);
+    
+        return ResponseEntity.ok("User approved.");
     }
-
-    request.setStatus(FlatMembershipStatus.APPROVED);
-    flatMembershipService.save(request);
-
-    return ResponseEntity.ok("User approved.");
-}
+    
 
 @DeleteMapping("/api/flats/{flatId}/members/{userId}/reject")
 @ResponseBody
