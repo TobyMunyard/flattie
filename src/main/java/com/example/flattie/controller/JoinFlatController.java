@@ -60,7 +60,7 @@ public String joinFlat(@AuthenticationPrincipal AppUser user,
     flatMembershipService.save(membership);
 
     model.addAttribute("message", "Join request sent. Please wait for approval.");
-return "joinFlat";
+    return "redirect:/pendingApproval";
 
     
 }

@@ -5,6 +5,9 @@ import com.example.flattie.model.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+
 import com.example.flattie.model.FlatMembershipStatus;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -12,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class FlatMembership {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // or AUTO if you prefer
 	private long id;
 
 	@ManyToOne
