@@ -14,7 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flattie.model.AppUser;
+import com.example.flattie.model.Flat;
+import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
+import com.example.flattie.model.Role;
 import com.example.flattie.service.AppUserService;
+import com.example.flattie.service.FlatMembershipService;
+import com.example.flattie.service.FlatService;
 
 import jakarta.annotation.PostConstruct;
 
@@ -30,6 +36,12 @@ public class CreateAccountController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    FlatService flatService;
+
+    @Autowired
+    FlatMembershipService flatMembershipService;
 
     /**
      * Called upon the submission of the account creation form. Checks that input
@@ -100,29 +112,11 @@ public class CreateAccountController {
      * Creates two default user accounts for testing purposes. This method is called
      * when the application starts up.
      */
-    @PostConstruct
-    public void createDefaultUsers() {
-        // Check if the test accounts already exist
-        Optional<AppUser> existingUser1 = appUserService.getAppUserByUsername("Tester");
-        Optional<AppUser> existingUser2 = appUserService.getAppUserByUsername("JaneDoe");
 
-        /**
-         * If they don't exist, create them
-         * Note: Passwords are hardcoded for testing purposes. In a real application,
-         * these are encrypted, obviously.
-         */
-        if (existingUser1.isEmpty()) {
-            AppUser user1 = new AppUser("Test", "User", "Tester", passwordEncoder.encode("test1234"));
-            appUserService.saveAppUser(user1);
-            System.out.println("Test account created: Tester / test1234");
-        }
-
-        if (existingUser2.isEmpty()) {
-            AppUser user2 = new AppUser("Jane", "Doe", "JaneDoe", passwordEncoder.encode("pass123"));
-            appUserService.saveAppUser(user2);
-            System.out.println("Test account created: JaneDoe / pass123");
-        }
-    }
+    
+    
+        // Set up flat membership
+    
 
     /**
      * Called when a user submits the edit account form. Can update first name, last
