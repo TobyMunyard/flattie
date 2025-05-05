@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Join Requests</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/pendingRequests.js" defer></script>
+</head>
+<body>
+    <h2>Pending Join Requests for Flat: <span id="flatName">Loading...</span></h2>
+
+    <!-- This will be filled dynamically via JS -->
+    <input type="hidden" id="flatId" th:value="${flat.id}" />
+    <h2>Pending Join Requests for Flat: <span id="flatName">Loading...</span></h2>
+    <div id="requestList"><p>Loading requests...</p></div>
+    <a href="/showFlatInfo">Back to Flat Info</a>
+    <a href="/showFlatInfo">Back to Flat Info</a>
+    
+</body>
+</html>

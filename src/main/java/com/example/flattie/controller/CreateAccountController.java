@@ -112,46 +112,11 @@ public class CreateAccountController {
      * Creates two default user accounts for testing purposes. This method is called
      * when the application starts up.
      */
+
     
-    @PostConstruct
-    public void createDefaultUsers() {
-        Optional<AppUser> existingUser1 = appUserService.getAppUserByUsername("Tester");
-        Optional<AppUser> existingUser2 = appUserService.getAppUserByUsername("JaneDoe");
-
-        // Create Tester
-        AppUser user1;
-        if (existingUser1.isEmpty()) {
-            user1 = new AppUser("Test", "User", "Tester", passwordEncoder.encode("test1234"));
-            appUserService.saveAppUser(user1);
-            System.out.println("Test account created: Tester / test1234");
-        } else {
-            user1 = existingUser1.get();
-        }
-
-        // Link Tester to default flat if not already
-        Flat defaultFlat = flatService.findByJoinCode("1234");
-
-        if (defaultFlat != null && user1.getFlat() == null) {
-            user1.setFlat(defaultFlat);
-            appUserService.saveAppUser(user1);
-        
-            FlatMembership membership = new FlatMembership();
-            membership.setFlat(defaultFlat);
-            membership.setUser(user1);
-            membership.setRole(Role.OWNER);
-            membership.setStatus(FlatMembershipStatus.APPROVED);
-            flatMembershipService.save(membership);
-        
-            System.out.println("Tester assigned as OWNER of Default Flat 1");
-        }
-
-        // Create JaneDoe
-        if (existingUser2.isEmpty()) {
-            AppUser user2 = new AppUser("Jane", "Doe", "JaneDoe", passwordEncoder.encode("pass123"));
-            appUserService.saveAppUser(user2);
-            System.out.println("Test account created: JaneDoe / pass123");
-        }
-    }
+    
+        // Set up flat membership
+    
 
     /**
      * Called when a user submits the edit account form. Can update first name, last

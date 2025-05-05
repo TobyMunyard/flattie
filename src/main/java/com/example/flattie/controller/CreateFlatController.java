@@ -119,21 +119,5 @@ public class CreateFlatController {
         return java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
-    @PostConstruct
-    public void createDefaultFlats() {
-        Flat existingFlat1 = flatService.findByJoinCode("123 Default St");
-        Flat existingFlat2 = flatService.findByJoinCode("456 Default St");
 
-        if (existingFlat1 == null) {
-            Flat defaultFlat1 = new Flat("1234", "Default Flat 1", "123 Default St", "Default City", "0000", "A default flat for new users.", 200.0, 3);
-            flatService.saveFlat(defaultFlat1);
-            System.out.println("Default flat created at 123 Default St");
-        }
-
-        if (existingFlat2 == null) {
-            Flat defaultFlat2 = new Flat("5678", "Default Flat 2", "456 Default St", "Default City", "0000", "A second default flat for newer, cooler, users.", 200.0, 3);
-            flatService.saveFlat(defaultFlat2);
-            System.out.println("Default flat created at 456 Default St");
-        }
-    }
 }

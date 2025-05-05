@@ -1,5 +1,7 @@
 package com.example.flattie.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -10,7 +12,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
 
 import com.example.flattie.model.AppUser;
+import com.example.flattie.model.Flat;
+import com.example.flattie.model.FlatMembership;
+import com.example.flattie.model.FlatMembershipStatus;
 import com.example.flattie.service.AppUserService;
+import com.example.flattie.service.FlatMembershipService;
 
 
 /**
@@ -25,6 +31,9 @@ public class LoginController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    FlatMembershipService flatMembershipService;
 
     /**
      * Handles a request from a user to log into an account. Redirects differently
@@ -43,36 +52,45 @@ public class LoginController {
      * @return If username and password are correct, the joinFlat page. Otherwise,
      *         redirect to the login page with a error message displayed.
      */
-    @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password,
-            Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+   @PostMapping("/login")
+public String login(@RequestParam("username") String username, 
+                    @RequestParam("password") String password,
+                    Model model, 
+                    RedirectAttributes redirectAttributes, 
+                    HttpSession session) {
 
-        boolean usernameExists = true;
-        boolean passwordsMatch = true;
+    boolean usernameExists = true;
+    boolean passwordsMatch = true;
 
-        AppUser existingUser = appUserService.getAppUserByUsername(username).orElse(null);
-        if (existingUser == null) {
-            // Username does not exist, return login page again
-            usernameExists = false;
-            redirectAttributes.addFlashAttribute("usernameExists", usernameExists);
-            return "redirect:/login";
-        }
-
-        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-            // Password does not match saved one
-            passwordsMatch = false;
-            redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);
-            return "redirect:/login";
-        }
-
-        // User exists and login correct
-        System.out.println("Working: " + existingUser);
-        model.addAttribute("user", existingUser);
-
-        // Store the user in session so it persists across requests
-        session.setAttribute("loggedInUser", existingUser);
-
-        // Redirect to the home page
-        return "redirect:/";
+    AppUser existingUser = appUserService.getAppUserByUsername(username).orElse(null);
+    if (existingUser == null) {
+        usernameExists = false;
+        redirectAttributes.addFlashAttribute("usernameExists", usernameExists);
+        return "redirect:/login";
     }
+
+    if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+        passwordsMatch = false;
+        redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);
+        return "redirect:/login";
+    }
+
+    // Save user to session
+    session.setAttribute("loggedInUser", existingUser);
+
+    // Check if user is already in a flat with approved membership
+    Flat flat = existingUser.getFlat();
+    if (flat != null) {
+        Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, existingUser);
+        if (membership.isPresent() && membership.get().getStatus() == FlatMembershipStatus.APPROVED) {
+            return "redirect:/showFlatInfo"; // go straight to flat page
+        } else {
+            return "redirect:/pendingApproval"; // user is waiting for approval
+        }
+    }
+
+    // No flat joined yet
+    return "redirect:/joinFlat";
+}
+
 }

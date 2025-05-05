@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -61,8 +62,12 @@ public String joinFlat(@AuthenticationPrincipal AppUser user,
 
     model.addAttribute("message", "Join request sent. Please wait for approval.");
     return "redirect:/pendingApproval";
-
-    
 }
+
+@GetMapping("/pendingApproval")
+public String showPendingApprovalPage() {
+    return "pendingApproval"; // tells Spring to render templates/pendingApproval.html
+}
+
 
 }
