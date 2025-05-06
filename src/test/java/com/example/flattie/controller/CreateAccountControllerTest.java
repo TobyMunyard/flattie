@@ -3,6 +3,9 @@ package com.example.flattie.controller;
 import com.example.flattie.config.TestSecurityConfig;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
+import com.example.flattie.service.FlatMembershipService;
+import com.example.flattie.service.FlatService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +34,12 @@ public class CreateAccountControllerTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
+    @MockBean
+    private FlatService flatService;
+
+    @MockBean
+    private FlatMembershipService flatMembershipService;
+
     @BeforeEach
     public void setup() {
         // Reset mocks before each test
@@ -56,13 +65,13 @@ public class CreateAccountControllerTest {
         // Verify
         ArgumentCaptor<AppUser> userCaptor = ArgumentCaptor.forClass(AppUser.class);
         verify(appUserService, times(1)).saveAppUser(userCaptor.capture());
-        
+
         AppUser savedUser = userCaptor.getValue();
         assertEquals("John", savedUser.getFirstName());
         assertEquals("Doe", savedUser.getLastName());
         assertEquals("johnny123", savedUser.getUsername());
         assertEquals(encodedPassword, savedUser.getPassword());
-        
+
         // Verify password encoding was called exactly once
         verify(passwordEncoder, times(1)).encode("validPassword");
     }
@@ -80,5 +89,4 @@ public class CreateAccountControllerTest {
                 .andExpect(flash().attribute("error", "Passwords do not match."));
     }
 
-    
 }
