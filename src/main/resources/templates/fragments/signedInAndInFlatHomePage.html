@@ -1,9 +1,9 @@
-<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null}"
     th:fragment="signedInAndInFlatHomePage">
 
     <div class="container">
         <h2>Noticeboard</h2>
-        <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null}"
+        <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null}"
             th:replace="~{fragments/signedInAndInFlatHomePage :: noticeboard}"></div>
         <button id="createNoticeButton">Add Notice</button>
         <div id="createNoticeModal" class="modal">
@@ -23,9 +23,9 @@
 
 </div>
 
-<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and currentUser.flat != null and currentUser.flat.noticeBoard.size() > 0}"
+<div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null and flat.noticeBoard.size() > 0}"
     th:fragment="noticeboard">
-    <div th:each="notice : ${currentUser.flat.noticeBoard}">
+    <div th:each="notice : ${flat.noticeBoard}">
         <h4 th:text="${notice.title}"></h4>
         <p th:text="${notice.description}"></p>
         <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>

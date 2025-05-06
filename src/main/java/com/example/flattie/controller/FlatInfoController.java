@@ -54,26 +54,26 @@ public class FlatInfoController {
         if (user == null) {
             return "redirect:/login";
         }
-    
-        Flat flat = user.getFlat();
+
+        Flat flat = flatRepo.findById(user.getFlat().getId())
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
         if (flat == null) {
             model.addAttribute("error", "You have not joined a flat.");
             return "error";
         }
-    
+
         Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, user);
-    
+
         if (membership.isEmpty() || membership.get().getStatus() != FlatMembershipStatus.APPROVED) {
             return "redirect:/pendingApproval";
         }
-    
-        // 
+
+        //
         model.addAttribute("membership", membership.orElse(null));
         model.addAttribute("flat", flat);
-    
+
         return "flatInfo";
     }
-    
 
     @PostMapping("/updateFlatInfo")
     public String updateFlatInfo(@AuthenticationPrincipal AppUser user,
@@ -188,10 +188,11 @@ public class FlatInfoController {
      */
     @PostMapping("/propertyManager/save")
     public String savePropertyManagerForm(@AuthenticationPrincipal AppUser user,
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam(required = false) String phone) {
-        Flat flat = user.getFlat();
+            @RequestParam("name") String name,
+            @RequestParam("email") String email,
+            @RequestParam(value = "phone", required = false) String phone) {
+        Flat flat = flatRepo.findById(user.getFlat().getId())
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
         if (flat == null)
             return "redirect:/joinFlat";
 
@@ -212,8 +213,7 @@ public class FlatInfoController {
             @AuthenticationPrincipal AppUser admin,
             Model model) throws Exception {
         Flat flat = admin.getFlat();
-         Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, admin);
-                
+        Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, admin);
 
         if (membership.isPresent() && membership.get().getRole() == Role.MEMBER) {
             throw new Exception("Only admins or owners can view join requests.");
@@ -225,107 +225,101 @@ public class FlatInfoController {
         return "pendingRequests"; // View file (e.g. pendingRequests.jsp or .html)
     }
 
-@PutMapping("/api/flats/{flatId}/members/{userId}/approve")
-@ResponseBody
-public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
-                                                 @PathVariable Long userId,
-                                                 @AuthenticationPrincipal AppUser adminUser) {
+    @PutMapping("/api/flats/{flatId}/members/{userId}/approve")
+    @ResponseBody
+    public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
+            @PathVariable Long userId,
+            @AuthenticationPrincipal AppUser adminUser) {
 
-    Flat flat = adminUser.getFlat();
+        Flat flat = adminUser.getFlat();
 
-    if (flat == null || !flat.getId().equals(flatId)) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+        if (flat == null || !flat.getId().equals(flatId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+        }
+
+        Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+        if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+        }
+
+        AppUser joiningUser = appUserService.getAppUserById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        FlatMembership request = flatMembershipService
+                .getMembership(flat, joiningUser)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
+
+        if (request.getStatus() != FlatMembershipStatus.PENDING) {
+            return ResponseEntity.badRequest().body("User is not pending approval.");
+        }
+
+        // Approve request and update user
+        request.setStatus(FlatMembershipStatus.APPROVED);
+        joiningUser.setFlat(flat);
+        appUserService.saveAppUser(joiningUser);
+        flatMembershipService.save(request);
+
+        // Refresh session if approving yourself
+        if (adminUser.getId().equals(joiningUser.getId())) {
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    joiningUser,
+                    joiningUser.getPassword(),
+                    joiningUser.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        return ResponseEntity.ok("User approved.");
     }
 
-    Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
-    if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+    @DeleteMapping("/api/flats/{flatId}/members/{userId}/reject")
+    @ResponseBody
+    public ResponseEntity<String> rejectJoinRequest(@PathVariable Long flatId,
+            @PathVariable Long userId,
+            @AuthenticationPrincipal AppUser adminUser) {
+
+        Flat flat = adminUser.getFlat();
+
+        if (flat == null || !flat.getId().equals(flatId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
+        }
+
+        Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+        if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
+        }
+
+        Optional<AppUser> joiningUser = appUserService.getAppUserById(userId);
+        flatMembershipService.removeUserFromFlat(flat,
+                joiningUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
+
+        return ResponseEntity.ok("User rejected.");
     }
 
-    AppUser joiningUser = appUserService.getAppUserById(userId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    @GetMapping("/api/flats/{flatId}/pendingRequestsData")
+    @ResponseBody
+    public Map<String, Object> getPendingRequestsData(@PathVariable Long flatId,
+            @AuthenticationPrincipal AppUser user) {
+        Flat flat = flatService.findById(flatId);
+        Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, user);
 
-    FlatMembership request = flatMembershipService
-        .getMembership(flat, joiningUser)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found"));
+        if (membership.isEmpty() || membership.get().getRole() == Role.MEMBER) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Insufficient permissions");
+        }
 
-    if (request.getStatus() != FlatMembershipStatus.PENDING) {
-        return ResponseEntity.badRequest().body("User is not pending approval.");
+        List<Map<String, Object>> requests = flatMembershipService.findPendingByFlat(flat).stream()
+                .map(m -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("userId", m.getUser().getId());
+                    map.put("username", m.getUser().getUsername());
+                    return map;
+                }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("flatName", flat.getFlatName());
+        response.put("requests", requests);
+
+        return response;
     }
-
-    // Approve request and update user
-    request.setStatus(FlatMembershipStatus.APPROVED);
-    joiningUser.setFlat(flat);
-    appUserService.saveAppUser(joiningUser);
-    flatMembershipService.save(request);
-
-    // Refresh session if approving yourself
-    if (adminUser.getId().equals(joiningUser.getId())) {
-        UsernamePasswordAuthenticationToken auth =
-            new UsernamePasswordAuthenticationToken(
-                joiningUser,
-                joiningUser.getPassword(),
-                joiningUser.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
-
-    return ResponseEntity.ok("User approved.");
-}
-
-    
-
-@DeleteMapping("/api/flats/{flatId}/members/{userId}/reject")
-@ResponseBody
-public ResponseEntity<String> rejectJoinRequest(@PathVariable Long flatId,
-                                                @PathVariable Long userId,
-                                                @AuthenticationPrincipal AppUser adminUser) {
-
-    Flat flat = adminUser.getFlat();
-
-    if (flat == null || !flat.getId().equals(flatId)) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied to this flat.");
-    }
-
-    Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
-    if (adminMembership.isEmpty() || adminMembership.get().getRole() == Role.MEMBER) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions.");
-    }
-
-   Optional<AppUser> joiningUser = appUserService.getAppUserById(userId);
-   flatMembershipService.removeUserFromFlat(flat, joiningUser.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
-
-    return ResponseEntity.ok("User rejected.");
-}
-
-@GetMapping("/api/flats/{flatId}/pendingRequestsData")
-@ResponseBody
-public Map<String, Object> getPendingRequestsData(@PathVariable Long flatId, @AuthenticationPrincipal AppUser user) {
-    Flat flat = flatService.findById(flatId);
-    Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, user);
-
-    if (membership.isEmpty() || membership.get().getRole() == Role.MEMBER) {
-        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Insufficient permissions");
-    }
-
-    List<Map<String, Object>> requests = flatMembershipService.findPendingByFlat(flat).stream()
-        .map(m -> {
-            Map<String, Object> map = new HashMap<>();
-            map.put("userId", m.getUser().getId());
-            map.put("username", m.getUser().getUsername());
-            return map;
-        }).toList();
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("flatName", flat.getFlatName());
-    response.put("requests", requests);
-
-    return response;
-}
-
-
-
-
-
 
 }

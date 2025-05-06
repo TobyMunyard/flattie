@@ -1,11 +1,14 @@
 package com.example.flattie.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import com.example.flattie.model.AppUser;
+import com.example.flattie.model.Flat;
+import com.example.flattie.repository.FlatRepository;
 
 /**
  * Controller class for the main page of the application. Maps URLs to html
@@ -13,6 +16,9 @@ import com.example.flattie.model.AppUser;
  */
 @Controller
 public class HomeController {
+
+    @Autowired
+    FlatRepository flatRepository;
 
     /**
      * Serves the home page of the application from the url "/". "index" string is
@@ -23,6 +29,16 @@ public class HomeController {
     @GetMapping("/")
     public String home(@AuthenticationPrincipal AppUser user, Model model) {
         model.addAttribute("user", user);
+
+        if (user == null || user.getFlat() == null) {
+            model.addAttribute("flat", null);
+            return "index";
+        }
+    
+        Flat flat = flatRepository.findByIdWithNotices(user.getFlat().getId())
+            .orElseThrow(() -> new RuntimeException("Flat not found"));
+    
+        model.addAttribute("flat", flat);
         return "index";
     }
 

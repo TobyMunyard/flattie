@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.Notice;
+import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.service.FlatService;
 import com.example.flattie.service.NoticeService;
 
@@ -24,19 +25,23 @@ public class NoticeBoardController {
     @Autowired
     FlatService flatService;
 
+    @Autowired
+    FlatRepository flatRepository;
+
     /**
      * Creates a new notice to display on the flat noticeboard.
      * 
-     * @param title The title of the notice.
+     * @param title       The title of the notice.
      * @param description A description of the notice specifics.
-     * @param user The user who created the notice (currently logged in).
+     * @param user        The user who created the notice (currently logged in).
      * @return A redirect to the home page (where the noticeboard is).
      */
     @PostMapping("/createNotice")
     public String createNotice(@RequestParam("title") String title,
             @RequestParam("description") String description,
             @AuthenticationPrincipal AppUser user) {
-        Flat userFlat = user.getFlat();
+        Flat userFlat = flatRepository.findById(user.getFlat().getId())
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
         Notice newNotice = new Notice(title, description, user, userFlat);
 
         userFlat.addNotice(newNotice);
@@ -49,7 +54,7 @@ public class NoticeBoardController {
      * Deletes a notice from the noticeboard. Called when "X" button is clicked.
      * 
      * @param noticeId The id number of the notice being deleted.
-     * @param user The user who is currently logged in.
+     * @param user     The user who is currently logged in.
      * @return A redirect to the home page (where the noticeboard is).
      */
     @PostMapping("/deleteNotice")
@@ -59,7 +64,7 @@ public class NoticeBoardController {
 
         userFlat.removeNotice(noticeToDelete);
         flatService.saveFlat(userFlat);
-        
+
         noticeService.deleteById(noticeId);
         return "redirect:/";
     }

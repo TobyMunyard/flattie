@@ -19,6 +19,7 @@ import com.example.flattie.service.EmailService;
 import com.example.flattie.service.ImageService;
 import com.example.flattie.model.MaintenanceTicket;
 import com.example.flattie.service.MaintenanceTicketService;
+import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.repository.MaintenanceTicketRepository;
 
 @Controller
@@ -36,6 +37,9 @@ public class MaintenanceTicketController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private FlatRepository flatRepository;
+
     @GetMapping("/ticket")
     public String ticketPage(@AuthenticationPrincipal AppUser user, Model model) {
         // Check if user is logged in and has a flat assigned
@@ -49,7 +53,8 @@ public class MaintenanceTicketController {
         }
 
         // Get the user's flat and tickets
-        Flat flat = user.getFlat();
+        Flat flat = flatRepository.findById(user.getFlat().getId())
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
         List<MaintenanceTicket> tickets = ticketService.getTicketsForFlat(flat);
 
         model.addAttribute("flat", flat);

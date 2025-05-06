@@ -15,9 +15,9 @@ import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatMembership;
 import com.example.flattie.model.FlatMembershipStatus;
+import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatMembershipService;
-
 
 /**
  * Controller class for handling all actions related to users logging into their
@@ -34,6 +34,9 @@ public class LoginController {
 
     @Autowired
     FlatMembershipService flatMembershipService;
+
+    @Autowired
+    FlatRepository flatRepository;
 
     /**
      * Handles a request from a user to log into an account. Redirects differently
@@ -52,45 +55,46 @@ public class LoginController {
      * @return If username and password are correct, the joinFlat page. Otherwise,
      *         redirect to the login page with a error message displayed.
      */
-   @PostMapping("/login")
-public String login(@RequestParam("username") String username, 
-                    @RequestParam("password") String password,
-                    Model model, 
-                    RedirectAttributes redirectAttributes, 
-                    HttpSession session) {
+    @PostMapping("/login")
+    public String login(@RequestParam("username") String username,
+            @RequestParam("password") String password,
+            Model model,
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
 
-    boolean usernameExists = true;
-    boolean passwordsMatch = true;
+        boolean usernameExists = true;
+        boolean passwordsMatch = true;
 
-    AppUser existingUser = appUserService.getAppUserByUsername(username).orElse(null);
-    if (existingUser == null) {
-        usernameExists = false;
-        redirectAttributes.addFlashAttribute("usernameExists", usernameExists);
-        return "redirect:/login";
-    }
-
-    if (!passwordEncoder.matches(password, existingUser.getPassword())) {
-        passwordsMatch = false;
-        redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);
-        return "redirect:/login";
-    }
-
-    // Save user to session
-    session.setAttribute("loggedInUser", existingUser);
-
-    // Check if user is already in a flat with approved membership
-    Flat flat = existingUser.getFlat();
-    if (flat != null) {
-        Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, existingUser);
-        if (membership.isPresent() && membership.get().getStatus() == FlatMembershipStatus.APPROVED) {
-            return "redirect:/showFlatInfo"; // go straight to flat page
-        } else {
-            return "redirect:/pendingApproval"; // user is waiting for approval
+        AppUser existingUser = appUserService.getAppUserByUsername(username).orElse(null);
+        if (existingUser == null) {
+            usernameExists = false;
+            redirectAttributes.addFlashAttribute("usernameExists", usernameExists);
+            return "redirect:/login";
         }
-    }
 
-    // No flat joined yet
-    return "redirect:/joinFlat";
-}
+        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+            passwordsMatch = false;
+            redirectAttributes.addFlashAttribute("passwordsMatch", passwordsMatch);
+            return "redirect:/login";
+        }
+
+        // Save user to session
+        session.setAttribute("loggedInUser", existingUser);
+
+        // Check if user is already in a flat with approved membership
+        Flat flat = flatRepository.findById(existingUser.getFlat().getId())
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
+        if (flat != null) {
+            Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, existingUser);
+            if (membership.isPresent() && membership.get().getStatus() == FlatMembershipStatus.APPROVED) {
+                return "redirect:/showFlatInfo"; // go straight to flat page
+            } else {
+                return "redirect:/pendingApproval"; // user is waiting for approval
+            }
+        }
+
+        // No flat joined yet
+        return "redirect:/joinFlat";
+    }
 
 }
