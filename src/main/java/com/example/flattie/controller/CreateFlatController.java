@@ -18,8 +18,6 @@ import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatMembershipService;
 import com.example.flattie.service.FlatService;
 
-import jakarta.annotation.PostConstruct;
-
 @Controller
 public class CreateFlatController {
 

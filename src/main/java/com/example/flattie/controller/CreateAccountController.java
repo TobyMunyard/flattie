@@ -14,15 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flattie.model.AppUser;
-import com.example.flattie.model.Flat;
-import com.example.flattie.model.FlatMembership;
-import com.example.flattie.model.FlatMembershipStatus;
-import com.example.flattie.model.Role;
 import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatMembershipService;
 import com.example.flattie.service.FlatService;
-
-import jakarta.annotation.PostConstruct;
 
 /**
  * Controller class for handling all requests based on user account creation
