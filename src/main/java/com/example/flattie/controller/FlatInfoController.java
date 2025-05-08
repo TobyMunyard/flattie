@@ -79,6 +79,7 @@ public class FlatInfoController {
     public String updateFlatInfo(@AuthenticationPrincipal AppUser user,
             @RequestParam("flatId") Long flatId,
             @RequestParam("flatName") String flatName,
+            @RequestParam("waiverContents") String waiverContents,
             @RequestParam("address") String address,
             @RequestParam("city") String city,
             @RequestParam("postcode") String postcode,
@@ -91,7 +92,8 @@ public class FlatInfoController {
         }
 
         // Retrieve the flat by its ID
-        Flat flat = user.getFlat();
+        Flat flat = flatRepo.findById(flatId)
+        .orElseThrow(() -> new RuntimeException("Flat not found"));
 
         if (flat == null || !flat.getId().equals(flatId)) {
             return "redirect:/error"; // Redirect to an error page if the flat is not found
@@ -105,6 +107,7 @@ public class FlatInfoController {
         flat.setPostcode(postcode);
         flat.setFlatDescription(flatDescription);
         flat.setWeeklyRent(weeklyRent);
+        flat.setWaiverContents(waiverContents);
         flat.setRooms(rooms);
 
         // Save the updated flat

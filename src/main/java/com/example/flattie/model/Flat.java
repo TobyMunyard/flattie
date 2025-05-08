@@ -59,6 +59,11 @@ public class Flat {
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlatExpense> expenses = new ArrayList<>(); // List of expenses associated with the flat
 
+    @Column(columnDefinition = "TEXT")
+    private String waiverContents;
+
+
+
     @OneToMany(mappedBy = "flat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppUser> users = new ArrayList<>(); // List of users associated with the flat
 
@@ -84,6 +89,16 @@ public class Flat {
         this.weeklyRent = weeklyRent;
         this.rooms = rooms;
         this.choreList = new ChoreList(this, new ArrayList<>()); // Initialize the chore list with an empty list
+        this.waiverContents = "All flatmates agree to uphold shared responsibilities and mutual respect.";
+
+    }
+
+    public String getWaiverContents() {
+        return waiverContents;
+    }
+
+    public void setWaiverContents(String waiverContents) {
+        this.waiverContents = waiverContents;
     }
 
     // Getters and setters

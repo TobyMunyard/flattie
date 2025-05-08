@@ -69,5 +69,17 @@ public String showPendingApprovalPage() {
     return "pendingApproval"; // tells Spring to render templates/pendingApproval.html
 }
 
+@GetMapping("/joinFlat/waiver")
+public String showFlatWaiver(@RequestParam("flat_code") String flatCode, Model model) {
+    Flat flat = flatService.findByJoinCode(flatCode);
+    if (flat == null) {
+        model.addAttribute("error", "Invalid flat code. Please try again.");
+        return "joinFlat";
+    }
+    model.addAttribute("flat", flat);
+    return "joinFlatWaiver";
+}
+
+
 
 }

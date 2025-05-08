@@ -28,7 +28,7 @@
       <section id="join-flat" th:unless="${flat != null}">
         <i class="fas fa-home login-icon"></i>
         <h2>Join Flat</h2>
-        <form action="/joinFlat" method="post">
+        <form action="/joinFlat/waiver" method="get">
           <label for="flat_code">Flat Code</label>
           <input
             type="text"
@@ -37,41 +37,10 @@
             placeholder="Enter flat code"
             required
           />
-          <div class="waiver-section">
-            <p>Please read the waiver to continue.</p>
-            <div
-              class="waiver-text"
-              style="
-                border: 1px solid #ccc;
-                padding: 10px;
-                margin-bottom: 10px;
-                max-height: 150px;
-                overflow-y: auto;
-              "
-            >
-              
-              By joining this flat, I acknowledge that I am entering a shared
-              living environment and agree to:
-              <ul>
-                <li>Respect communal spaces and housemates' privacy</li>
-                <li>
-                  Share cleaning, shopping, and other responsibilities fairly
-                </li>
-                <li>Communicate respectfully to resolve any disputes</li>
-                <li>
-                  Comply with any rules or terms agreed upon by flat members
-                </li>
-              </ul>
-            </div>
-            <label>
-              <input type="checkbox" name="waiverAccepted" required />
-              I accept the waiver terms
-            </label>
-          </div>
-          <button type="submit">Join</button>
-          <!-- Display error message if needed -->
-          <p th:if="${error}" th:text="${error}" style="color: red"></p>
+          <button type="submit">Continue</button>
         </form>
+        <p th:if="${error}" th:text="${error}" style="color: red"></p>
+        
       </section>
 
       <!-- Display flats in a grid -->

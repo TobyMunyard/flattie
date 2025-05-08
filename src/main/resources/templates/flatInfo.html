@@ -46,6 +46,10 @@
           <strong>Flat Join Code:</strong>
           <span th:text="${flat.joinCode}">Flat Join Code</span>
         </p>
+        <p>
+          <strong>Flat Waiver Contents:</strong><br>
+          <pre style="white-space: pre-wrap;" th:text="${flat.waiverContents}">Default waiver</pre>
+        </p>
 
         <p><strong>Property Manager:</strong></p>
         <div th:if="${flat.propertyManager != null}">
@@ -62,25 +66,24 @@
 
         <!-- Check Join Requests button for admins/owners -->
         <div
-        th:if="${membership != null and (membership.role.name() == 'OWNER' or membership.role.name() == 'ADMIN')}"
-      >
-        
-        <a th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}" 
-            class="button"
-          style="
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 10px;
-            display: inline-block;
-            border-radius: 5px;
-            text-decoration: none;
-          "
+          th:if="${membership != null and (membership.role.name() == 'OWNER' or membership.role.name() == 'ADMIN')}"
         >
-          Check Join Requests
-        </a>
-      </div>
-      
+          <a
+            th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}"
+            class="button"
+            style="
+              background-color: #007bff;
+              color: white;
+              padding: 10px 20px;
+              margin-top: 10px;
+              display: inline-block;
+              border-radius: 5px;
+              text-decoration: none;
+            "
+          >
+            Check Join Requests
+          </a>
+        </div>
 
         <!-- Edit Button -->
         <button onclick="openModal()" class="button">Edit</button>
@@ -122,6 +125,14 @@
             th:value="${flat.flatName}"
             required
           />
+
+          <label for="waiverContents">Waiver Contents:</label>
+          <textarea
+            id="waiverContents"
+            name="waiverContents"
+            required
+            th:text="${flat.waiverContents}"
+          ></textarea>
 
           <label for="address">Address:</label>
           <input
