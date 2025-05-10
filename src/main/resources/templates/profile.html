@@ -30,6 +30,9 @@
             <h2 th:text="'Welcome, ' + ${user.firstName}"></h2>
             <p th:text="'Name:        ' + ${user.firstName} + ' ' + ${user.lastName}"></p>
             <p th:text="'Username:        ' + ${user.username}"></p>
+            <p th:text="'Bio: ' + ${user.bio}"></p>
+            <p th:text="'Noise Tolerance: ' + ${user.noiseTolerance} + '/5'"></p>
+            <p th:text="'Cleanliness: ' + ${user.cleanliness} + '/5'"></p>
             <button id="editAccountButton">Edit Account</button>
             <button id="changePasswordButton">Change Password</button>
             <div id="editProfileModal" class="modal">
@@ -43,6 +46,26 @@
                         <input type="text" name="lastName" th:value="${user.lastName}" required>
                         <label>Username:</label>
                         <input type="text" name="username" th:value="${user.username}" required>
+
+                        <label>Bio:</label>
+                        <textarea name="bio" cols="50" th:text="${user.bio}"></textarea>
+
+                        <label>Noise Tolerance (1-5):</label>
+                        <input type="range" name="noiseTolerance" min="1" max="5" 
+                            th:value="${user.noiseTolerance != null ? user.noiseTolerance : 3}" 
+                            id="noiseToleranceSlider" 
+                            oninput="updateNoiseToleranceValue(this.value)" required>
+                        <span id="noiseToleranceValue" 
+                            th:text="${user.noiseTolerance != null ? user.noiseTolerance : 3}">3</span>
+
+                        <label>Cleanliness (1-5):</label>
+                        <input type="range" name="cleanliness" min="1" max="5" 
+                            th:value="${user.cleanliness != null ? user.cleanliness : 3}" 
+                            id="cleanlinessSlider" 
+                            oninput="updateCleanlinessValue(this.value)" required>
+                        <span id="cleanlinessValue" 
+                        th:text="${user.cleanliness != null ? user.cleanliness : 3}">3</span>
+                        
                         <button type="submit">Submit</button>
                     </form>
                 </div>

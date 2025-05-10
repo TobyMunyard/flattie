@@ -29,3 +29,13 @@ window.onclick = (event) => {
 document.getElementById("changePasswordModalForm").onsubmit = (e) => {
   modal.style.display = "none";
 };
+
+// Function to update the displayed value for noise tolerance
+function updateNoiseToleranceValue(value) {
+    document.getElementById("noiseToleranceValue").textContent = value;
+}
+
+// Function to update the displayed value for cleanliness
+function updateCleanlinessValue(value) {
+    document.getElementById("cleanlinessValue").textContent = value;
+}
