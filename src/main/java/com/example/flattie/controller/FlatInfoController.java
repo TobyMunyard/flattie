@@ -158,6 +158,10 @@ public class FlatInfoController {
                     Map<String, Object> data = new HashMap<>();
                     data.put("id", flatmate.getId());
                     data.put("username", flatmate.getUsername());
+                    data.put("name", flatmate.getFirstName());
+                    data.put("bio", flatmate.getBio());
+                    data.put("noiseTolerance", flatmate.getNoiseTolerance());
+                    data.put("cleanliness", flatmate.getCleanliness());
                     return data;
                 })
                 .toList();
