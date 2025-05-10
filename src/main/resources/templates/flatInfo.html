@@ -1,77 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Flat Info - Flattie.com</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="/css/flatInfoStyles.css" />
-  </head>
 
-  <body>
-    <header>
-      <h1>Flattie.com</h1>
-      <p>Your one-stop shop for flatmate management</p>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flat Info - Flattie.com</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/flatInfoStyles.css" />
+</head>
 
-    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+<body>
+  <header>
+    <h1>Flattie.com</h1>
+    <p>Your one-stop shop for flatmate management</p>
+  </header>
 
-    <div class="container">
-      <section id="flat-info" th:if="${flat != null}">
-        <h2 th:text="${flat.flatName}">Flat Name</h2>
-        <p>
-          <strong>Address:</strong>
-          <span th:text="${flat.address}">Flat Address</span>
-        </p>
-        <p>
-          <strong>City:</strong> <span th:text="${flat.city}">Flat City</span>
-        </p>
-        <p>
-          <strong>Postcode:</strong>
-          <span th:text="${flat.postcode}">Flat Postcode</span>
-        </p>
-        <p>
-          <strong>Description:</strong>
-          <span th:text="${flat.flatDescription}">Flat Description</span>
-        </p>
-        <p>
-          <strong>Weekly Rent:</strong>
-          <span th:text="${flat.weeklyRent}">Flat Weekly Rent</span>
-        </p>
-        <p>
-          <strong>Number of Rooms:</strong>
-          <span th:text="${flat.rooms}">Flat Rooms</span>
-        </p>
-        <p>
-          <strong>Flat Join Code:</strong>
-          <span th:text="${flat.joinCode}">Flat Join Code</span>
-        </p>
-        <p>
-          <strong>Flat Waiver Contents:</strong><br>
-          <pre style="white-space: pre-wrap;" th:text="${flat.waiverContents}">Default waiver</pre>
-        </p>
+  <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
-        <p><strong>Property Manager:</strong></p>
-        <div th:if="${flat.propertyManager != null}">
-          <p>Name: <span th:text="${flat.propertyManager.name}"></span></p>
-          <p>Email: <span th:text="${flat.propertyManager.email}"></span></p>
-          <p th:if="${flat.propertyManager.phone != null}">
-            Phone: <span th:text="${flat.propertyManager.phone}"></span>
-          </p>
-        </div>
-        <div th:if="${flat.propertyManager == null}">
-          <p>No property manager has been set for this flat.</p>
-          <a class="button" href="/propertyManagerForm">Set Property Manager</a>
-        </div>
+  <div class="container">
+    <section id="flat-info" th:if="${flat != null}">
+      <h2 th:text="${flat.flatName}">Flat Name</h2>
+      <p>
+        <strong>Address:</strong>
+        <span th:text="${flat.address}">Flat Address</span>
+      </p>
+      <p>
+        <strong>City:</strong> <span th:text="${flat.city}">Flat City</span>
+      </p>
+      <p>
+        <strong>Postcode:</strong>
+        <span th:text="${flat.postcode}">Flat Postcode</span>
+      </p>
+      <p>
+        <strong>Description:</strong>
+        <span th:text="${flat.flatDescription}">Flat Description</span>
+      </p>
+      <p>
+        <strong>Weekly Rent:</strong>
+        <span th:text="${flat.weeklyRent}">Flat Weekly Rent</span>
+      </p>
+      <p>
+        <strong>Number of Rooms:</strong>
+        <span th:text="${flat.rooms}">Flat Rooms</span>
+      </p>
+      <p>
+        <strong>Flat Join Code:</strong>
+        <span th:text="${flat.joinCode}">Flat Join Code</span>
+      </p>
+      <p>
+        <strong>Flat Waiver Contents:</strong><br>
+      <pre style="white-space: pre-wrap;" th:text="${flat.waiverContents}">Default waiver</pre>
+      </p>
 
-        <!-- Check Join Requests button for admins/owners -->
-        <div
-          th:if="${membership != null and (membership.role.name() == 'OWNER' or membership.role.name() == 'ADMIN')}"
-        >
-          <a
-            th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}"
-            class="button"
-            style="
+      <p><strong>Property Manager:</strong></p>
+      <div th:if="${flat.propertyManager != null}">
+        <p>Name: <span th:text="${flat.propertyManager.name}"></span></p>
+        <p>Email: <span th:text="${flat.propertyManager.email}"></span></p>
+        <p th:if="${flat.propertyManager.phone != null}">
+          Phone: <span th:text="${flat.propertyManager.phone}"></span>
+        </p>
+      </div>
+      <div th:if="${flat.propertyManager == null}">
+        <p>No property manager has been set for this flat.</p>
+        <a class="button" href="/propertyManagerForm">Set Property Manager</a>
+      </div>
+
+      <!-- Check Join Requests button for admins/owners -->
+      <div th:if="${membership != null and (membership.role.name() == 'OWNER' or membership.role.name() == 'ADMIN')}">
+        <a th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}" class="button" style="
               background-color: #007bff;
               color: white;
               padding: 10px 20px;
@@ -79,139 +75,94 @@
               display: inline-block;
               border-radius: 5px;
               text-decoration: none;
-            "
-          >
-            Check Join Requests
-          </a>
-        </div>
-
-        <!-- Edit Button -->
-        <button onclick="openModal()" class="button">Edit</button>
-
-        <!-- Leave Flat Button -->
-        <form action="/leaveFlat" method="post" style="margin-top: 20px">
-          <button
-            type="submit"
-            class="button"
-            style="background-color: #f44336; color: white"
-          >
-            Leave Flat
-          </button>
-        </form>
-      </section>
-
-      <section id="error" th:if="${flat == null}">
-        <h2>Error</h2>
-        <p>
-          You have not joined a flat. Please join a flat to see its details.
-        </p>
-        <a href="/joinFlat" class="button">Join a Flat</a>
-      </section>
-    </div>
-
-    <!-- Edit Flat Modal -->
-    <div id="editModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Edit Flat Information</h2>
-        <form action="/updateFlatInfo" method="post">
-          <input type="hidden" name="flatId" th:value="${flat.id}" />
-
-          <label for="flatName">Flat Name:</label>
-          <input
-            type="text"
-            id="flatName"
-            name="flatName"
-            th:value="${flat.flatName}"
-            required
-          />
-
-          <label for="waiverContents">Waiver Contents:</label>
-          <textarea
-            id="waiverContents"
-            name="waiverContents"
-            required
-            th:text="${flat.waiverContents}"
-          ></textarea>
-
-          <label for="address">Address:</label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            th:value="${flat.address}"
-            required
-          />
-
-          <label for="city">City:</label>
-          <input
-            type="text"
-            id="city"
-            name="city"
-            th:value="${flat.city}"
-            required
-          />
-
-          <label for="postcode">Postcode:</label>
-          <input
-            type="text"
-            id="postcode"
-            name="postcode"
-            th:value="${flat.postcode}"
-            required
-          />
-
-          <label for="flatDescription">Description:</label>
-          <textarea
-            id="flatDescription"
-            name="flatDescription"
-            required
-            th:text="${flat.flatDescription}"
-          ></textarea>
-
-          <label for="weeklyRent">Weekly Rent:</label>
-          <input
-            type="number"
-            id="weeklyRent"
-            name="weeklyRent"
-            th:value="${flat.weeklyRent}"
-            required
-          />
-
-          <label for="rooms">Number of Rooms:</label>
-          <input
-            type="number"
-            id="rooms"
-            name="rooms"
-            th:value="${flat.rooms}"
-            required
-          />
-
-          <div class="modal-buttons">
-            <button
-              type="submit"
-              class="button"
-              style="background-color: #4caf50"
-            >
-              Save Changes
-            </button>
-            <button
-              type="button"
-              class="button"
-              onclick="closeModal()"
-              style="background-color: #f44336"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            ">
+          Check Join Requests
+        </a>
       </div>
+
+      <!-- Edit Button -->
+      <button onclick="openModal()" class="button">Edit</button>
+
+      <!-- View Flatmates Button -->
+      <button onclick="openFlatmatesModal()" class="button" style="margin-top: 10px;">
+        View Flatmates
+      </button>
+
+      <!-- Flatmates Modal -->
+      <div id="flatmatesModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close" onclick="closeFlatmatesModal()">&times;</span>
+          <h2>Flatmates</h2>
+          <div id="flatmatesList"></div>
+        </div>
+      </div>
+
+      <!-- Leave Flat Button -->
+      <form action="/leaveFlat" method="post" style="margin-top: 20px">
+        <button type="submit" class="button" style="background-color: #f44336; color: white">
+          Leave Flat
+        </button>
+      </form>
+    </section>
+
+    <section id="error" th:if="${flat == null}">
+      <h2>Error</h2>
+      <p>
+        You have not joined a flat. Please join a flat to see its details.
+      </p>
+      <a href="/joinFlat" class="button">Join a Flat</a>
+    </section>
+  </div>
+
+  <!-- Edit Flat Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Edit Flat Information</h2>
+      <form action="/updateFlatInfo" method="post">
+        <input type="hidden" name="flatId" th:value="${flat.id}" />
+
+        <label for="flatName">Flat Name:</label>
+        <input type="text" id="flatName" name="flatName" th:value="${flat.flatName}" required />
+
+        <label for="waiverContents">Waiver Contents:</label>
+        <textarea id="waiverContents" name="waiverContents" required th:text="${flat.waiverContents}"></textarea>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" th:value="${flat.address}" required />
+
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" th:value="${flat.city}" required />
+
+        <label for="postcode">Postcode:</label>
+        <input type="text" id="postcode" name="postcode" th:value="${flat.postcode}" required />
+
+        <label for="flatDescription">Description:</label>
+        <textarea id="flatDescription" name="flatDescription" required th:text="${flat.flatDescription}"></textarea>
+
+        <label for="weeklyRent">Weekly Rent:</label>
+        <input type="number" id="weeklyRent" name="weeklyRent" th:value="${flat.weeklyRent}" required />
+
+        <label for="rooms">Number of Rooms:</label>
+        <input type="number" id="rooms" name="rooms" th:value="${flat.rooms}" required />
+
+        <div class="modal-buttons">
+          <button type="submit" class="button" style="background-color: #4caf50">
+            Save Changes
+          </button>
+          <button type="button" class="button" onclick="closeModal()" style="background-color: #f44336">
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <script src="/js/flatInfoScript.js"></script>
+  <script src="/js/flatInfoScript.js"></script>
 
-    <footer>
-      <p>&copy; 2025 Flattie.com. All rights reserved.</p>
-    </footer>
-  </body>
+  <footer>
+    <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+  </footer>
+</body>
+
 </html>
