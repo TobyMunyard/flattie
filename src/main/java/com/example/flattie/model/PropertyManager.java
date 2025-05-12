@@ -1,10 +1,15 @@
 package com.example.flattie.model;
 
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToOne;
 
 @Entity
 public class PropertyManager {
@@ -16,11 +21,12 @@ public class PropertyManager {
     private String email;
     private String phone;
 
-    @OneToOne(mappedBy = "propertyManager")
-    private Flat flat;
+    @OneToMany(mappedBy = "propertyManager", cascade = CascadeType.PERSIST)
+    private List<Flat> flats;
 
     // Default constructor required by JPA
     public PropertyManager() {
+        flats = new ArrayList<>();
     }
 
     // Constructor with all fields
@@ -28,6 +34,7 @@ public class PropertyManager {
         this.name = name;
         this.email = email;
         this.phone = phone;
+        flats = new ArrayList<>();
     }
 
     public Long getId() {
@@ -62,11 +69,27 @@ public class PropertyManager {
         this.phone = phone;
     }
 
-    public Flat getFlat() {
-        return flat;
+    public void addFlat(Flat flat) {
+        if (flats == null) {
+            flats = new ArrayList<>();
+        } else if (flats.contains(flat)) {
+            return; // Flat already exists in the list, no need to add it again
+        } else {
+            this.flats.add(flat);
+            flat.setPropertyManager(this); // Set the property manager for the flat as well
+        }
     }
 
-    public void setFlat(Flat flat) {
-        this.flat = flat;
+    public void removeFlat(Flat flat) {
+        this.flats.remove(flat);
+        flat.setPropertyManager(null); // Remove the property manager from the flat
+    }
+
+    public List<Flat> getFlats() {
+        return flats;
+    }
+
+    public void setFlatList(List<Flat> flats) {
+        this.flats = flats;
     }
 }

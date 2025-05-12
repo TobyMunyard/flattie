@@ -12,8 +12,8 @@ import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
 import com.example.flattie.model.PropertyManager;
 import com.example.flattie.repository.AppUserRepository;
-// import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.repository.FlatRepository;
+import com.example.flattie.repository.PropertyManagerRepository;
 
 /**
  * Service class for database interaction with Flat entities.
@@ -22,17 +22,17 @@ import com.example.flattie.repository.FlatRepository;
 @Service
 public class FlatService {
 
-    // @Autowired
-    // private FlatExpenseRepository flatExpenseRepository;
-
     @Autowired
     private AppUserRepository appUserRepository;
 
     private final FlatRepository flatRepository;
 
+    private PropertyManagerRepository propertyManagerRepo;
+
     @Autowired
-    public FlatService(FlatRepository flatRepository) {
+    public FlatService(FlatRepository flatRepository, PropertyManagerRepository propertyManagerRepository) {
         this.flatRepository = flatRepository;
+        this.propertyManagerRepo = propertyManagerRepository;
     }
 
     /**
@@ -113,12 +113,17 @@ public class FlatService {
      * @param phone The phone number of the PropertyManager.
      */
     public void assignPropertyManager(Flat flat, String name, String email, String phone) {
-        PropertyManager manager = new PropertyManager();
-        manager.setName(name);
-        manager.setEmail(email);
-        manager.setPhone(phone);
-        manager.setFlat(flat);
-        flat.setPropertyManager(manager);
+        PropertyManager pm = propertyManagerRepo.findByEmail(email)
+            .orElseGet(() -> {
+                PropertyManager newPm = new PropertyManager();
+                newPm.setName(name);
+                newPm.setEmail(email);
+                newPm.setPhone(phone);
+                return newPm;
+            });
+    
+        flat.setPropertyManager(pm);
+        pm.getFlats().add(flat);
         flatRepository.save(flat);
     }
 }
