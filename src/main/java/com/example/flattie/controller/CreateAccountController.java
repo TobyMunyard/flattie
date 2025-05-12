@@ -126,7 +126,9 @@ public class CreateAccountController {
     @PostMapping("/updateUser")
     public String updateUserInfo(@AuthenticationPrincipal AppUser authenticatedUser,
             @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
-            @RequestParam("username") String username, RedirectAttributes redirectAttributes) {
+            @RequestParam("username") String username, @RequestParam("bio") String bio,
+            @RequestParam("noiseTolerance") Integer noiseTolerance,
+            @RequestParam("cleanliness") Integer cleanliness, RedirectAttributes redirectAttributes) {
         // Get user by AuthenticationPrincipal in case username is being changed
         AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
                 .orElse(null);
@@ -160,10 +162,28 @@ public class CreateAccountController {
             return "redirect:/profilePage";
         }
 
+        if (bio != null && bio.length() > 500) {
+            redirectAttributes.addFlashAttribute("error", "Bio must be under 500 characters.");
+            return "redirect:/profilePage";
+        }
+
+        if (noiseTolerance == null || noiseTolerance < 1 || noiseTolerance > 5) {
+            redirectAttributes.addFlashAttribute("error", "Noise tolerance must be between 1 and 5.");
+            return "redirect:/profilePage";
+        }
+
+        if (cleanliness == null || cleanliness < 1 || cleanliness > 5) {
+            redirectAttributes.addFlashAttribute("error", "Cleanliness must be between 1 and 5.");
+            return "redirect:/profilePage";
+        }
+
         // Update user information and redirect to the same page so they can see results
         existingUser.setFirstName(firstName);
         existingUser.setLastName(lastName);
         existingUser.setUsername(username);
+        existingUser.setBio(bio);
+        existingUser.setNoiseTolerance(noiseTolerance);
+        existingUser.setCleanliness(cleanliness);
         appUserService.saveAppUser(existingUser);
 
         // Refreshes the whole @AuthenticationPrincipal, refreshing user information for

@@ -47,6 +47,16 @@ public class AppUser implements UserDetails {
     
     private String profileImage; // URL to the user's profile image
 
+    @Column(length = 500) // Limit the length of the bio
+    private String bio;
+
+    @Column(nullable = false)
+    private Integer noiseTolerance = 3; // Default value
+
+    @Column(nullable = false)
+    private Integer cleanliness = 3; // Default value
+
+
     public AppUser() {
     }
 
@@ -57,6 +67,7 @@ public class AppUser implements UserDetails {
         this.password = password;
     }
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -103,6 +114,30 @@ public class AppUser implements UserDetails {
 
     public void setFlat(Flat flat) {
         this.flat = flat;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public Integer getNoiseTolerance() {
+        return noiseTolerance;
+    }
+
+    public void setNoiseTolerance(Integer noiseTolerance) {
+        this.noiseTolerance = noiseTolerance;
+    }
+
+    public Integer getCleanliness() {
+        return cleanliness;
+    }
+
+    public void setCleanliness(Integer cleanliness) {
+        this.cleanliness = cleanliness;
     }
 
     @Override

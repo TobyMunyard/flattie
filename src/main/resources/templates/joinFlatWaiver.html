@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Join Flat - Waiver</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2 th:text="'Join ' + ${flat.flatName}"></h2>
+    <p>Please read and accept the waiver to join this flat.</p>
+
+    <div class="waiver-text" style="border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: auto;">
+      <pre th:text="${flat.waiverContents}">Default waiver text here.</pre>
+    </div>
+
+    <form action="/joinFlat" method="post">
+      <input type="hidden" name="flat_code" th:value="${flat.joinCode}" />
+      <label>
+        <input type="checkbox" name="waiverAccepted" required />
+        I accept the waiver terms
+      </label>
+      <br />
+      <button type="submit">Join Flat</button>
+    </form>
+  </div>
+</body>
+</html>
