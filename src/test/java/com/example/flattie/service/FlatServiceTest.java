@@ -51,4 +51,36 @@ public class FlatServiceTest {
         assertEquals(pmEmail, assigned.getEmail());
         assertEquals(pmPhone, assigned.getPhone());
     }
+
+    @Test
+    public void testReusesExistingPropertyManager() {
+        // Existing PM setup
+        PropertyManager existingPm = new PropertyManager();
+        existingPm.setName("Existing PM");
+        existingPm.setEmail("pm@example.com");
+        existingPm.setPhone("123456789");
+
+        when(propertyManagerRepository.findByEmail("pm@example.com"))
+                .thenReturn(Optional.of(existingPm));
+
+        Flat newFlat = new Flat();
+        newFlat.setId(2L);
+
+        flatService.assignPropertyManager(newFlat, "Should Be Ignored", "pm@example.com", "999");
+
+        ArgumentCaptor<Flat> flatCaptor = ArgumentCaptor.forClass(Flat.class);
+        verify(flatRepository).save(flatCaptor.capture());
+
+        Flat savedFlat = flatCaptor.getValue();
+
+        // confirm the existing PM was reused
+        assertSame(existingPm, savedFlat.getPropertyManager());
+        assertEquals("pm@example.com", savedFlat.getPropertyManager().getEmail());
+        assertEquals("Existing PM", savedFlat.getPropertyManager().getName());
+        assertEquals("123456789", savedFlat.getPropertyManager().getPhone());
+
+        // confirm the flat was added to existing PM’s flat list
+        assertTrue(existingPm.getFlats().contains(savedFlat));
+    }
+
 }
