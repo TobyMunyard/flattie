@@ -53,6 +53,10 @@ public class FlatInfoController {
             return "redirect:/login";
         }
 
+        if (user.getFlat() == null) {
+            return "redirect:/joinFlat";
+        }
+        
         Flat flat = flatRepo.findById(user.getFlat().getId())
                 .orElseThrow(() -> new RuntimeException("Flat not found"));
         if (flat == null) {
