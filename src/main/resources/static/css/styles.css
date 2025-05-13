@@ -634,6 +634,28 @@ footer {
     transform: scale(0.98);
 }
 
+/* Default button styling */
+.flatInfoButton {
+    background-color: #e67e22;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 10px;
+    display: inline-block;
+    border-radius: 5px;
+    text-decoration: none;
+    border: none;
+    font-size: 100%;
+}
+
+.flatInfoButton:hover {
+    background-color: #d35400;
+    cursor: pointer;
+}
+
+.flatInfoButton:active {
+    transform: scale(0.98);
+}
+
 /* User Icon */
 .auth-page .login-icon {
     font-size: 50px;
