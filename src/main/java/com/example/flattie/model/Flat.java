@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.example.flattie.model.Role; // Import the Role enum or class
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
@@ -41,7 +40,7 @@ public class Flat {
     private double weeklyRent; // Weekly rent for the flat
     private int rooms; // Number of rooms in the flat
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "property_manager_id")
     private PropertyManager propertyManager; // Property manager associated with the flat
 
@@ -71,7 +70,7 @@ public class Flat {
     private List<Notice> noticeBoard = new ArrayList<>(); // List of notices associated with the flat
 
     @OneToMany(mappedBy = "flat")
-    private List<Event> events;  // List of events on the flat calender
+    private List<Event> events; // List of events on the flat calender
 
     // Default constructor required by JPA
     public Flat() {
@@ -245,13 +244,6 @@ public class Flat {
         user.setFlat(null); // Ensure bidirectional consistency
     }
 
-    // public void setPropertyManager(PropertyManager manager) {
-    // this.propertyManager = manager; // Set the property manager for the flat
-    // if (manager != null) {
-    // manager.setFlat(this); // Ensure bidirectional consistency
-    // }
-    // }
-
     public void addMaintenanceTicket(MaintenanceTicket ticket) {
         maintenanceTickets.add(ticket); // Add the ticket to the list
         ticket.setFlat(this); // Set the flat reference in the ticket
@@ -276,9 +268,9 @@ public class Flat {
 
     public void setPropertyManager(PropertyManager propertyManager) {
         this.propertyManager = propertyManager; // Set the property manager for the flat
-        if (propertyManager != null) {
-            propertyManager.setFlat(this); // Ensure bidirectional consistency
-        }
+    if (propertyManager != null && !propertyManager.getFlats().contains(this)) { // Check if the property manager already has this flat
+        propertyManager.addFlat(this); // bi-directional relationship
+    }
     }
 
     public List<Notice> getNoticeBoard() {
@@ -293,7 +285,7 @@ public class Flat {
         noticeBoard.add(notice);
     }
 
-    public void removeNotice(Notice notice){
+    public void removeNotice(Notice notice) {
         System.out.println(noticeBoard.get(0).toString());
         System.out.println(notice.toString());
         noticeBoard.remove(notice);
@@ -340,16 +332,14 @@ public class Flat {
 
     public boolean isAdmin(AppUser user) {
         return members.stream()
-            .anyMatch(m -> m.getUser().equals(user) && m.getRole() == Role.ADMIN);
+                .anyMatch(m -> m.getUser().equals(user) && m.getRole() == Role.ADMIN);
     }
 
     public Optional<Role> getRoleOfUser(AppUser user) {
         return members.stream()
-            .filter(m -> m.getUser().equals(user))
-            .map(m -> (Role) m.getRole())
-            .findFirst();
+                .filter(m -> m.getUser().equals(user))
+                .map(m -> (Role) m.getRole())
+                .findFirst();
     }
-    
-    
 
 }

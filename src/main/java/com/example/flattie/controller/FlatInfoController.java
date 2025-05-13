@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,6 @@ import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatMembership;
 import com.example.flattie.model.FlatMembershipStatus;
-import com.example.flattie.model.PropertyManager;
 import com.example.flattie.model.Role;
 import com.example.flattie.repository.FlatRepository;
 import com.example.flattie.service.AppUserService;
@@ -205,15 +203,7 @@ public class FlatInfoController {
         if (flat == null)
             return "redirect:/joinFlat";
 
-        PropertyManager manager = new PropertyManager();
-        manager.setName(name);
-        manager.setEmail(email);
-        manager.setPhone(phone);
-        manager.setFlat(flat);
-
-        flat.setPropertyManager(manager);
-        flatRepo.save(flat); // cascade saves manager too
-
+        flatService.assignPropertyManager(flat, name, email, phone);
         return "redirect:/showFlatInfo"; // Redirect to flat info page
     }
 

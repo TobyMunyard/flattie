@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
+import com.example.flattie.model.PropertyManager;
 import com.example.flattie.repository.AppUserRepository;
-// import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.repository.FlatRepository;
+import com.example.flattie.repository.PropertyManagerRepository;
 
 /**
  * Service class for database interaction with Flat entities.
@@ -21,17 +22,17 @@ import com.example.flattie.repository.FlatRepository;
 @Service
 public class FlatService {
 
-    // @Autowired
-    // private FlatExpenseRepository flatExpenseRepository;
-
     @Autowired
     private AppUserRepository appUserRepository;
 
     private final FlatRepository flatRepository;
 
+    private PropertyManagerRepository propertyManagerRepo;
+
     @Autowired
-    public FlatService(FlatRepository flatRepository) {
+    public FlatService(FlatRepository flatRepository, PropertyManagerRepository propertyManagerRepository) {
         this.flatRepository = flatRepository;
+        this.propertyManagerRepo = propertyManagerRepository;
     }
 
     /**
@@ -43,7 +44,7 @@ public class FlatService {
         return flatRepository.findAll();
     }
 
-    /** Chekc if the address already exists in the databse */
+    /** Check if the address already exists in the database */
     public boolean addressExists(String address) {
         return flatRepository.existsByAddress(address);
     }
@@ -100,5 +101,29 @@ public class FlatService {
      */
     public List<AppUser> getFlatmates(Long flatId) {
         return appUserRepository.findByFlat_Id(flatId);
+    }
+
+    /**
+     * Assigns a PropertyManager to a Flat and updates the Flat's property manager
+     * field.
+     * 
+     * @param flat The Flat to assign the PropertyManager to.
+     * @param name The name of the PropertyManager.
+     * @param email The email of the PropertyManager.
+     * @param phone The phone number of the PropertyManager.
+     */
+    public void assignPropertyManager(Flat flat, String name, String email, String phone) {
+        PropertyManager pm = propertyManagerRepo.findByEmail(email)
+            .orElseGet(() -> {
+                PropertyManager newPm = new PropertyManager();
+                newPm.setName(name);
+                newPm.setEmail(email);
+                newPm.setPhone(phone);
+                return newPm;
+            });
+    
+        flat.setPropertyManager(pm);
+        pm.getFlats().add(flat);
+        flatRepository.save(flat);
     }
 }
