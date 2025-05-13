@@ -46,6 +46,7 @@ public class FlatInfoController {
     @Autowired
     private FlatMembershipService flatMembershipService;
 
+
     @Autowired
     private FlatRepository flatRepo;
 
@@ -162,6 +163,7 @@ public class FlatInfoController {
                     data.put("bio", flatmate.getBio());
                     data.put("noiseTolerance", flatmate.getNoiseTolerance());
                     data.put("cleanliness", flatmate.getCleanliness());
+                    data.put("role", flatMembershipService.getRole(user.getFlat(), flatmate)); // Use role from membership
                     return data;
                 })
                 .toList();
@@ -229,7 +231,7 @@ public class FlatInfoController {
         List<FlatMembership> pending = flatMembershipService.findPendingByFlat(flat);
         model.addAttribute("flat", flat);
         model.addAttribute("pendingRequests", pending);
-        return "pendingRequests"; // View file (e.g. pendingRequests.jsp or .html)
+        return "pendingRequests"; 
     }
 
     @PutMapping("/api/flats/{flatId}/members/{userId}/approve")
@@ -265,6 +267,7 @@ public class FlatInfoController {
         joiningUser.setFlat(flat);
         appUserService.saveAppUser(joiningUser);
         flatMembershipService.save(request);
+        // Need to add in here what membership the 
 
         // Refresh session if approving yourself
         if (adminUser.getId().equals(joiningUser.getId())) {

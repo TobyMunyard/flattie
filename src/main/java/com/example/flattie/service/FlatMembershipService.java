@@ -18,10 +18,10 @@ public class FlatMembershipService {
     @Autowired
     private FlatMembershipRepository repository;
 
+  
 
-    public Optional<FlatMembership> getMembership(Flat flat, AppUser user) {
-        return repository.findByFlatAndUser(flat, user);
-    }
+
+  
 
     public List<FlatMembership> getMembersOfFlat(Flat flat) {
         return repository.findAllByFlat(flat);
@@ -32,6 +32,18 @@ public class FlatMembershipService {
             .orElseThrow(() -> new RuntimeException("User not in flat"));
         m.setRole(newRole);
         repository.save(m);
+    }
+
+ 
+
+    public Optional<FlatMembership> getMembership(Flat flat, AppUser user) {
+        return repository.findByFlatAndUser(flat, user);
+    }
+
+    public Role getRole(Flat flat, AppUser user) {
+        return getMembership(flat, user)
+                .map(FlatMembership::getRole)
+                .orElse(Role.MEMBER); // or throw if you want stricter handling
     }
 
     public void removeUserFromFlat(Flat flat, AppUser user) {

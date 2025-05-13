@@ -61,6 +61,7 @@ function openFlatmatesModal() {
                     <p><strong>Bio:</strong> ${user.bio || 'N/A'}</p>
                     <p><strong>Noise Tolerance:</strong> ${user.noiseTolerance ?? 'N/A'}</p>
                     <p><strong>Cleanliness:</strong> ${user.cleanliness ?? 'N/A'}</p>
+                    <p><strong>Role Level:</strong> ${user.role}
                     <hr>
                 `;
                 flatmatesList.appendChild(div);
