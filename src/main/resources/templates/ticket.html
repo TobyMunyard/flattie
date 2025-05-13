@@ -18,7 +18,6 @@
     <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div id="main">
-        <button class="openbtn" onclick="openNav()">☰</button>
         <!-- Modal if no property manager -->
         <div th:if="${flat.propertyManager == null}" class="modal-overlay">
             <div class="modal">
