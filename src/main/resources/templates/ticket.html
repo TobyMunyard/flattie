@@ -9,8 +9,13 @@
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div id="main">
         <button class="openbtn" onclick="openNav()">☰</button>
@@ -92,7 +97,7 @@
     <p th:if="${success}" th:text="${success}"></p>
 
     <footer>
-        <p>&copy; 2025 Flattie.com</p>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
     </footer>
 </body>
 

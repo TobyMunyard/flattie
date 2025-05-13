@@ -12,9 +12,13 @@
 </head>
 
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
 
-    <!-- Directly inject the sidebar from /fragments/ -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div id="main">
         <button class="openbtn" onclick="openNav()">☰</button>
@@ -30,6 +34,9 @@
             </ul>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
     <script src="/js/shoppingList.js"></script>
 </body>
 
