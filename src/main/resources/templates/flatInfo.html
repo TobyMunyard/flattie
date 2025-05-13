@@ -157,6 +157,15 @@
       </form>
     </div>
   </div>
+  <script>
+    const currentFlatId = /*[[${flat.id}]]*/ '1';
+  </script>
+
+  <script th:inline="javascript">
+    const currentUserId = [[${#authentication.principal.id}]];
+  </script>
+  
+  
 
   <script src="/js/flatInfoScript.js"></script>
 
@@ -166,3 +175,4 @@
 </body>
 
 </html>
+

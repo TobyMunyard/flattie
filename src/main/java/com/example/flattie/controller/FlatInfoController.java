@@ -44,7 +44,6 @@ public class FlatInfoController {
     @Autowired
     private FlatMembershipService flatMembershipService;
 
-
     @Autowired
     private FlatRepository flatRepo;
 
@@ -92,7 +91,7 @@ public class FlatInfoController {
 
         // Retrieve the flat by its ID
         Flat flat = flatRepo.findById(flatId)
-        .orElseThrow(() -> new RuntimeException("Flat not found"));
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
 
         if (flat == null || !flat.getId().equals(flatId)) {
             return "redirect:/error"; // Redirect to an error page if the flat is not found
@@ -161,10 +160,30 @@ public class FlatInfoController {
                     data.put("bio", flatmate.getBio());
                     data.put("noiseTolerance", flatmate.getNoiseTolerance());
                     data.put("cleanliness", flatmate.getCleanliness());
-                    data.put("role", flatMembershipService.getRole(user.getFlat(), flatmate)); // Use role from membership
+                    data.put("role", flatMembershipService.getRole(user.getFlat(), flatmate)); // Use role from
+                                                                                               // membership
                     return data;
                 })
                 .toList();
+    }
+
+    @PutMapping("/api/flat/{flatId}/members/{userId}/role")
+    @ResponseBody
+    public ResponseEntity<String> updateRole(@PathVariable Long flatId,
+            @PathVariable Long userId,
+            @RequestParam("role") String role,
+            @AuthenticationPrincipal AppUser adminUser) {
+        Flat flat = adminUser.getFlat();
+
+        Optional<FlatMembership> adminMembership = flatMembershipService.getMembership(flat, adminUser);
+        if (adminMembership.isEmpty() || adminMembership.get().getRole() != Role.OWNER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only OWNER can change roles.");
+        }
+
+        Role newRole = Role.valueOf(role.toUpperCase());
+        flatMembershipService.updateRole(flat, userId, newRole);
+
+        return ResponseEntity.ok("Role updated to " + newRole);
     }
 
     /**
@@ -221,7 +240,7 @@ public class FlatInfoController {
         List<FlatMembership> pending = flatMembershipService.findPendingByFlat(flat);
         model.addAttribute("flat", flat);
         model.addAttribute("pendingRequests", pending);
-        return "pendingRequests"; 
+        return "pendingRequests";
     }
 
     @PutMapping("/api/flats/{flatId}/members/{userId}/approve")
@@ -257,7 +276,7 @@ public class FlatInfoController {
         joiningUser.setFlat(flat);
         appUserService.saveAppUser(joiningUser);
         flatMembershipService.save(request);
-        // Need to add in here what membership the 
+        // Need to add in here what membership the
 
         // Refresh session if approving yourself
         if (adminUser.getId().equals(joiningUser.getId())) {
@@ -321,5 +340,7 @@ public class FlatInfoController {
 
         return response;
     }
+
+    
 
 }
