@@ -26,13 +26,14 @@
 <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null and flat.noticeBoard.size() > 0}"
     th:fragment="noticeboard">
     <div th:each="notice : ${flat.noticeBoard}">
-        <h4 th:text="${notice.title}"></h4>
-        <p th:text="${notice.description}"></p>
-        <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>
-
-        <form id="modalForm" action="/deleteNotice" method="post">
-            <input type="hidden" name="noticeId" th:value="${notice.id}" />
-            <button type="submit">&times;</button>
-        </form>
+        <div class="noticeContainer">
+            <form id="modalForm" action="/deleteNotice" method="post">
+                <input type="hidden" name="noticeId" th:value="${notice.id}" />
+                <span class="close" onclick="document.getElementById('modalForm').submit()">&times;</span>
+            </form>
+            <h4 th:text="${notice.title}"></h4>
+            <p th:text="${notice.description}"></p>
+            <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>
+        </div>
     </div>
 </div>

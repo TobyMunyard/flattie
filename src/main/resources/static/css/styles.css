@@ -677,6 +677,10 @@ footer {
     transform: scale(0.98);
 }
 
+.noticeContainer {
+    position: relative;
+}
+
 /* User Icon */
 .auth-page .login-icon {
     font-size: 50px;
