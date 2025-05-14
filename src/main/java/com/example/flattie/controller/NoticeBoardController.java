@@ -59,7 +59,11 @@ public class NoticeBoardController {
      */
     @PostMapping("/deleteNotice")
     public String deleteNotice(@RequestParam("noticeId") Long noticeId, @AuthenticationPrincipal AppUser user) {
-        Flat userFlat = user.getFlat();
+        Flat userFlat = flatRepository.findByIdWithNotices(user.getFlat().getId()).orElse(null);
+        if (userFlat == null) {
+            // Redirect to home, couldn't get user flat for some reason. Should never happen
+            return "redirect:/";
+        }
         Notice noticeToDelete = noticeService.getNoticeById(noticeId);
 
         userFlat.removeNotice(noticeToDelete);
