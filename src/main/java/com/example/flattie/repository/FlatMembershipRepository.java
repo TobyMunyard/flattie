@@ -14,6 +14,8 @@ public interface FlatMembershipRepository extends JpaRepository<FlatMembership, 
     List<FlatMembership> findAllByFlat(Flat flat);
     void deleteByFlatAndUser(Flat flat, AppUser user);
     List<FlatMembership> findByFlatAndStatus(Flat flat, FlatMembershipStatus status);
+    Optional<FlatMembership> findByFlatIdAndUserId(Long flatId, Long userId);
+
 }
 
 
