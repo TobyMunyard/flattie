@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,7 +17,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import com.example.flattie.model.AppUser;
@@ -28,7 +28,7 @@ import com.example.flattie.service.FlatExpenseService;
 import com.example.flattie.service.FlatService;
 import com.example.flattie.util.ResponseApi;
 
-@Controller
+@RestController
 /**
  * Controller class for Flat Expenses. Maps api calls to methods that handle
  * the requests and return the appropriate response. Also handles the expense

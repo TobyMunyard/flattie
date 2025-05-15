@@ -7,6 +7,7 @@ import com.example.flattie.model.Flat;
 import com.example.flattie.model.FlatExpense;
 import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.service.FlatExpenseService;
+import com.example.flattie.service.FlatService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @Import(TestSecurityConfig.class)
 @WebMvcTest(FlatExpenseController.class)
@@ -46,6 +48,9 @@ public class FlatExpenseControllerTest {
 
     @Autowired
     private FlatExpenseController flatExpenseController;
+
+    @MockBean
+    private FlatService flatService;
 
     private AppUser mockUser;
     private Flat mockFlat;
@@ -81,35 +86,36 @@ public class FlatExpenseControllerTest {
     }
 
     @Test
-public void testSetFlatExpenseDelegations_ValidInput_Success() throws Exception {
-    // Arrange
-    Long expenseId = 5L;
+    public void testSetFlatExpenseDelegations_ValidInput_Success() throws Exception {
+        // Arrange
+        Long expenseId = 5L;
 
-    String jsonDelegations = """
-            [
-              { "flatmate": { "id": 99 }, "amount": 600 },
-              { "flatmate": { "id": 99 }, "amount": 600 }
-            ]
-            """;
+        String jsonDelegations = """
+                [
+                  { "flatmate": { "id": 99 }, "amount": 600 },
+                  { "flatmate": { "id": 99 }, "amount": 600 }
+                ]
+                """;
 
-    FlatExpense responseExpense = new FlatExpense();
-    responseExpense.setId(expenseId);
-    responseExpense.setTotalAmount(BigDecimal.valueOf(1200));
+        FlatExpense responseExpense = new FlatExpense();
+        responseExpense.setId(expenseId);
+        responseExpense.setTotalAmount(BigDecimal.valueOf(1200));
 
-    when(flatExpenseService.saveDelegations(eq(mockUser), eq(expenseId), any()))
-            .thenReturn(responseExpense);
+        when(flatExpenseService.saveDelegations(eq(mockUser), eq(expenseId), any()))
+                .thenReturn(responseExpense);
 
-    // Act & Assert
-    mockMvc.perform(post("/api/flat/expense/delegations")
-            .param("expenseId", String.valueOf(expenseId))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(jsonDelegations))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value("success"))
-            .andExpect(jsonPath("$.message").value("Delegations saved successfully."));
+        // Act & Assert
+        mockMvc.perform(post("/api/flat/expense/delegations")
+                .param("expenseId", String.valueOf(expenseId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonDelegations))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"))
+                .andExpect(jsonPath("$.message").value("Delegations saved successfully."));
 
-    verify(flatExpenseService, times(1))
-            .saveDelegations(eq(mockUser), eq(expenseId), any());
-}
+        verify(flatExpenseService, times(1))
+                .saveDelegations(eq(mockUser), eq(expenseId), any());
+    }
 
 }
