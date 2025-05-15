@@ -53,6 +53,10 @@ public class FlatInfoController {
             return "redirect:/login";
         }
 
+        if (user.getFlat() == null) {
+            return "redirect:/joinFlat";
+        }
+
         Flat flat = flatRepo.findById(user.getFlat().getId())
                 .orElseThrow(() -> new RuntimeException("Flat not found"));
         if (flat == null) {
@@ -245,8 +249,8 @@ public class FlatInfoController {
 
     @PutMapping("/api/flats/{flatId}/members/{userId}/approve")
     @ResponseBody
-    public ResponseEntity<String> approveJoinRequest(@PathVariable Long flatId,
-            @PathVariable Long userId,
+    public ResponseEntity<String> approveJoinRequest(@PathVariable("flatId") Long flatId,
+            @PathVariable("userId") Long userId,
             @AuthenticationPrincipal AppUser adminUser) {
 
         Flat flat = adminUser.getFlat();
@@ -293,8 +297,8 @@ public class FlatInfoController {
 
     @DeleteMapping("/api/flats/{flatId}/members/{userId}/reject")
     @ResponseBody
-    public ResponseEntity<String> rejectJoinRequest(@PathVariable Long flatId,
-            @PathVariable Long userId,
+    public ResponseEntity<String> rejectJoinRequest(@PathVariable("flatId") Long flatId,
+            @PathVariable("userId") Long userId,
             @AuthenticationPrincipal AppUser adminUser) {
 
         Flat flat = adminUser.getFlat();
@@ -317,7 +321,7 @@ public class FlatInfoController {
 
     @GetMapping("/api/flats/{flatId}/pendingRequestsData")
     @ResponseBody
-    public Map<String, Object> getPendingRequestsData(@PathVariable Long flatId,
+    public Map<String, Object> getPendingRequestsData(@PathVariable("flatId") Long flatId,
             @AuthenticationPrincipal AppUser user) {
         Flat flat = flatService.findById(flatId);
         Optional<FlatMembership> membership = flatMembershipService.getMembership(flat, user);

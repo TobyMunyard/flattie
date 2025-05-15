@@ -48,7 +48,7 @@ public class ChoreListItem {
     /**
      * Constructs a new chore list item. Needed for spring to function.
      */
-    protected ChoreListItem() {
+    public ChoreListItem() {
     }
 
     /**

@@ -84,7 +84,7 @@ public class SecurityConfig {
                                 .formLogin((form) -> form
                                                 .loginPage("/login")
                                                 .loginProcessingUrl("/perform_login") // Form POST action
-                                                .defaultSuccessUrl("/joinFlat", true)
+                                                .defaultSuccessUrl("/showFlatInfo", true)
                                                 .failureUrl("/login?error=true")
                                                 .permitAll())
                                 .logout((logout) -> logout

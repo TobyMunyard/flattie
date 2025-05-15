@@ -1,13 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
+
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
+
     <h1>Error</h1>
     <p th:text="${error}"></p> <!-- Display the error message passed to the model -->
     <a href="/">Go back to Home</a>
+
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
 </body>
+
 </html>

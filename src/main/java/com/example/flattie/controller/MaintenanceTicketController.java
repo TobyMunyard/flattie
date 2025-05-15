@@ -125,7 +125,7 @@ public class MaintenanceTicketController {
 
     @GetMapping("/maintenance/confirm/{token}")
     @ResponseBody
-    public String confirmTicket(@PathVariable String token) {
+    public String confirmTicket(@PathVariable("token") String token) {
         boolean success = ticketService.resolveTicket(token);
         return success ? "Ticket marked as resolved." : "Invalid or expired confirmation link.";
     }

@@ -30,6 +30,9 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
+                buttonText: {
+                    today: 'Today' // Capitalized because lowercase annoyed me too much
+                },
                 selectable: true,
                 select: function (info) {
                     var title = prompt('Enter Event Title:');

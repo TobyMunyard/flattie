@@ -13,16 +13,19 @@
 </head>
 
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
 
-    <!-- Sidebar -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <!-- Main Content -->
     <div id="main">
-        <button class="openbtn" onclick="openNav()">☰</button>
 
         <div class="calculator-container">
-            <h1><i class="fas fa-calculator"></i> Rent Calculator</h1>
+            <h1 class="pageTitle"><i class="fas fa-calculator"></i> Rent Calculator</h1>
 
             <!-- Total Rent Display -->
             <div class="total-rent">
@@ -50,6 +53,9 @@
         </div>
     </div>
 
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
     <script src="/js/rentCalculator.js"></script>
 </body>
 

@@ -12,14 +12,17 @@
 </head>
 
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
 
-    <!-- Directly inject the sidebar from /fragments/ -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div id="main">
-        <button class="openbtn" onclick="openNav()">☰</button>
         <div class="shopping-list-container">
-            <h1><i class="fas fa-shopping-cart"></i> Flatmate Shopping List</h1>
+            <h1 class="pageTitle"><i class="fas fa-shopping-cart"></i> Flatmate Shopping List</h1>
             <form id="shoppingForm">
                 <input type="text" id="item-input" placeholder="Add item">
                 <input type="text" id="item-quantity" placeholder="1">
@@ -30,6 +33,9 @@
             </ul>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
     <script src="/js/shoppingList.js"></script>
 </body>
 
