@@ -221,7 +221,7 @@ public class FlatInfoController {
             @RequestParam("name") String name,
             @RequestParam("email") String email,
             @RequestParam(value = "phone", required = false) String phone) {
-        Flat flat = flatRepo.findById(user.getFlat().getId())
+        Flat flat = flatRepo.findWithPMById(user.getFlat().getId())
                 .orElseThrow(() -> new RuntimeException("Flat not found"));
         if (flat == null)
             return "redirect:/joinFlat";
@@ -344,7 +344,5 @@ public class FlatInfoController {
 
         return response;
     }
-
-    
 
 }

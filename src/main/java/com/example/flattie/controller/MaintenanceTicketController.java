@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.flattie.model.Flat;
 import com.example.flattie.model.AppUser;
 import com.example.flattie.service.EmailService;
+import com.example.flattie.service.FlatService;
 import com.example.flattie.service.ImageService;
 import com.example.flattie.model.MaintenanceTicket;
 import com.example.flattie.service.MaintenanceTicketService;
@@ -35,6 +36,9 @@ public class MaintenanceTicketController {
 
     @Autowired
     private FlatRepository flatRepository;
+
+    @Autowired
+    private FlatService flatService;
 
     @GetMapping("/ticket")
     public String ticketPage(@AuthenticationPrincipal AppUser user, Model model) {
@@ -85,12 +89,13 @@ public class MaintenanceTicketController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy 'at' HH:mm");
         String formattedTime = ticket.getSubmittedAt().format(formatter);
 
-        // Build email body
+        // 4. Load flat and build email body
+        Flat flat = flatService.getFlatWithPM(user.getFlat().getId());
         StringBuilder body = new StringBuilder();
         body.append("A new maintenance request has been submitted.\n\n")
-                .append("Dear ").append(user.getFlat().getPropertyManager().getName()).append(",\n\n")
+                .append("Dear ").append(flat.getPropertyManager().getName()).append(",\n\n")
                 .append("A new maintenance request has been submitted by ").append(user.getUsername()).append(".\n\n")
-                .append("Flat: ").append(user.getFlat().getFlatName()).append("\n")
+                .append("Flat: ").append(flat.getFlatName()).append("\n")
                 .append("Submitted at: ").append(formattedTime).append("\n")
                 .append("Description: ").append(ticket.getDescription()).append("\n")
                 .append("Location: ").append(ticket.getLocation()).append("\n")
@@ -108,7 +113,7 @@ public class MaintenanceTicketController {
         // Send email to property manager
         emailService.sendMaintenanceEmail(
                 ticket.getManagerEmail(),
-                "Maintenance Request - " + user.getFlat().getFlatName(),
+                "Maintenance Request - " + flat.getFlatName(),
                 body.toString(),
                 imageFile);
 

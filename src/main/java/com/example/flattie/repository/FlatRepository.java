@@ -36,4 +36,12 @@ public interface FlatRepository extends JpaRepository<Flat, Long> {
                WHERE f.id = :id
             """)
     Optional<Flat> findByIdWithNotices(@Param("id") Long id);
+
+    @Query("""
+            SELECT f
+            FROM Flat f
+            LEFT JOIN FETCH f.propertyManager
+            WHERE f.id = :id
+            """)
+    Optional<Flat> findWithPMById(@Param("id") Long id);
 }

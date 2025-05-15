@@ -18,25 +18,32 @@ public class MaintenanceTicketService {
     @Autowired
     private MaintenanceTicketRepository ticketRepo;
 
+    @Autowired
+    private FlatService flatService;
+
     public List<MaintenanceTicket> getTicketsForFlat(Flat flat) {
         return ticketRepo.findByFlat(flat);
     }
 
     public MaintenanceTicket createAndSaveTicket(AppUser user, String description, String urgency, String location,
             String type) {
-                // Create a new MaintenanceTicket object
+        // Create a new MaintenanceTicket object
         if (user == null || user.getFlat() == null) {
             throw new IllegalArgumentException("User or flat cannot be null");
         }
+
+        // Fully fetch Flat with PropertyManager
+        Flat flat = flatService.getFlatWithPM(user.getFlat().getId());
+
         MaintenanceTicket ticket = new MaintenanceTicket();
-        ticket.setFlat(user.getFlat());
+        ticket.setFlat(flat);
         ticket.setDescription(description);
         ticket.setUrgency(urgency.toUpperCase());
         ticket.setStatus("PENDING");
         ticket.setSubmittedBy(user.getUsername());
         ticket.setSubmittedAt(LocalDateTime.now());
         ticket.setConfirmationToken(UUID.randomUUID().toString());
-        ticket.setManagerEmail(user.getFlat().getPropertyManager().getEmail());
+        ticket.setManagerEmail(flat.getPropertyManager().getEmail());
         ticket.setLocation(location);
         ticket.setType(type);
 

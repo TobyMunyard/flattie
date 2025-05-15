@@ -107,23 +107,29 @@ public class FlatService {
      * Assigns a PropertyManager to a Flat and updates the Flat's property manager
      * field.
      * 
-     * @param flat The Flat to assign the PropertyManager to.
-     * @param name The name of the PropertyManager.
+     * @param flat  The Flat to assign the PropertyManager to.
+     * @param name  The name of the PropertyManager.
      * @param email The email of the PropertyManager.
      * @param phone The phone number of the PropertyManager.
      */
     public void assignPropertyManager(Flat flat, String name, String email, String phone) {
         PropertyManager pm = propertyManagerRepo.findByEmail(email)
-            .orElseGet(() -> {
-                PropertyManager newPm = new PropertyManager();
-                newPm.setName(name);
-                newPm.setEmail(email);
-                newPm.setPhone(phone);
-                return newPm;
-            });
-    
+                .orElseGet(() -> {
+                    PropertyManager newPm = new PropertyManager();
+                    newPm.setName(name);
+                    newPm.setEmail(email);
+                    newPm.setPhone(phone);
+                    propertyManagerRepo.save(newPm);
+                    return newPm;
+                });
+
         flat.setPropertyManager(pm);
         pm.getFlats().add(flat);
         flatRepository.save(flat);
+    }
+
+    public Flat getFlatWithPM(Long flatId) {
+        return flatRepository.findWithPMById(flatId)
+                .orElseThrow(() -> new RuntimeException("Flat not found"));
     }
 }
