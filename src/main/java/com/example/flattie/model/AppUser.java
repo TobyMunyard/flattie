@@ -56,6 +56,10 @@ public class AppUser implements UserDetails {
     @Column(nullable = false)
     private Integer cleanliness = 3; // Default value
 
+    @Column(nullable = true)
+    private String role;
+ 
+
 
     public AppUser() {
     }
@@ -185,7 +189,10 @@ public class AppUser implements UserDetails {
         return firstName + " " + lastName;
     }
 
+    public void setRole(String role) {
+        this.role = role;
+    }    
     public String getRole() {
-        return "ROLE_USER"; // Placeholder for role, can be updated later
+        return role;
     }
 }

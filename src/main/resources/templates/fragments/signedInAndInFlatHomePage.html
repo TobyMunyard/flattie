@@ -2,10 +2,10 @@
     th:fragment="signedInAndInFlatHomePage">
 
     <div class="container">
-        <h2>Noticeboard</h2>
+        <h1 class="pageTitle">Noticeboard</h1>
         <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null}"
             th:replace="~{fragments/signedInAndInFlatHomePage :: noticeboard}"></div>
-        <button id="createNoticeButton">Add Notice</button>
+        <button id="createNoticeButton" class="addNoticeButton">Add Notice</button>
         <div id="createNoticeModal" class="modal">
             <div class="modal-content">
                 <span id="closeModalBtn" class="close">&times;</span>
@@ -14,8 +14,8 @@
                     <label>Title:</label>
                     <input type="text" name="title" required>
                     <label>Description:</label>
-                    <textarea name="description" required rows="4" cols="30"></textarea>
-                    <button type="submit">Create</button>
+                    <textarea name="description" required rows="4" cols="30" maxlength="255"></textarea>
+                    <button type="submit" class="addNoticeButton">Create</button>
                 </form>
             </div>
         </div>
@@ -26,13 +26,14 @@
 <div th:if="${#authentication != null and #authentication.authenticated and currentUser != null and flat != null and flat.noticeBoard.size() > 0}"
     th:fragment="noticeboard">
     <div th:each="notice : ${flat.noticeBoard}">
-        <h4 th:text="${notice.title}"></h4>
-        <p th:text="${notice.description}"></p>
-        <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>
-
-        <form id="modalForm" action="/deleteNotice" method="post">
-            <input type="hidden" name="noticeId" th:value="${notice.id}" />
-            <button type="submit">&times;</button>
-        </form>
+        <div class="noticeContainer">
+            <form id="modalForm" action="/deleteNotice" method="post">
+                <input type="hidden" name="noticeId" th:value="${notice.id}" />
+                <span class="close" onclick="document.getElementById('modalForm').submit()">&times;</span>
+            </form>
+            <h4 th:text="${notice.title}"></h4>
+            <p th:text="${notice.description}"></p>
+            <p th:text="'-' + ${notice.creator.firstName} + ' ' + ${notice.creator.lastName}"></p>
+        </div>
     </div>
 </div>

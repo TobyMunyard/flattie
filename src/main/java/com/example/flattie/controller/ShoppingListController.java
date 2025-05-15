@@ -45,7 +45,7 @@ public class ShoppingListController {
 	}
 
 	@DeleteMapping("/shopping-list/delete/{itemId}")
-	public ResponseEntity<String> deleteItem(@PathVariable String itemId) {
+	public ResponseEntity<String> deleteItem(@PathVariable("itemId") String itemId) {
 		List<ShoppingListItem> items = shoppingListService.getAllItems();
 
 		for (ShoppingListItem listItem : items) {
@@ -58,7 +58,7 @@ public class ShoppingListController {
 	}
 
 	@PutMapping("/shopping-list/update/{id}")
-	public ResponseEntity<String> updateItem(@PathVariable Long id, @RequestBody ShoppingListItem updatedItem) {
+	public ResponseEntity<String> updateItem(@PathVariable("id") Long id, @RequestBody ShoppingListItem updatedItem) {
 		ShoppingListItem existingItem = shoppingListService.getItembyId(id);
 
 		if (existingItem != null) {

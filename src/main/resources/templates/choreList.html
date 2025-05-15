@@ -12,14 +12,17 @@
 </head>
 
 <body>
+    <header>
+        <h1>Flattie.com</h1>
+        <p>Your one-stop shop for flatmate management</p>
+    </header>
 
-    <!-- Directly inject the sidebar from /fragments/ -->
-    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <!-- Directly inject the nav menu from /fragments/ -->
+    <div th:replace="~{fragments/navMenu :: navMenu}"></div>
 
     <div id="main">
-        <button class="openbtn" onclick="openNav()">☰</button>
         <div class="chore-list-container">
-            <h1><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
+            <h1 class="pageTitle"><i class="fas fa-check-double"></i> Flatmate Chore List</h1>
 
             <!-- This div will be used to show the error message when flatmates cannot be loaded -->
             <div id="flatmate-error" style="display: none; color: red; text-align: center; margin-bottom: 10px;">
@@ -108,6 +111,9 @@
             </table>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2025 Flattie.com. All rights reserved.</p>
+    </footer>
     <script src="/js/choreListScript.js"></script>
 </body>
 

@@ -114,7 +114,7 @@ public class ChoreListController {
      * @return A response entity indicating the result of the operation
      */
     @PostMapping("/chore/edit/{id}")
-    public ResponseEntity<?> editChore(@PathVariable Long id,
+    public ResponseEntity<?> editChore(@PathVariable("id") Long id,
             @ModelAttribute ChoreListItem choreListItem,
             @AuthenticationPrincipal AppUser user) {
         // Validate the user and flat
@@ -138,7 +138,7 @@ public class ChoreListController {
      * @return The updated chore list page
      */
     @PostMapping("/chore/toggleComplete/{id}")
-    public String toggleChoreComplete(@PathVariable Long id, @AuthenticationPrincipal AppUser user, Model model) {
+    public String toggleChoreComplete(@PathVariable("id") Long id, @AuthenticationPrincipal AppUser user, Model model) {
         if (user == null) {
             model.addAttribute("error", "You are not logged in.");
             return "redirect:/login"; // Redirect to login page if user is not logged in
@@ -169,7 +169,7 @@ public class ChoreListController {
     }
 
     @DeleteMapping("/chore/delete/{id}")
-    public ResponseEntity<Void> deleteChore(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteChore(@PathVariable("id") Long id) {
         choreListService.deleteChoreFromFlat(id);
         return ResponseEntity.noContent().build();
     }

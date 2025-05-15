@@ -32,6 +32,10 @@ public class FlatMembership {
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
+	public Role getRole() {
+		return role;
+	}
+
 	@Enumerated(EnumType.STRING)
 	private FlatMembershipStatus status;
 
@@ -43,9 +47,7 @@ public class FlatMembership {
 		this.status = status;
 	}
 
-	public Object getRole() {
-		return this.role;
-	}
+
 
 	public void setRole(com.example.flattie.model.Role newRole) {
 		this.role = newRole; // Set the role of the user in the flat
