@@ -132,4 +132,10 @@ public class FlatService {
         return flatRepository.findWithPMById(flatId)
                 .orElseThrow(() -> new RuntimeException("Flat not found"));
     }
+
+    public Flat getFlatWithRentExpense(Long id) {
+    return flatRepository.findWithRentExpenseById(id)
+        .orElseThrow(() -> new RuntimeException("Flat not found"));
+}
+
 }

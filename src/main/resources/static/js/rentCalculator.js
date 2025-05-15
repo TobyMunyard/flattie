@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // This function fetches the delegations from the server and restores them in the UI.
     async function restoreDelegationsFromServer() {
         try {
-            const res = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`);
+            const res = await fetch(`/api/flat/expense/delegations?expenseId=${expenseId}`)
             const delegations = await res.json();
 
             if (!delegations || delegations.length === 0) {

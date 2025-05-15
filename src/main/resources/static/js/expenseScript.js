@@ -302,15 +302,12 @@ document.addEventListener('DOMContentLoaded', function () {
     
             const json = await res.json();
             if (json.status === "success") {
-                // ✅ Delegations saved successfully!
-                alert("✅ Delegations saved!");
-    
                 // Auto-collapse the sliders
                 const card = document.querySelector(`.expense-card[data-id="${expense.id}"]`);
                 const sliderContainer = card.querySelector('.expense-sliders-container');
                 sliderContainer.style.display = 'none';
     
-                // Small success message (optional nicer UX)
+                // Small success message
                 const successMessage = document.createElement('div');
                 successMessage.textContent = "Delegations Saved!";
                 successMessage.style.color = "green";

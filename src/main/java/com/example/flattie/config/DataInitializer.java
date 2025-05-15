@@ -58,6 +58,14 @@ public class DataInitializer {
             System.out.println("Created Tester");
         }
 
+        AppUser tester2 = appUserService.getAppUserByUsername("Tester2").orElse(null);
+        if (tester2 == null) {
+            tester2 = new AppUser("Test2", "User", "Tester2", passwordEncoder.encode("test1234"));
+            tester2.setFlat(flat1);
+            appUserService.saveAppUser(tester2);
+            System.out.println("Created Tester");
+        }
+
         AppUser jane = appUserService.getAppUserByUsername("JaneDoe").orElse(null);
         if (jane == null) {
             jane = new AppUser("Jane", "Doe", "JaneDoe", passwordEncoder.encode("pass123"));

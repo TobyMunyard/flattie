@@ -25,6 +25,7 @@ import com.example.flattie.model.FlatExpense;
 import com.example.flattie.model.FlatExpenseDelegation;
 import com.example.flattie.repository.FlatExpenseRepository;
 import com.example.flattie.service.FlatExpenseService;
+import com.example.flattie.service.FlatService;
 import com.example.flattie.util.ResponseApi;
 
 @Controller
@@ -41,18 +42,25 @@ public class FlatExpenseController {
     @Autowired
     private FlatExpenseService flatExpenseService;
 
+    @Autowired
+    private FlatService flatService;
+
+    /**
+     * Returns the current user's flat rent. This method is called when the user
+     * accesses the /api/flat/rent endpoint.
+     *
+     * @param user The current authenticated user.
+     * @return The total amount of the rent expense for the user's flat.
+     */
     @GetMapping("/api/flat/rent")
     @ResponseBody
-    public BigDecimal getCurrentUserFlatRent(@AuthenticationPrincipal AppUser user, Model model) {
-        // Might not need the model, but it's here for future use?
-        Flat flat = user.getFlat();
+    public BigDecimal getCurrentUserFlatRent(@AuthenticationPrincipal AppUser user) {
+        Flat flat = flatService.getFlatWithRentExpense(user.getFlat().getId());
         FlatExpense rentExpense = flat.getRentExpense();
+        return rentExpense != null && rentExpense.getTotalAmount() != null
+                ? rentExpense.getTotalAmount()
+                : BigDecimal.ZERO;
 
-        if (rentExpense != null && rentExpense.getTotalAmount() != null) {
-            return rentExpense.getTotalAmount();
-        } else {
-            return BigDecimal.ZERO;
-        }
     }
 
     /**
@@ -141,7 +149,8 @@ public class FlatExpenseController {
     @GetMapping("/api/flat/rent-expense-id")
     @ResponseBody
     public Long getRentExpenseId(@AuthenticationPrincipal AppUser user) {
-        return user.getFlat().getRentExpense().getId();
+        Flat flat = flatService.getFlatWithRentExpense(user.getFlat().getId());
+        return flat.getRentExpense().getId();
     }
 
     /**

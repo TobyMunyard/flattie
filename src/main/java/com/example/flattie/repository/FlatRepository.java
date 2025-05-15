@@ -17,31 +17,38 @@ import com.example.flattie.model.Flat;
  */
 @Repository
 public interface FlatRepository extends JpaRepository<Flat, Long> {
-    boolean existsByAddress(String address); // Custom query method to check if an address exists
+        boolean existsByAddress(String address); // Custom query method to check if an address exists
 
-    Flat findByJoinCode(String joinCode); // Custom query method to find a flat by join code
+        Flat findByJoinCode(String joinCode); // Custom query method to find a flat by join code
 
-    @Query("""
-                SELECT f FROM Flat f
-                LEFT JOIN FETCH f.members m
-                LEFT JOIN FETCH m.user
-                WHERE f.id = :id
-            """)
-    Optional<Flat> findByIdWithMembers(@Param("id") Long id);
+        @Query("""
+                            SELECT f FROM Flat f
+                            LEFT JOIN FETCH f.members m
+                            LEFT JOIN FETCH m.user
+                            WHERE f.id = :id
+                        """)
+        Optional<Flat> findByIdWithMembers(@Param("id") Long id);
 
-    @Query("""
-              SELECT f
-                FROM Flat f
-                LEFT JOIN FETCH f.noticeBoard nb
-               WHERE f.id = :id
-            """)
-    Optional<Flat> findByIdWithNotices(@Param("id") Long id);
+        @Query("""
+                          SELECT f
+                            FROM Flat f
+                            LEFT JOIN FETCH f.noticeBoard nb
+                           WHERE f.id = :id
+                        """)
+        Optional<Flat> findByIdWithNotices(@Param("id") Long id);
 
-    @Query("""
-            SELECT f
-            FROM Flat f
-            LEFT JOIN FETCH f.propertyManager
-            WHERE f.id = :id
-            """)
-    Optional<Flat> findWithPMById(@Param("id") Long id);
+        @Query("""
+                        SELECT f
+                        FROM Flat f
+                        LEFT JOIN FETCH f.propertyManager
+                        WHERE f.id = :id
+                        """)
+        Optional<Flat> findWithPMById(@Param("id") Long id);
+
+        @Query("""
+                            SELECT f FROM Flat f
+                            LEFT JOIN FETCH f.rentExpense
+                            WHERE f.id = :id
+                        """)
+        Optional<Flat> findWithRentExpenseById(@Param("id") Long id);
 }

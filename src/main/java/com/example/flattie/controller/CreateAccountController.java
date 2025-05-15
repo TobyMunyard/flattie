@@ -103,16 +103,6 @@ public class CreateAccountController {
     }
 
     /**
-     * Creates two default user accounts for testing purposes. This method is called
-     * when the application starts up.
-     */
-
-    
-    
-        // Set up flat membership
-    
-
-    /**
      * Called when a user submits the edit account form. Can update first name, last
      * name and username. Password is updated seperately due to security reasons, as
      * displaying it is not possible and a huge security flaw.
