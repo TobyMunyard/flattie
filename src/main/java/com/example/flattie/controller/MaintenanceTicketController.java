@@ -20,16 +20,12 @@ import com.example.flattie.service.ImageService;
 import com.example.flattie.model.MaintenanceTicket;
 import com.example.flattie.service.MaintenanceTicketService;
 import com.example.flattie.repository.FlatRepository;
-import com.example.flattie.repository.MaintenanceTicketRepository;
 
 @Controller
 public class MaintenanceTicketController {
 
     @Autowired
     private MaintenanceTicketService ticketService;
-
-    @Autowired
-    private MaintenanceTicketRepository ticketRepository;
 
     @Autowired
     private ImageService imageService;
@@ -72,8 +68,7 @@ public class MaintenanceTicketController {
             RedirectAttributes redirectAttributes) {
 
         // 1. Create ticket with all fields
-        MaintenanceTicket ticket = ticketService.createTicket(user, description, urgency);
-        ticket.setLocation(location);
+        MaintenanceTicket ticket = ticketService.createAndSaveTicket(user, description, urgency, location, "PLUMBING");
 
         try {
             String imagePath = imageService.saveImage(image, "tickets");
@@ -82,9 +77,7 @@ public class MaintenanceTicketController {
             redirectAttributes.addFlashAttribute("error", "Image upload failed");
             return "redirect:/ticket";
         }
-
-        ticketRepository.save(ticket);
-
+        
         // 2. Prepare email body AFTER everything is set
         String confirmLink = "http://localhost:8080/maintenance/confirm/" + ticket.getConfirmationToken();
 
@@ -126,7 +119,8 @@ public class MaintenanceTicketController {
     @GetMapping("/maintenance/confirm/{token}")
     @ResponseBody
     public String confirmTicket(@PathVariable String token) {
-        boolean success = ticketService.resolveTicket(token);
-        return success ? "Ticket marked as resolved." : "Invalid or expired confirmation link.";
+        // boolean success = ticketService.resolveTicket(token);
+        // return success ? "Ticket marked as resolved." : "Invalid or expired confirmation link.";
+        return "Got token: " + token; // <- TEMP DEBUG
     }
 }

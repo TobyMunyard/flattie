@@ -22,7 +22,12 @@ public class MaintenanceTicketService {
         return ticketRepo.findByFlat(flat);
     }
 
-    public MaintenanceTicket createTicket(AppUser user, String description, String urgency) {
+    public MaintenanceTicket createAndSaveTicket(AppUser user, String description, String urgency, String location,
+            String type) {
+                // Create a new MaintenanceTicket object
+        if (user == null || user.getFlat() == null) {
+            throw new IllegalArgumentException("User or flat cannot be null");
+        }
         MaintenanceTicket ticket = new MaintenanceTicket();
         ticket.setFlat(user.getFlat());
         ticket.setDescription(description);
@@ -32,7 +37,11 @@ public class MaintenanceTicketService {
         ticket.setSubmittedAt(LocalDateTime.now());
         ticket.setConfirmationToken(UUID.randomUUID().toString());
         ticket.setManagerEmail(user.getFlat().getPropertyManager().getEmail());
+        ticket.setLocation(location);
+        ticket.setType(type);
 
+        // Save the ticket to the database
+        ticketRepo.save(ticket);
         return ticket;
     }
 
