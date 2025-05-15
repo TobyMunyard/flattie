@@ -69,8 +69,6 @@ public class FlatInfoController {
         if (membership.isEmpty() || membership.get().getStatus() != FlatMembershipStatus.APPROVED) {
             return "redirect:/pendingApproval";
         }
-    
-        
 
         //
         model.addAttribute("membership", membership.orElse(null));
@@ -158,8 +156,9 @@ public class FlatInfoController {
         return "redirect:/showFlatInfo"; // or reload modal via JS if coming from AJAX
     }
 
-    @PostMapping("/leaveFlat")
-    public String leaveFlat(@AuthenticationPrincipal AppUser user, Model model) {
+    @PostMapping("/api/flat/{flatId}/members/{userId}/leave")
+    public String leaveFlat(@AuthenticationPrincipal AppUser user, Model model, @PathVariable Long flatId,
+            @PathVariable Long userId) {
         // Check if the user is logged in
         if (user == null) {
             return "redirect:/login"; // Redirect to login if the user is not authenticated
@@ -167,19 +166,61 @@ public class FlatInfoController {
 
         // Check if the user belongs to a flat
         Flat flat = user.getFlat();
-        if (flat == null) {
+        if (flat == null || !flat.getId().equals(flatId)) {
             model.addAttribute("error", "You are not part of any flat to leave.");
             return "error"; // Render an error page
         }
 
-        // Remove the user from the flat
+        Optional<FlatMembership> actingMembership = flatMembershipService.getMembership(flat, user);
+        if (actingMembership.isEmpty() || actingMembership.get().getRole() != Role.OWNER) {
+            model.addAttribute("error", "Only flat owners can remove members.");
+            return "error";
+        }
+
+        // if (user.getId().equals(userId)) {
+        // model.addAttribute("error", "You cannot remove yourself.");
+        // return "error";
+        // }
+
+        AppUser targetUser = appUserService.getAppUserById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        List<FlatMembership> allMembers = flatMembershipService.getMembersOfFlat(flat); // Find an admin to promote
+        AppUser toPromote = null;
+        for (FlatMembership member : allMembers) {
+            if (member.getUser().getId().equals(user.getId()))
+                continue; // skip the leaver
+            if (toPromote == null) {
+                toPromote = member.getUser();
+            } else {
+                Role current = flatMembershipService.getMembership(flat, toPromote).get().getRole();
+                Role candidate = member.getRole();
+
+                if (candidate == Role.ADMIN
+                        && (current != Role.ADMIN || member.getUser().getId() < toPromote.getId())) {
+                    toPromote = member.getUser();
+                } else if (candidate == Role.MEMBER && current == Role.MEMBER
+                        && member.getUser().getId() < toPromote.getId()) {
+                    toPromote = member.getUser();
+                }
+            }
+        }
+        if (toPromote != null) {
+            flatMembershipService.updateRole(flat, toPromote, Role.OWNER);
+        }
+        flatMembershipService.removeUserFromFlat(flat, targetUser); 
+        // As there is no other members, just delete the flat.
+        if(toPromote == null){
+            flatService.deleteFlat(flatId);
+        }
+
+
         user.setFlat(null);
         appUserService.saveAppUser(user);
 
         model.addAttribute("success", "You have successfully left the flat.");
 
-        // Redirect to a suitable page
-        return "redirect:/";
+        return "redirect:/joinFlat";
     }
 
     /**

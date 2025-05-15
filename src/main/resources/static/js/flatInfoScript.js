@@ -74,6 +74,13 @@ function closeFlatmatesModal() {
   flatmatesModal.style.display = "none";
 }
 
+function leave(userId, flatId){
+  post(`/api/flat/{flatId}/members/{userId}/leave`).then()
+
+  }
+
+
+
 function toggleRole(userId, currentRole) {
   const newRole = currentRole === "ADMIN" ? "MEMBER" : "ADMIN";
 

@@ -67,15 +67,7 @@
 
       <!-- Check Join Requests button for admins/owners -->
 <div th:if="${membership != null and (membership.role.name() == 'OWNER' or membership.role.name() == 'ADMIN')}">
-        <a th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}" class="button" style="
-              background-color: #007bff;
-              color: white;
-              padding: 10px 20px;
-              margin-top: 10px;
-              display: inline-block;
-              border-radius: 5px;
-              text-decoration: none;
-            ">
+        <a th:href="@{/flats/{flatId}/pendingRequests(flatId=${flat.id})}" class="button" >
           Check Join Requests
         </a>
       </div>
@@ -98,7 +90,7 @@
       </div>
 
       <!-- Leave Flat Button -->
-      <form action="/leaveFlat" method="post" style="margin-top: 20px">
+      <form th:action="@{'/api/flat/' + ${flat.id} + '/members/' + ${#authentication.principal.id} + '/leave'}" method="post" style="margin-top: 20px">
         <button type="submit" class="flatInfoButton" style="background-color: #f44336; color: white">
           Leave Flat
         </button>
