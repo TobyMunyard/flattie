@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.flattie.model.FlatMembership;
 import com.example.flattie.model.FlatMembershipStatus;
 import com.example.flattie.model.Flat;
@@ -19,6 +21,9 @@ public class FlatMembershipService {
     @Autowired
     private FlatMembershipRepository repository;
 
+    @Autowired
+    private AppUserService appUserService;
+
     public List<FlatMembership> getMembersOfFlat(Flat flat) {
         return repository.findAllByFlat(flat);
     }
@@ -30,8 +35,6 @@ public class FlatMembershipService {
         repository.save(m);
     }
 
-    
-
     public Optional<FlatMembership> getMembership(Flat flat, AppUser user) {
         return repository.findByFlatAndUser(flat, user);
     }
@@ -42,8 +45,11 @@ public class FlatMembershipService {
                 .orElse(Role.MEMBER); // or throw if you want stricter handling
     }
 
+    @Transactional
     public void removeUserFromFlat(Flat flat, AppUser user) {
-        repository.deleteByFlatAndUser(flat, user);
+        repository.deleteByFlatAndUser(flat, user); // removes membership
+        user.setFlat(null); // removes their association
+        appUserService.saveAppUser(user); // persist change
     }
 
     public void save(FlatMembership membership) {

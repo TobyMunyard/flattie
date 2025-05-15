@@ -69,6 +69,8 @@ public class FlatInfoController {
         if (membership.isEmpty() || membership.get().getStatus() != FlatMembershipStatus.APPROVED) {
             return "redirect:/pendingApproval";
         }
+    
+        
 
         //
         model.addAttribute("membership", membership.orElse(null));
@@ -117,6 +119,43 @@ public class FlatInfoController {
 
         // Redirect back to the flat info page
         return "redirect:/showFlatInfo";
+    }
+
+    // post mapping for owners/admins to remove flatmates
+    @PostMapping("/api/flat/{flatId}/members/{userId}/remove")
+    public String removeFlatmate(@AuthenticationPrincipal AppUser user,
+            @PathVariable Long flatId,
+            @PathVariable Long userId,
+            Model model) {
+
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Flat flat = user.getFlat();
+        if (flat == null || !flat.getId().equals(flatId)) {
+            model.addAttribute("error", "Access denied to this flat.");
+            return "error";
+        }
+
+        Optional<FlatMembership> actingMembership = flatMembershipService.getMembership(flat, user);
+        if (actingMembership.isEmpty() || actingMembership.get().getRole() != Role.OWNER) {
+            model.addAttribute("error", "Only flat owners can remove members.");
+            return "error";
+        }
+
+        if (user.getId().equals(userId)) {
+            model.addAttribute("error", "You cannot remove yourself.");
+            return "error";
+        }
+
+        AppUser targetUser = appUserService.getAppUserById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        flatMembershipService.removeUserFromFlat(flat, targetUser); // You should already have this logic
+
+        model.addAttribute("success", "Member removed successfully.");
+        return "redirect:/showFlatInfo"; // or reload modal via JS if coming from AJAX
     }
 
     @PostMapping("/leaveFlat")

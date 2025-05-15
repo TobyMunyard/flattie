@@ -80,13 +80,13 @@
         </a>
       </div>
 
-      <!-- Edit Button -->
-      <button onclick="openModal()" class="flatInfoButton">Edit</button>
-
-      <!-- View Flatmates Button -->
-      <button onclick="openFlatmatesModal()" class="flatInfoButton" style="margin-top: 10px;">
-        View Flatmates
-      </button>
+      <div th:if="${membership.role.name() == 'OWNER' || membership.role.name() == 'ADMIN'}">
+        <button onclick="openModal()" class="button">Edit</button>
+        <button onclick="openFlatmatesModal()" class="button" style="margin-top: 10px;">
+          View Flatmates
+        </button>
+      </div>
+      
 
       <!-- Flatmates Modal -->
       <div id="flatmatesModal" class="modal" style="display:none;">
@@ -157,13 +157,13 @@
       </form>
     </div>
   </div>
-  <script>
-    const currentFlatId = /*[[${flat.id}]]*/ '1';
-  </script>
-
   <script th:inline="javascript">
     const currentUserId = [[${#authentication.principal.id}]];
+    const currentUserRole = [[${membership.role.name()}]]; // this will output: "OWNER"
+    const currentFlatId = [[${flat.id}]];
   </script>
+  
+  
   
   
 

@@ -1,50 +1,26 @@
-// This script handles the modal functionality for editing flat information
-// This was decoupled from the html page from Rocky
+// Flat Info Modal JS
+
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("editModal");
   const openButton = document.querySelector('button[onclick="openModal()"]');
-  const closeButtons = modal?.querySelectorAll(
-    '.close, .button[type="button"]'
-  );
+  const closeButtons = modal?.querySelectorAll('.close, .button[type="button"]');
 
   function openModal() {
-    if (modal) {
-      modal.style.display = "block";
-    }
+    if (modal) modal.style.display = "block";
   }
 
   function closeModal() {
-    if (modal) {
-      modal.style.display = "none";
-    }
+    if (modal) modal.style.display = "none";
   }
 
-  // Bind open modal
-  if (openButton) {
-    openButton.addEventListener("click", openModal);
-  }
+  if (openButton) openButton.addEventListener("click", openModal);
+  if (closeButtons) closeButtons.forEach((btn) => btn.addEventListener("click", closeModal));
 
-  // Bind close modal
-  if (closeButtons) {
-    closeButtons.forEach((btn) => btn.addEventListener("click", closeModal));
-  }
-
-  // Close modal on outside click
   window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      closeModal();
-    }
+    if (event.target === modal) closeModal();
   });
-
-  // Enable check requests button navigation
-  const checkRequestsBtn = document.getElementById("checkRequestsBtn");
-  if (checkRequestsBtn) {
-    const flatId = checkRequestsBtn.dataset.flatid;
-    checkRequestsBtn.href = `/pendingRequests.html?flatId=${flatId}`;
-  }
 });
 
-// Flatmates Modal functionality
 const flatmatesModal = document.getElementById("flatmatesModal");
 const flatmatesBtn = document.getElementById("viewFlatmatesBtn");
 const closeFlatmatesBtn = document.getElementById("closeFlatmatesBtn");
@@ -56,21 +32,34 @@ function openFlatmatesModal() {
     .then((data) => {
       flatmatesList.innerHTML = "";
       data.forEach((user) => {
-        console.log("The user id is:" + user.id + "The current logged in user id is" + currentUserId)
+        let userActions = "";
+
+        if (
+          currentUserRole === "OWNER" &&
+          user.role !== "OWNER" &&
+          user.id !== parseInt(currentUserId)
+        ) {
+          userActions = `
+            <button onclick="toggleRole(${user.id}, '${user.role}')">
+              ${user.role === "ADMIN" ? "Demote to MEMBER" : "Promote to ADMIN"}
+            </button>
+            <form method="POST" action="/api/flat/${currentFlatId}/members/${user.id}/remove" 
+                  onsubmit="return confirm('Are you sure you want to remove this flatmate?');" style="display:inline;">
+              <button type="submit" style="margin-left: 10px; background-color: #f44336; color: white;">Remove</button>
+            </form>
+          `;
+        }
+
         const div = document.createElement("div");
         div.innerHTML = `
-                    <p><strong>Name:</strong> ${user.name}</p>
-                    <p><strong>Bio:</strong> ${user.bio || "N/A"}</p>
-                    <p><strong>Noise Tolerance:</strong> ${user.noiseTolerance ?? "N/A"}</p>
-                    <p><strong>Cleanliness:</strong> ${user.cleanliness ?? "N/A"}</p>
-                    <p><strong>Role Level:</strong> <span id="role-${user.id}">${user.role}</span></p>
-                    ${user.role !== "OWNER" && user.id !== parseInt(currentUserId) ? `
-                        <button onclick="toggleRole(${user.id}, '${user.role}')">
-                          ${user.role === "ADMIN" ? "Demote to MEMBER" : "Promote to ADMIN"}
-                        </button>
-                      ` : ''}
-                    <hr>
-                `;
+          <p><strong>Name:</strong> ${user.name}</p>
+          <p><strong>Bio:</strong> ${user.bio || "N/A"}</p>
+          <p><strong>Noise Tolerance:</strong> ${user.noiseTolerance ?? "N/A"}</p>
+          <p><strong>Cleanliness:</strong> ${user.cleanliness ?? "N/A"}</p>
+          <p><strong>Role Level:</strong> <span id="role-${user.id}">${user.role}</span></p>
+          ${userActions}
+          <hr>
+        `;
         flatmatesList.appendChild(div);
       });
       flatmatesModal.style.display = "block";
@@ -97,7 +86,7 @@ function toggleRole(userId, currentRole) {
     })
     .then((msg) => {
       document.getElementById(`role-${userId}`).innerText = newRole;
-      openFlatmatesModal(); // Refresh modal
+      openFlatmatesModal();
     })
     .catch((err) => {
       alert("Error updating role: " + err.message);
@@ -105,12 +94,8 @@ function toggleRole(userId, currentRole) {
 }
 
 if (flatmatesBtn) flatmatesBtn.addEventListener("click", openFlatmatesModal);
-if (closeFlatmatesBtn)
-  closeFlatmatesBtn.addEventListener("click", closeFlatmatesModal);
+if (closeFlatmatesBtn) closeFlatmatesBtn.addEventListener("click", closeFlatmatesModal);
 
-// Close modal on outside click
 window.addEventListener("click", (event) => {
-  if (event.target === flatmatesModal) {
-    closeFlatmatesModal();
-  }
+  if (event.target === flatmatesModal) closeFlatmatesModal();
 });
