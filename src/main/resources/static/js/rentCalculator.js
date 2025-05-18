@@ -109,12 +109,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const profilePicture = document.createElement('img');
             // This is a placeholder for the profile picture
             // In a real application, you would fetch the actual profile picture URL from the server
-            profilePicture.src = `https://i.pravatar.cc/150?img=${i + 1}`;
+            if (flatmates[i].profileImage) {
+                profilePicture.src = flatmates[i].profileImage;
+            } else {
+                profilePicture.src = '/img/default-user.png'; // fallback image
+            }
             profilePicture.alt = 'Profile Picture';
             profilePicture.classList.add('profile-picture');
             sliderContainer.appendChild(profilePicture);
 
-            // Create a div for the username
+            // Create a div for the username    
             const username = document.createElement('p');
             username.classList.add('person-name');
             username.textContent = personNames[i];

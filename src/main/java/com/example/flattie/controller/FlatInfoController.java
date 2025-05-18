@@ -246,6 +246,7 @@ public class FlatInfoController {
                     data.put("cleanliness", flatmate.getCleanliness());
                     data.put("role", flatMembershipService.getRole(user.getFlat(), flatmate)); // Use role from
                                                                                                // membership
+                    data.put("profileImage", flatmate.getProfileImage());
                     return data;
                 })
                 .toList();
