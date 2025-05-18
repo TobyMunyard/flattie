@@ -1,5 +1,6 @@
 package com.example.flattie.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.flattie.model.AppUser;
@@ -36,6 +38,9 @@ public class CreateAccountController {
 
     @Autowired
     FlatMembershipService flatMembershipService;
+
+    @Autowired
+    com.example.flattie.service.ImageService imageService;
 
     /**
      * Called upon the submission of the account creation form. Checks that input
@@ -118,7 +123,9 @@ public class CreateAccountController {
             @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
             @RequestParam("username") String username, @RequestParam("bio") String bio,
             @RequestParam("noiseTolerance") Integer noiseTolerance,
-            @RequestParam("cleanliness") Integer cleanliness, RedirectAttributes redirectAttributes) {
+            @RequestParam("cleanliness") Integer cleanliness,
+            @RequestParam(value = "image", required = false) MultipartFile image, // <-- Add this
+                RedirectAttributes redirectAttributes) {
         // Get user by AuthenticationPrincipal in case username is being changed
         AppUser existingUser = appUserService.getAppUserById(authenticatedUser.getId())
                 .orElse(null);
@@ -174,7 +181,21 @@ public class CreateAccountController {
         existingUser.setBio(bio);
         existingUser.setNoiseTolerance(noiseTolerance);
         existingUser.setCleanliness(cleanliness);
+
+        // Handle profile image upload
+        if (image != null && !image.isEmpty()) {
+        try {
+            String path = imageService.saveImage(image, "profiles");
+            existingUser.setProfileImage(path);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload image.");
+            return "redirect:/profilePage";
+        }
+    }
+
         appUserService.saveAppUser(existingUser);
+
+        
 
         // Refreshes the whole @AuthenticationPrincipal, refreshing user information for
         // display instead of requiring logout to see changes.

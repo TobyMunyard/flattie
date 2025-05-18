@@ -23,7 +23,11 @@
 
     <div class="auth-page">
         <section id="profile">
-            <i class="fas fa-user-circle login-icon"></i> <!-- this is the login icon -->
+            <!-- Profile photo display -->
+            <div class="profile-photo" style="text-align:center; margin-bottom:1em;">
+                <img th:if="${user.profileImage != null}" th:src="@{${user.profileImage}}" alt="Profile Photo" width="120" height="120" style="border-radius:50%;object-fit:cover;">
+                <i th:if="${user.profileImage == null}" class="fas fa-user-circle login-icon" style="font-size:120px;"></i>
+            </div>
             <div>
                 <p th:if="${error != null}" th:text="${error}"></p>
             </div>
@@ -38,34 +42,33 @@
             <div id="editProfileModal" class="modal">
                 <div class="modal-content">
                     <span id="closeModalBtn" class="close">&times;</span>
-                    <form id="modalForm" action="/updateUser" method="post">
+                    <form id="modalForm" action="/updateUser" method="post" enctype="multipart/form-data">
                         <h2>Edit Account</h2>
+                        <!-- Profile photo file input (now part of main form) -->
+                        <label>Profile Photo:</label>
+                        <input type="file" name="image" accept="image/*">
                         <label>First Name:</label>
                         <input type="text" name="firstName" th:value="${user.firstName}" required>
                         <label>Last Name:</label>
                         <input type="text" name="lastName" th:value="${user.lastName}" required>
                         <label>Username:</label>
                         <input type="text" name="username" th:value="${user.username}" required>
-
                         <label>Bio:</label>
                         <textarea name="bio" cols="50" th:text="${user.bio}"></textarea>
-
                         <label>Noise Tolerance (1-5):</label>
-                        <input type="range" name="noiseTolerance" min="1" max="5" 
-                            th:value="${user.noiseTolerance != null ? user.noiseTolerance : 3}" 
-                            id="noiseToleranceSlider" 
+                        <input type="range" name="noiseTolerance" min="1" max="5"
+                            th:value="${user.noiseTolerance != null ? user.noiseTolerance : 3}"
+                            id="noiseToleranceSlider"
                             oninput="updateNoiseToleranceValue(this.value)" required>
-                        <span id="noiseToleranceValue" 
+                        <span id="noiseToleranceValue"
                             th:text="${user.noiseTolerance != null ? user.noiseTolerance : 3}">3</span>
-
                         <label>Cleanliness (1-5):</label>
-                        <input type="range" name="cleanliness" min="1" max="5" 
-                            th:value="${user.cleanliness != null ? user.cleanliness : 3}" 
-                            id="cleanlinessSlider" 
+                        <input type="range" name="cleanliness" min="1" max="5"
+                            th:value="${user.cleanliness != null ? user.cleanliness : 3}"
+                            id="cleanlinessSlider"
                             oninput="updateCleanlinessValue(this.value)" required>
-                        <span id="cleanlinessValue" 
-                        th:text="${user.cleanliness != null ? user.cleanliness : 3}">3</span>
-                        
+                        <span id="cleanlinessValue"
+                            th:text="${user.cleanliness != null ? user.cleanliness : 3}">3</span>
                         <button type="submit">Submit</button>
                     </form>
                 </div>
