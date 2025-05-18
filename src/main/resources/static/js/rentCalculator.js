@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (flatmates[i].profileImage) {
                 profilePicture.src = flatmates[i].profileImage;
             } else {
-                profilePicture.src = '/img/default-user.png'; // fallback image
+                profilePicture.src = 'https://i.pinimg.com/474x/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg'; // fallback image
             }
             profilePicture.alt = 'Profile Picture';
             profilePicture.classList.add('profile-picture');
