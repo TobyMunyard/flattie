@@ -9,9 +9,11 @@
   
   .modal-content {
     background-color: #fff;
-    margin: 15% auto;
+    margin: auto;
+    margin-top: 5vh;
     padding: 20px;
-    width: 300px;
+    width: 100%;
+    max-width: 350px;
     border-radius: 10px;
     position: relative;
     max-height: 80vh; 
