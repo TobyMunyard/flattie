@@ -33,12 +33,16 @@ public class MaintenanceTicketController {
 
     @Autowired
     private EmailService emailService;
+    
+    @Autowired
+    private FlatService flatService;
 
+    @Autowired
+    private MaintenanceTicketService maintenanceTicketService;
+    
     @Autowired
     private FlatRepository flatRepository;
 
-    @Autowired
-    private FlatService flatService;
 
     @GetMapping("/ticket")
     public String ticketPage(@AuthenticationPrincipal AppUser user, Model model) {
@@ -81,7 +85,7 @@ public class MaintenanceTicketController {
             redirectAttributes.addFlashAttribute("error", "Image upload failed");
             return "redirect:/ticket";
         }
-        
+
         // 2. Prepare email body AFTER everything is set
         String confirmLink = "http://localhost:8080/maintenance/confirm/" + ticket.getConfirmationToken();
 
@@ -126,5 +130,27 @@ public class MaintenanceTicketController {
     public String confirmTicket(@PathVariable("token") String token) {
         boolean success = ticketService.resolveTicket(token);
         return success ? "Ticket marked as resolved." : "Invalid or expired confirmation link.";
+    }
+
+    @PostMapping("/maintenance/{id}/resolve")
+    public String resolveTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            maintenanceTicketService.resolveTicket(id);
+            redirectAttributes.addFlashAttribute("success", "Ticket marked as resolved.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not resolve ticket.");
+        }
+        return "redirect:/ticket";
+    }
+
+    @PostMapping("/maintenance/{id}/delete")
+    public String deleteTicket(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            maintenanceTicketService.deleteTicket(id);
+            redirectAttributes.addFlashAttribute("success", "Ticket deleted.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Could not delete ticket.");
+        }
+        return "redirect:/ticket";
     }
 }

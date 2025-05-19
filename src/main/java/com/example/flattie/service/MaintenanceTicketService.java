@@ -1,8 +1,12 @@
 package com.example.flattie.service;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.nio.file.Path;
+import java.nio.file.Files;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,13 +20,13 @@ import com.example.flattie.repository.MaintenanceTicketRepository;
 public class MaintenanceTicketService {
 
     @Autowired
-    private MaintenanceTicketRepository ticketRepo;
+    private MaintenanceTicketRepository ticketRepository;
 
     @Autowired
     private FlatService flatService;
 
     public List<MaintenanceTicket> getTicketsForFlat(Flat flat) {
-        return ticketRepo.findByFlat(flat);
+        return ticketRepository.findByFlat(flat);
     }
 
     public MaintenanceTicket createAndSaveTicket(AppUser user, String description, String urgency, String location,
@@ -48,17 +52,43 @@ public class MaintenanceTicketService {
         ticket.setType(type);
 
         // Save the ticket to the database
-        ticketRepo.save(ticket);
+        ticketRepository.save(ticket);
         return ticket;
     }
 
     public boolean resolveTicket(String token) {
-        MaintenanceTicket ticket = ticketRepo.findByConfirmationToken(token);
+        MaintenanceTicket ticket = ticketRepository.findByConfirmationToken(token);
         if (ticket != null) {
             ticket.setStatus("RESOLVED");
-            ticketRepo.save(ticket);
+            ticketRepository.save(ticket);
             return true;
         }
         return false;
     }
+
+    public void resolveTicket(Long id) {
+        MaintenanceTicket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        ticket.setStatus("RESOLVED"); // could use enum like MaintenanceTicket.RESOLVED in future
+        ticketRepository.save(ticket);
+    }
+
+    public void deleteTicket(Long id) {
+        MaintenanceTicket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+
+        // Delete image if present
+        if (ticket.getImageUrl() != null) {
+            try {
+                Path path = Paths.get("uploads").resolve(ticket.getImageUrl());
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                // Log and continue
+                System.err.println("Failed to delete image: " + e.getMessage());
+            }
+        }
+
+        ticketRepository.delete(ticket);
+    }
+
 }

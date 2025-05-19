@@ -17,94 +17,57 @@ function closeNav() {
     document.getElementById("main").style.marginLeft = "0";
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('maintenance-request-form');
-    const ticketList = document.getElementById('ticket-list');
-    const descriptionInput = document.getElementById('issue-description');
-    const locationInput = document.getElementById('issue-location');
-    const urgencySelect = document.getElementById('urgency');
-
-    // Load tickets from localStorage
-    let maintenanceTickets = JSON.parse(localStorage.getItem('maintenanceTickets')) || [];
-
-    function renderTickets() {
-        ticketList.innerHTML = ''; // Clear existing list
-        maintenanceTickets.forEach((ticket, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${ticket.description}</td>
-                <td>${ticket.location || 'N/A'}</td>
-                <td class="urgency-${ticket.urgency.toLowerCase()}">${ticket.urgency}</td>
-                <td>${new Date(ticket.submittedDate).toLocaleDateString()}</td>
-                <td>
-                    <select class="status-select" data-index="${index}">
-                        <option value="Pending" ${ticket.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                        <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="Completed" ${ticket.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                    </select>
-                </td>
-                <td><button class="delete-ticket-button" data-index="${index}"><i class="fas fa-trash-alt"></i></button></td>
-            `;
-            ticketList.appendChild(row);
-        });
-
-        // Add event listeners for status changes
-        document.querySelectorAll('.status-select').forEach(select => {
-            select.addEventListener('change', updateTicketStatus);
-        });
-         // Add event listeners for delete buttons
-        document.querySelectorAll('.delete-ticket-button').forEach(button => {
-            button.addEventListener('click', deleteTicket);
-        });
+document.getElementById("image").addEventListener("change", function () {
+    const preview = document.getElementById("imagePreview");
+    const file = this.files[0];
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+    } else {
+        preview.style.display = "none";
     }
-
-    function addTicket(event) {
-        event.preventDefault(); // Prevent page reload
-
-        const newTicket = {
-            description: descriptionInput.value.trim(),
-            location: locationInput.value.trim(),
-            urgency: urgencySelect.value,
-            submittedDate: new Date().toISOString(),
-            status: 'Pending' // Default status
-        };
-
-        if (newTicket.description) {
-            maintenanceTickets.push(newTicket);
-            saveTickets();
-            renderTickets();
-            form.reset(); // Clear the form
-        } else {
-            alert('Please provide an issue description.');
-        }
-    }
-
-     function updateTicketStatus(event) {
-        const index = event.target.dataset.index;
-        const newStatus = event.target.value;
-        maintenanceTickets[index].status = newStatus;
-        saveTickets();
-        // Optionally re-render or just update visually if needed
-        // renderTickets(); // Re-rendering ensures consistency
-    }
-
-    function deleteTicket(event) {
-         // Go up the DOM tree to find the button if the icon was clicked
-        const button = event.target.closest('.delete-ticket-button');
-         if (button) {
-            const index = button.dataset.index;
-            maintenanceTickets.splice(index, 1); // Remove ticket from array
-            saveTickets();
-            renderTickets(); // Re-render the list
-        }
-    }
-
-    function saveTickets() {
-        localStorage.setItem('maintenanceTickets', JSON.stringify(maintenanceTickets));
-    }
-
-    form.addEventListener('submit', addTicket);
-
-    // Initial render of tickets
-    renderTickets();
 });
+
+// Ticket modal logic
+function openTicketModal(cell) {
+  const row = cell.closest('tr');
+  document.getElementById("modalDesc").innerText = row.children[0].innerText;
+  document.getElementById("modalLocation").innerText = row.children[1].innerText;
+  document.getElementById("modalUrgency").innerText = row.children[2].innerText;
+  document.getElementById("modalStatus").innerText = row.children[3].innerText;
+  document.getElementById("modalTime").innerText = row.children[4].innerText;
+  document.getElementById("modalUser").innerText = row.children[5].innerText;
+
+  const imageLink = row.children[6].querySelector("a");
+  const modalImage = document.getElementById("modalImage");
+  if (imageLink) {
+    modalImage.src = imageLink.href;
+    modalImage.style.display = "block";
+  } else {
+    modalImage.style.display = "none";
+  }
+
+  document.getElementById("ticketModal").style.display = "flex";
+}
+
+function closeTicketModal() {
+  document.getElementById("ticketModal").style.display = "none";
+}
+
+// Filtering logic
+document.getElementById("urgencyFilter").addEventListener("change", filterTickets);
+document.getElementById("statusFilter").addEventListener("change", filterTickets);
+
+function filterTickets() {
+  const urgency = document.getElementById("urgencyFilter").value;
+  const status = document.getElementById("statusFilter").value;
+  const rows = document.querySelectorAll("#ticketTable tbody tr");
+
+  rows.forEach(row => {
+    const rowUrgency = row.getAttribute("data-urgency");
+    const rowStatus = row.getAttribute("data-status");
+    const matchesUrgency = urgency === "ALL" || rowUrgency === urgency;
+    const matchesStatus = status === "ALL" || rowStatus === status;
+    row.style.display = matchesUrgency && matchesStatus ? "" : "none";
+  });
+}

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.file.Paths;
 
-// This configuration allows you to serve static files from the uploads directory in your project root.
+// This configuration allows you to serve static files from the uploads directory in the project root.
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
