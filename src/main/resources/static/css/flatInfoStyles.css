@@ -34,3 +34,90 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+/* ===== Page Info Styling ===== */
+.info-card {
+  background-color: #fff8f0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border-left: 6px solid #f39c12;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.info-card h3 {
+  margin-top: 0;
+  color: #e67e22;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.join-code-box {
+  font-family: monospace;
+  background-color: #f3f3f3;
+  padding: 12px;
+  border: 2px dashed #f39c12;
+  border-radius: 8px;
+  font-size: 1.2em;
+  text-align: center;
+  margin-top: 5px;
+}
+
+/* ===== Flat Edit Modal ===== */
+.styled-modal {
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  background-color: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.flat-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px 20px;
+}
+
+.flat-form-grid textarea {
+  grid-column: span 2;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.flat-form-grid label {
+  font-weight: bold;
+  align-self: center;
+}
+
+.flat-form-grid input,
+.flat-form-grid textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-buttons {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.save-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+}
