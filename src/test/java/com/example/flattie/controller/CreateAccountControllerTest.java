@@ -5,6 +5,7 @@ import com.example.flattie.model.AppUser;
 import com.example.flattie.service.AppUserService;
 import com.example.flattie.service.FlatMembershipService;
 import com.example.flattie.service.FlatService;
+import com.example.flattie.service.ImageService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ public class CreateAccountControllerTest {
 
     @MockBean
     private FlatMembershipService flatMembershipService;
+
+    @MockBean
+    private ImageService imageService;
 
     @BeforeEach
     public void setup() {
