@@ -262,3 +262,41 @@ function getCSRFToken() {
     const tokenMeta = document.querySelector('meta[name="_csrf"]');
     return tokenMeta ? tokenMeta.getAttribute('content') : '';
 }
+
+// === SORTING FUNCTIONALITY ===
+document.querySelectorAll('th[data-sort]').forEach(header => {
+    header.addEventListener('click', () => {
+        const sortKey = header.getAttribute('data-sort');
+        const tbody = document.getElementById('chore-list');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        let getValue;
+        switch (sortKey) {
+            case 'chore':
+                getValue = row => row.children[0].textContent.trim().toLowerCase();
+                break;
+            case 'assignment':
+                getValue = row => row.children[1].textContent.trim().toLowerCase();
+                break;
+            case 'priority':
+                getValue = row => parseInt(row.children[2].textContent.trim(), 10);
+                break;
+            default:
+                return;
+        }
+
+        const ascending = !header.classList.contains('asc');
+        rows.sort((a, b) => {
+            const valA = getValue(a);
+            const valB = getValue(b);
+            return ascending ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+        });
+
+        // Remove previous sort direction indicators
+        document.querySelectorAll('th[data-sort]').forEach(h => h.classList.remove('asc', 'desc'));
+        header.classList.add(ascending ? 'asc' : 'desc');
+
+        // Reinsert sorted rows
+        rows.forEach(row => tbody.appendChild(row));
+    });
+});

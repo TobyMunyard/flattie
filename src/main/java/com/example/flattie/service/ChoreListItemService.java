@@ -33,7 +33,8 @@ public class ChoreListItemService {
      * Finds a list of chores by chore list ID.
      * 
      * @param flatId The ID of the chore list to find chores for.
-     * @return A list of ChoreListItem entities associated with the given chore list ID.
+     * @return A list of ChoreListItem entities associated with the given chore list
+     *         ID.
      */
     public List<ChoreListItem> findByListId(Long choreListId) {
         return choreListItemRepository.findByChoreList_Id(choreListId);

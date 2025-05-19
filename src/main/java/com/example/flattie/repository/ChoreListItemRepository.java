@@ -6,6 +6,8 @@ import com.example.flattie.model.ChoreListItem;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repository interface for interacting with ChoreListItem entities within
@@ -20,4 +22,8 @@ public interface ChoreListItemRepository extends JpaRepository<ChoreListItem, Lo
 
     // Method to find a chore by its name.
     List<ChoreListItem> findByChoreNameContainingIgnoreCase(String choreName);
+
+    @Query("SELECT c FROM ChoreListItem c WHERE c.choreList.flat.id = :flatId AND LOWER(c.choreName) LIKE LOWER(CONCAT('%', :query, '%'))")
+    List<ChoreListItem> searchByFlatAndQuery(@Param("flatId") Long flatId, @Param("query") String query);
+
 }

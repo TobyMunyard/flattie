@@ -1,0 +1,8 @@
+th.asc::after {
+    content: " ▲";
+    font-size: 0.75em;
+}
+th.desc::after {
+    content: " ▼";
+    font-size: 0.75em;
+}

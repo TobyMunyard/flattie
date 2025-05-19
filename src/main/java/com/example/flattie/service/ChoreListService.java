@@ -51,6 +51,20 @@ public class ChoreListService {
         return choreListRepository.findByFlatId(flatId);
     }
 
+    /**
+     * Gets the chorelist for a given flat ID and searches for the given chore.
+     * Ensuring that only the flats chores are searched
+     * 
+     * @param flatId The ID of the flat for which to retrieve the ChoreList.
+     * @param query  the chore item to search for
+     * @return The list of chore associated with the given query.
+     */
+    public List<ChoreListItem> searchChoresInFlat(Long flatId, String query) {
+        if (query == null || query.trim().isEmpty())
+            return choreListRepository.findByFlatId(flatId).getChoreListItems();
+        return choreListItemRepository.searchByFlatAndQuery(flatId, query);
+    }
+
     public void addChoreToFlat(Flat flat, ChoreListItem choreItem) {
         ChoreList choreList = getChoreListForFlat(flat.getId());
         // Add the chore item to the flat's chore list
@@ -102,11 +116,12 @@ public class ChoreListService {
     }
 
     /**
-     * Updates an existing ChoreListItem in the database with the values of a provided 
-     * new ChoreListItem. It does not save the new ChoreListItem to the database, 
+     * Updates an existing ChoreListItem in the database with the values of a
+     * provided
+     * new ChoreListItem. It does not save the new ChoreListItem to the database,
      * but rather updates the existing one.
      * 
-     * @param id The id of the ChoreListItem to edit.
+     * @param id       The id of the ChoreListItem to edit.
      * @param newChore The new ChoreListItem with values to copy from.
      */
     public void updateChore(Long id, ChoreListItem newChore) {

@@ -176,8 +176,12 @@ public class ChoreListController {
 
     @GetMapping("/chore/search")
     @ResponseBody
-    public List<ChoreListItem> searchChores(@RequestParam String query) {
-        // Logic to search chores
-        return choreListService.searchChoreListItemsByName(query);
+    public List<ChoreListItem> searchChores(@RequestParam String query, @AuthenticationPrincipal AppUser currentUser) {
+        Flat flat = currentUser.getFlat(); // Or fetch via FlatMembershipService
+        if (flat == null)
+            return List.of();
+
+        return choreListService.searchChoresInFlat(flat.getId(), query);
     }
+
 }
