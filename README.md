@@ -4,15 +4,15 @@ Flattie is a flat management web application intended to be used by students who
 
 ## Accessing Flattie
 1. Install a [Java JDK](https://www.oracle.com/middleeast/java/technologies/downloads/) of your choosing, version 17 or newer is required.
-2. Clone this repository by clicking the green "code" button at the top of the page and cloning in whatever way you wish.
+2. Clone this repository by clicking the green "code" button at the top of the page and cloning in whatever way you wish. The simplest way may be downloading the ZIP file version of the repository.
 3. Open a terminal of your choosing.
 4. Run "cd \<whatever directory you saved flattie to>"
-5. Once in the correct directory, run "gradlew build" on windows or "./gradlew build" on linux/mac.
-6. Run "gradlew run" on windows or "./gradlew run" on linux/mac.
-7. If you are not already there, move to the bottom of the command output and click the locahost:8080 link or visit localhost:8080 in your web browser to open the home page.
+5. Once in the flattie directory, run "gradlew build" on windows or "./gradlew build" on linux/mac.
+6. Run "gradlew bootRun" on windows or "./gradlew bootRun" on linux/mac.
+7. If you are not already there, move to the bottom of the command output and click the locahost:8080 link or visit localhost:8080 in your web browser to open the home page. Optionally you can also access localhost:8080/h2-console to view the database. The username is "sa" and there is no password.
 
 ## Using Flattie Features
-* Most features are locked behind having a account. This can be done by visiting the "create account" and "login" pages from the top navigation bar.
+* Most features are locked behind having a account. This can be done by visiting the "create account" and "login" pages from the top navigation bar. Optionally there is an account already created with the username "Tester" and password "test1234".
 * After an account has been created you will see several new items appear in the navigation bar. These include creating flats and joining flats.
 * In order to access further features such as contacting property managers you will need to join a flat. This can be done by joining the test flat using code "1234" or you could create your own, which you will be automatically added to.
 
